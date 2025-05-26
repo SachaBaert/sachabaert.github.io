@@ -612,7 +612,6 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#themas">Thema's</a></li>
                 <li><a href="#methodologie">Methodologie</a></li>
-                <li><a href="#implementatie">Implementatie</a></li>
                 <li><a href="#bronnen">Bronnen</a></li>
                 <li><a href="#auteur">Auteur</a></li>
             </ul>
@@ -3774,85 +3773,6 @@
                 header.classList.remove('scrolled');
             }
         });
-
-        // DOWNLOAD FUNCTIONS
-        function downloadObservatielijsten() {
-            // In real implementation, this would trigger actual download
-            showDownloadNotification('📋 Observatielijsten & Checklists', 'Bevat: Groepsrollen observatieformulier, Gedragsmonitoring sheets, Klassfeer thermometer, Preventie checklists');
-            
-            // Simulate download preparation
-            setTimeout(() => {
-                alert('📥 Download gestart!\n\n📋 Observatielijsten & Checklists pakket bevat:\n• Gestructureerde observatieformulieren\n• Gedragsmonitoring templates\n• Klassfeer evaluatie tools\n• Preventie assessment checklists\n\n✅ Perfect voor directe implementatie!');
-            }, 1000);
-        }
-
-        function downloadTemplates() {
-            showDownloadNotification('🎨 Templates & Werkbladen', 'Bevat: Afsprakenposter templates, Gedragscontract voorbeelden, Routine planners, Activiteit werkbladen');
-            
-            setTimeout(() => {
-                alert('📥 Download gestart!\n\n🎨 Templates & Werkbladen pakket bevat:\n• Bewerkbare afsprakenposter templates\n• Gedragscontract voorbeelden\n• Routine planning werkbladen\n• Activiteit templates voor alle themas\n\n🎯 Klaar om aan te passen aan jouw klas!');
-            }, 1000);
-        }
-
-        function downloadEvaluatieformulieren() {
-            showDownloadNotification('📊 Evaluatie & Reflectie-instrumenten', 'Bevat: Gibbs reflectie templates, Zelfassessment tools, Voortgangsmonitoring, Effectiviteit meetinstrumenten');
-            
-            setTimeout(() => {
-                alert('📥 Download gestart!\n\n📊 Evaluatie & Reflectie pakket bevat:\n• Gibbs reflectiecylcus templates\n• Zelfassessment instrumenten\n• Voortgangsmonitoring tools\n• Effectiviteit evaluatie formulieren\n\n📈 Essentieel voor professionele groei!');
-            }, 1000);
-        }
-
-        function downloadStappenplannen() {
-            showDownloadNotification('📝 Implementatie Stappenplannen', 'Bevat: Week-voor-week implementatie, Troubleshooting gidsen, Quick reference kaarten, Best practices');
-            
-            setTimeout(() => {
-                alert('📥 Download gestart!\n\n📝 Implementatie Stappenplannen bevat:\n• Gedetailleerde week-voor-week plannen\n• Troubleshooting gidsen\n• Quick reference implementatie kaarten\n• Best practices voor elke tool\n\n🚀 Stap-voor-stap naar succes!');
-            }, 1000);
-        }
-
-        function downloadVolledigeToolbox() {
-            showDownloadNotification('📖 Volledige Toolbox (100+ pagina\'s)', 'Bevat: Alle 12 themas, Complete theoretische onderbouwing, Praktijkvoorbeelden, Literatuurlijst, Implementatiegids');
-            
-            setTimeout(() => {
-                alert('📥 Download gestart!\n\n📖 Volledige Toolbox (100+ paginas) bevat:\n• Alle 12 complete themas uitgewerkt\n• Theoretische onderbouwing per tool\n• Praktijkvoorbeelden en casussen\n• Uitgebreide literatuurlijst\n• Complete implementatiegids\n• Bonus: Video tutorials links\n\n🌟 De complete gids voor beginnende leerkrachten!');
-            }, 1500);
-        }
-
-        function showDownloadNotification(title, description) {
-            // Create and show download notification
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: linear-gradient(135deg, #00b894, #00cec9);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 10px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-                z-index: 10000;
-                max-width: 350px;
-                animation: slideIn 0.5s ease-out;
-            `;
-            
-            notification.innerHTML = `
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">⏬ Voorbereiden Download...</h4>
-                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">${title}</p>
-                <div style="margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.8;">${description}</div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Remove notification after 3 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.5s ease-in';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 500);
-            }, 3000);
-        }
 
         // Add CSS animations for notifications
         const style = document.createElement('style');
