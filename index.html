@@ -957,10 +957,7 @@
             <h2>💾 Download Complete Materialen</h2>
             <p>Alle tools, templates en hulpmiddelen voor directe implementatie in de klas - volledig uitgewerkt en klaar voor gebruik</p>
             <a href="Observatielijsten.pdf"><button class="download-btn">📋 Observatielijsten & Checklists</button></a>
-            <a href="Observatielijsten.pdf"><button class="download-btn">🎨 Templates & Werkbladen</button></a>
-            <a href="Observatielijsten.pdf"><button class="download-btn">📊 Evaluatie & Reflectie-instrumenten</button></a>
-            <a href="Observatielijsten.pdf"><button class="download-btn">📝 Implementatie Stappenplannen</button></a>
-            <a href="Observatielijsten.pdf"><button class="download-btn">📖 Volledige Toolbox (100+ pagina's)</button></a>
+            <a href="Templates.pdf"><button class="download-btn">🎨 Templates & Werkbladen</button></a>
         </div>
     </section>
 
@@ -990,10 +987,8 @@
             <h2>👨‍🎓 Over de Auteur & Dit Eindwerk</h2>
             <div class="author-card">
                 <h3>Eindwerk: Sterk in de Klas Toolbox - Complete Editie</h3>
-                <p><strong>Vak:</strong> Klasmanagement & Pedagogische Vaardigheden</p>
                 <p><strong>Academiejaar:</strong> 2024-2025</p>
-                <p><strong>Instelling:</strong> [Jouw onderwijsinstelling]</p>
-                <p><strong>Begeleider:</strong> [Naam begeleider]</p>
+                <p><strong>Instelling:</strong> Edugo Lochristi</p>
                 <p><strong>Omvang:</strong> 12 thema's | 50+ tools | 200+ praktijktips | 25+ wetenschappelijke bronnen</p>
                 <p style="margin-top: 1.5rem;"><em>"Dit eindwerk vormt de synthese van uitgebreide theoretische studie, intensieve praktijkervaring, en reflectieve analyse. Het doel is het creëren van een compleet, gebruiksvriendelijk instrument dat beginnende leerkrachten daadwerkelijk ondersteunt in hun professionele ontwikkeling en klasmanagement-excellentie."</em></p>
             </div>
@@ -3644,7 +3639,7 @@
                     <h3 style="margin-bottom: 1rem; color: #74b9ff;">🎯 Sterk in de Klas Toolbox</h3>
                     <p style="line-height: 1.6; color: #ddd;">Complete gids voor beginnende leerkrachten met 12 thema's, 50+ tools en evidence-based strategieën voor succesvol klasmanagement.</p>
                     <div style="margin-top: 1rem;">
-                        <span style="background: #00b894; padding: 0.2rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">✅ 100% Praktijkgericht</span>
+                        <span style="background: #00b894; padding: 0.2rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">✅ 100% Praktijkgericht</span></br>
                         <span style="background: #e17055; padding: 0.2rem 0.8rem; border-radius: 15px; font-size: 0.9rem; margin-left: 0.5rem;">📚 Wetenschappelijk Onderbouwd</span>
                     </div>
                 </div>
@@ -3676,9 +3671,7 @@
                 <div>
                     <h4 style="margin-bottom: 1rem; color: #74b9ff;">📞 Contact & Support</h4>
                     <div style="color: #ddd; line-height: 1.8;">
-                        <p>📧 <strong>Email:</strong> info@sterkindeklas.edu</p>
-                        <p>📱 <strong>WhatsApp:</strong> +32 xxx xxx xxx</p>
-                        <p>🌐 <strong>Website:</strong> www.sterkindeklas.edu</p>
+                        <p>🌐 <strong>Website:</strong> https://sachabaert.github.io/index.html</p>
                         <p>📍 <strong>Locatie:</strong> Vlaanderen, België</p>
                         <div style="margin-top: 1rem;">
                             <button onclick="showContactForm()" style="background: #00b894; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">✉️ Contact Opnemen</button>
@@ -3690,7 +3683,7 @@
             <div style="border-top: 1px solid #636e72; padding-top: 2rem; text-align: center; color: #b2bec3;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <p>&copy; 2024-2025 Sterk in de Klas Toolbox | Eindwerk Klasmanagement</p>
+                        <p>&copy; 2024-2025 Sterk in de Klas Toolbox</p>
                         <p style="font-size: 0.9rem; margin-top: 0.5rem;">Ontwikkeld met ❤️ voor beginnende leerkrachten</p>
                     </div>
                     <div>
@@ -3700,7 +3693,7 @@
                 
                 <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #636e72;">
                     <p style="font-size: 0.8rem; color: #81ecec;">
-                        🎓 <strong>Academische Disclaimer:</strong> Deze toolbox is ontwikkeld als eindwerk voor de opleiding Klasmanagement. 
+                        🎓 <strong>Academische Disclaimer:</strong> Deze toolbox is ontwikkeld als eindwerk voor de opleiding Sterk in de klas 
                         Alle tools zijn gebaseerd op wetenschappelijk onderzoek en praktijkervaring, maar dienen aangepast te worden aan specifieke contexten.
                     </p>
                 </div>
@@ -3800,88 +3793,6 @@
             }
         `;
         document.head.appendChild(style);
-
-        // CONTACT FORM FUNCTIONALITY
-        function showContactForm() {
-            // Create modal for contact form
-            const contactModal = document.createElement('div');
-            contactModal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.7);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 20000;
-            `;
-            
-            contactModal.innerHTML = `
-                <div style="background: white; padding: 2rem; border-radius: 15px; max-width: 500px; width: 90%; position: relative;">
-                    <span onclick="this.parentElement.parentElement.remove()" style="position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; color: #666;">&times;</span>
-                    <h3 style="margin-bottom: 1.5rem; color: #2d3436;">📞 Contact Opnemen</h3>
-                    <form onsubmit="submitContactForm(event)">
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Naam:</label>
-                            <input type="text" required style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Email:</label>
-                            <input type="email" required style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Onderwerp:</label>
-                            <select style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
-                                <option>Vraag over implementatie</option>
-                                <option>Feedback op toolbox</option>
-                                <option>Samenwerking mogelijkheden</option>
-                                <option>Technische ondersteuning</option>
-                                <option>Anders</option>
-                            </select>
-                        </div>
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Bericht:</label>
-                            <textarea required rows="4" style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
-                        </div>
-                        <button type="submit" style="background: linear-gradient(45deg, #00b894, #00cec9); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1rem; cursor: pointer; width: 100%;">
-                            📧 Verstuur Bericht
-                        </button>
-                    </form>
-                </div>
-            `;
-            
-            document.body.appendChild(contactModal);
-            document.body.style.overflow = 'hidden';
-            
-            // Close on click outside
-            contactModal.addEventListener('click', function(e) {
-                if (e.target === contactModal) {
-                    contactModal.remove();
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        }
-
-        function submitContactForm(event) {
-            event.preventDefault();
-            
-            // Simulate form submission
-            const submitButton = event.target.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-            
-            submitButton.innerHTML = '⏳ Versturen...';
-            submitButton.disabled = true;
-            
-            setTimeout(() => {
-                alert('✅ Bedankt voor je bericht!\n\nJe bericht is ontvangen en we nemen binnen 48 uur contact met je op.\n\n📧 Je ontvangt een automatische bevestiging op je emailadres.');
-                
-                // Close modal
-                event.target.closest('.modal, [style*="position: fixed"]').remove();
-                document.body.style.overflow = 'auto';
-            }, 2000);
-        }
 
         // SEARCH FUNCTIONALITY (voor toekomstige uitbreiding)
         function initSearch() {
