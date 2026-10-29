@@ -57,6 +57,13 @@
     var b2 = el("button", { class: "btn sec mt", onclick: function () { openCheat(I.cs); } }, ["Theorie bekijken (spiekbrief)"]);
     w.appendChild(b1); w.appendChild(b2);
   }
+  var ctxOpen = true;
+  function situatie() {
+    var d = el("details", { class: "ctx" }, [el("summary", { text: "Situatie: wat staat er op DNS01?" }), el("div", { html: D.situatie })]);
+    if (ctxOpen) d.setAttribute("open", "");
+    d.addEventListener("toggle", function () { ctxOpen = d.open; });
+    return d;
+  }
   function hint(text) {
     if (!text) return null;
     var wrapH = el("div");
@@ -165,7 +172,9 @@
       var tries = 0;
       box.appendChild(el("div", { class: "muted", text: "Ronde " + (ri + 1) + " van " + rounds.length + " · stap 1: bouwen" }));
       box.appendChild(progress(ri, rounds.length));
-      box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: "Bouw de volledige FQDN van: <b>" + R.prompt + "</b>" }),
+      box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: R.prompt + " wordt geopend via:" }),
+        el("div", { class: "cmd", style: "margin:8px 0", text: R.url }),
+        el("div", { class: "q", style: "font-size:16px", text: "Bouw de volledige FQDN van deze server." }),
         el("div", { class: "muted", text: "Bouw van rechts naar links: de root staat al klaar. Tik eerst het topdomein (TLD), dan het domein, dan de host." })]));
       var ans = el("div", { class: "answer", "aria-live": "polite" });
       var bank = el("div", { class: "bank" });
@@ -308,8 +317,8 @@
       var it = items[i], sel = {};
       box.appendChild(el("div", { class: "muted", text: "Query " + (i + 1) + " van " + items.length }));
       box.appendChild(progress(i, items.length + 1));
+      box.appendChild(situatie());
       box.appendChild(el("div", { class: "cmd", text: it.cmd }));
-      box.appendChild(el("button", { class: "hint", type: "button", onclick: function () { openCheat("zones"); } }, ["Bekijk wat er op DNS01 staat"]));
       var groups = {};
       Object.keys(D.exitFields).forEach(function (f) {
         var F = D.exitFields[f], chips = el("div", { class: "chips" });
@@ -353,6 +362,7 @@
     show();
   }
   function mcq(box, q, done, isCmd) {
+    if (isCmd && q.s) box.appendChild(el("div", { class: "scen", html: q.s }));
     box.appendChild(isCmd ? el("div", { class: "cmd", text: q.cmd }) : el("div", { class: "card" }, [el("div", { class: "q", html: q.q })]));
     var hb = hint(q.h); if (hb) box.appendChild(hb);
     var order = shuffle(q.o.map(function (t, k) { return { t: t, k: k }; }));
@@ -378,6 +388,7 @@
       if (i >= qs.length) return finish(box, "check2", score, qs.length, function () { check("pred"); });
       box.appendChild(el("div", { class: "muted", text: "Vraag " + (i + 1) + " van " + qs.length }));
       box.appendChild(progress(i, qs.length));
+      box.appendChild(situatie());
       mcq(box, qs[i], function (ok) {
         if (ok) score++;
         box.appendChild(el("button", { class: "btn mt", onclick: function () { i++; show(); } }, [i + 1 < qs.length ? "Volgende" : "Resultaat"]));
@@ -411,6 +422,7 @@
       nodeEls[N.id] = n; net.appendChild(n);
     });
     var cpanel = el("div", { class: "caches" });
+    cpanel.appendChild(el("div", { class: "cbox" }, [el("b", { text: "Situatie" }), el("div", { style: "font-size:13.5px;margin-top:2px", text: "CLIENT01 gebruikt DNS01 als DNS-server. DNS01 heeft een eigen zone campusconnect.test (zie onderaan) en stuurt alle andere namen door naar een forwarder." })]));
     [["client", "Clientcache CLIENT01"], ["hosts", "hosts-bestand CLIENT01"], ["dns01", "Servercache DNS01"]].forEach(function (c) {
       cacheEls[c[0]] = el("div", { class: "cache" });
       cpanel.appendChild(el("div", { class: "cbox" }, [el("b", { text: c[1] }), cacheEls[c[0]]]));
