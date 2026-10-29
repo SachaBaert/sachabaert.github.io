@@ -34,9 +34,39 @@
     w.appendChild(back());
   }
 
+  function openCheat(id) {
+    var old = document.querySelector(".sheet"); if (old) old.remove();
+    var nav = el("nav", null, D.cheat.map(function (c) { return el("a", { href: "#", onclick: function (e) { e.preventDefault(); var t = document.getElementById("cs-" + c.id); if (t) t.scrollIntoView({ behavior: "smooth" }); } }, [c.t]); }));
+    var body = el("div", { class: "wrap" }, [nav].concat(D.cheat.map(function (c) {
+      return el("section", { id: "cs-" + c.id, class: "card" }, [el("h2", { text: c.t, style: "margin-top:0" }), el("div", { html: c.h })]);
+    })));
+    var closeBtn = el("button", { type: "button", onclick: function () { s.remove(); document.getElementById("cheatBtn").focus(); } }, ["Sluiten"]);
+    var s = el("div", { class: "sheet", role: "dialog", "aria-modal": "true", "aria-label": "Spiekbrief" }, [
+      el("div", { class: "bar" }, [el("b", { text: "Spiekbrief DNS" }), closeBtn]), body]);
+    s.addEventListener("keydown", function (e) { if (e.key === "Escape") s.remove(); });
+    document.body.appendChild(s); closeBtn.focus();
+    if (id) { var t = document.getElementById("cs-" + id); if (t) setTimeout(function () { t.scrollIntoView(); }, 30); }
+  }
+  document.getElementById("cheatBtn").addEventListener("click", function () { openCheat(); });
+  function intro(w, key, start) {
+    var I = D.intros[key];
+    var box = el("div", { class: "card intro" }, [el("span", { class: "tag black", text: "Zo werkt het" }), el("h2", { text: I.t })]
+      .concat(I.p.map(function (p) { return el("p", { html: p }); })));
+    w.appendChild(box);
+    var b1 = el("button", { class: "btn", onclick: function () { box.remove(); b1.remove(); b2.remove(); start(); } }, ["Start"]);
+    var b2 = el("button", { class: "btn sec mt", onclick: function () { openCheat(I.cs); } }, ["Theorie bekijken (spiekbrief)"]);
+    w.appendChild(b1); w.appendChild(b2);
+  }
+  function hint(text) {
+    if (!text) return null;
+    var wrapH = el("div");
+    var b = el("button", { class: "hint", type: "button", onclick: function () { b.remove(); wrapH.appendChild(el("div", { class: "hinttext", html: text })); } }, ["Toon een hint"]);
+    wrapH.appendChild(b); return wrapH;
+  }
+
   /* ---------- home ---------- */
   var GAMES = [
-    { r: "records", t: "Welk record?", s: "Stemkaart + oefenen met 10 situaties", c: "#919E2C", i: "A" },
+    { r: "recordquiz", t: "Welk record?", s: "10 situaties + stemkaart voor de klas", c: "#919E2C", i: "A" },
     { r: "fqdn", t: "FQDN-puzzel", s: "Bouw en ontleed volledige namen", c: "#000", i: "." },
     { r: "check", t: "Voorspel de uitvoer", s: "Exitcheck blok 1 + begripscheck 2", c: "#EB6008", i: "?" },
     { r: "sim", t: "Het querypad", s: "Volg een DNS-query stap voor stap", c: "#7C5EAC", i: "→" }
@@ -46,14 +76,14 @@
     var w = wrap();
     w.appendChild(el("span", { class: "tag olive", text: "CampusConnect" }));
     w.appendChild(el("h1", { text: "DNS op Windows Server" }));
-    w.appendChild(el("p", { class: "muted", text: "Kies de oefening die je docent aangeeft. Je resultaten blijven alleen op dit toestel." }));
+    w.appendChild(el("p", { class: "muted", text: "Vier oefeningen bij de les DNS. Elk spel begint met korte uitleg, en via ‘Spiekbrief’ (rechtsboven) vind je altijd de theorie. Je resultaten blijven alleen op dit toestel." }));
     var t = el("div", { class: "tiles" });
     GAMES.forEach(function (g) {
       var res = store(g.r);
       t.appendChild(el("a", { class: "tile", href: "#/" + g.r }, [
         el("span", { class: "ico", style: "background:" + g.c, text: g.i }),
         el("span", null, [el("b", { text: g.t }), el("small", { text: g.s })]),
-        res ? el("span", { class: "done", text: res.score + "/" + res.total }) : null
+        (res = store(g.r === "recordquiz" ? "records" : g.r)) ? el("span", { class: "done", text: res.score + "/" + res.total }) : null
       ]));
     });
     w.appendChild(t);
@@ -70,8 +100,8 @@
     var w = wrap();
     w.appendChild(el("h1", { text: "Welk record?" }));
     var seg = el("div", { class: "seg", role: "tablist" }, [
-      el("button", { class: mode === "vote" ? "on" : "", role: "tab", "aria-selected": mode === "vote", onclick: function () { records("vote"); } }, ["Stemkaart (klas)"]),
-      el("button", { class: mode === "quiz" ? "on" : "", role: "tab", "aria-selected": mode === "quiz", onclick: function () { records("quiz"); } }, ["Oefenen"])
+      el("button", { class: mode === "quiz" ? "on" : "", role: "tab", "aria-selected": mode === "quiz", onclick: function () { records("quiz"); } }, ["Oefenen"]),
+      el("button", { class: mode === "vote" ? "on" : "", role: "tab", "aria-selected": mode === "vote", onclick: function () { records("vote"); } }, ["Stemkaart (klas)"])
     ]);
     w.appendChild(seg);
     if (mode === "vote") {
@@ -82,7 +112,7 @@
       });
       w.appendChild(g);
       w.appendChild(back());
-    } else recordQuiz(w);
+    } else intro(w, "recordquiz", function () { recordQuiz(w); });
   }
   function bigCard(r) {
     var c = el("div", { class: "bigcard", style: "background:" + r.c, role: "button", "aria-label": "Sluit kaart " + r.t, tabindex: 0 }, [
@@ -102,10 +132,11 @@
       box.appendChild(el("div", { class: "muted", text: "Situatie " + (i + 1) + " van " + qs.length }));
       box.appendChild(progress(i, qs.length));
       box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: q.q })]));
+      var hb = hint(q.h); if (hb) box.appendChild(hb);
       var g = el("div", { class: "rgrid" }), done = false;
       D.records.forEach(function (r) {
         var b = el("button", { class: "rbtn", style: "background:" + r.c, onclick: function () {
-          if (done) return; done = true;
+          if (done) return; done = true; if (hb) hb.remove();
           var ok = r.t === q.a; if (ok) score++;
           Array.prototype.forEach.call(g.children, function (x) { x.style.opacity = x === b || x.dataset.t === q.a ? 1 : .25; });
           box.appendChild(fb(ok, ok ? "Juist: " + q.a : "Niet juist. Het is " + q.a + ".", q.e));
@@ -246,7 +277,7 @@
       box.appendChild(ul);
       finish(box, "fqdn", score, total, fqdn);
     }
-    round();
+    intro(box, "fqdn", round);
   }
 
   /* ---------- 3. Voorspel de uitvoer ---------- */
@@ -259,7 +290,8 @@
       el("button", { class: part === "exit" ? "on" : "", role: "tab", onclick: function () { check("exit"); } }, ["Exitcheck blok 1"]),
       el("button", { class: part === "pred" ? "on" : "", role: "tab", onclick: function () { check("pred"); } }, ["Begripscheck 2"])
     ]));
-    if (part === "exit") exitcheck(w); else predict(w);
+    var holder = el("div"); w.appendChild(holder);
+    intro(holder, part === "exit" ? "exit" : "pred", function () { if (part === "exit") exitcheck(holder); else predict(holder); });
   }
   function exitcheck(w) {
     w.appendChild(el("p", { class: "muted", text: "Kies voor elke query de zone, het recordtype en wie antwoordt. Alle query's komen van CLIENT01, die DNS01 als DNS-server gebruikt." }));
@@ -272,6 +304,7 @@
       box.appendChild(el("div", { class: "muted", text: "Query " + (i + 1) + " van " + items.length }));
       box.appendChild(progress(i, items.length + 1));
       box.appendChild(el("div", { class: "cmd", text: it.cmd }));
+      box.appendChild(el("button", { class: "hint", type: "button", onclick: function () { openCheat("zones"); } }, ["Bekijk wat er op DNS01 staat"]));
       var groups = {};
       Object.keys(D.exitFields).forEach(function (f) {
         var F = D.exitFields[f], chips = el("div", { class: "chips" });
@@ -316,11 +349,12 @@
   }
   function mcq(box, q, done, isCmd) {
     box.appendChild(isCmd ? el("div", { class: "cmd", text: q.cmd }) : el("div", { class: "card" }, [el("div", { class: "q", html: q.q })]));
+    var hb = hint(q.h); if (hb) box.appendChild(hb);
     var order = shuffle(q.o.map(function (t, k) { return { t: t, k: k }; }));
     var opts = el("div", { class: "opts" }), m = el("div"), answered = false;
     order.forEach(function (o) {
       var b = el("button", { class: "opt", onclick: function () {
-        if (answered) return; answered = true;
+        if (answered) return; answered = true; if (hb) hb.remove();
         var ok = o.k === q.a;
         Array.prototype.forEach.call(opts.children, function (x, idx) { x.disabled = true; if (order[idx].k === q.a) x.className = "opt ok"; });
         if (!ok) b.className = "opt bad";
@@ -361,7 +395,9 @@
     clear(); crumb.textContent = "Het querypad";
     var w = wrap();
     w.appendChild(el("h1", { text: "Het querypad" }));
-    w.appendChild(el("p", { class: "muted", text: "Volg de vraag van CLIENT01 door het netwerk. Kies bij elke stap wat er gebeurt." }));
+    var introBox = el("div"); w.appendChild(introBox);
+    intro(introBox, "sim", function () { introBox.remove(); run(); });
+    function run() {
     var caches = { client: [], dns01: [] }, hostsLine = false;
     var ri = 0, si = 0, score = 0, total = 0;
     var net = el("div", { class: "net", "aria-hidden": "true" }); var nodeEls = {}; var cacheEls = {};
@@ -374,6 +410,8 @@
       cacheEls[c[0]] = el("div", { class: "cache" });
       cpanel.appendChild(el("div", { class: "cbox" }, [el("b", { text: c[1] }), cacheEls[c[0]]]));
     });
+    cpanel.appendChild(el("div", { class: "cbox zone" }, [el("b", { text: "Zone campusconnect.test op DNS01" }),
+      el("div", { class: "cache" }, D.zone.map(function (z) { return el("div", null, [el("span", { text: z })]); }))]));
     var title = el("h2"); var qbox = el("div");
     w.appendChild(net); w.appendChild(title); w.appendChild(qbox); w.appendChild(cpanel);
 
@@ -427,12 +465,13 @@
       finish(qbox, "sim", score, total, sim);
     }
     step();
+    }
   }
 
   /* ---------- router ---------- */
   function route() {
     var r = (location.hash || "#/").replace(/^#\//, "");
-    ({ "": home, records: function () { records(); }, fqdn: fqdn, check: function () { check(); }, check2: function () { check("pred"); }, sim: sim }[r] || home)();
+    ({ "": home, records: function () { records("vote"); }, recordquiz: function () { records("quiz"); }, fqdn: fqdn, check: function () { check(); }, check2: function () { check("pred"); }, sim: sim }[r] || home)();
     app.focus({ preventScroll: true });
   }
   window.addEventListener("hashchange", route);
