@@ -59,7 +59,7 @@
   }
   var ctxOpen = true;
   function situatie() {
-    var d = el("details", { class: "ctx" }, [el("summary", { text: "Situatie: wat staat er op DNS01?" }), el("div", { html: D.situatie })]);
+    var d = el("details", { class: "ctx" }, [el("summary", { text: "Situatie: wat staat er op SRV-DC01?" }), el("div", { html: D.situatie })]);
     if (ctxOpen) d.setAttribute("open", "");
     d.addEventListener("toggle", function () { ctxOpen = d.open; });
     return d;
@@ -96,7 +96,7 @@
     w.appendChild(t);
     w.appendChild(el("div", { class: "card mt" }, [
       el("b", { text: "Labomgeving" }),
-      el("p", { class: "muted", html: "DNS01 <code>192.168.10.10</code> · CLIENT01 <code>192.168.10.100</code> · RTR01 <code>192.168.10.1</code><br>Records: WEB01 <code>.20</code> · FILE01 <code>.30</code> · intranet → web01" })
+      el("p", { class: "muted", html: "ADM-W11-01 <code>10.0.10.10</code> (clients) → RTR01 → SRV-DC01 <code>172.16.0.10</code> (servers)<br>Records: SRV-FILE01 <code>172.16.0.20</code> · SRV-WEB01 <code>192.168.100.10</code> (DMZ) · intranet → srv-web01" })
     ]));
   }
 
@@ -268,14 +268,14 @@
       box.appendChild(el("div", { class: "muted", text: "Ronde " + (ri + 1) + " · stap 3" }));
       box.appendChild(progress(ri + 0.8, rounds.length));
       var name = R.target.join("");
-      box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: "Kan DNS01 <code>" + name + "</code> zelf beantwoorden uit de zone <b>campusconnect.test</b>?" })]));
+      box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: "Kan SRV-DC01 <code>" + name + "</code> zelf beantwoorden uit de zone <b>campusconnect.test</b>?" })]));
       var opts = el("div", { class: "opts" }), m = el("div"), done = false;
-      [["Ja, DNS01 is autoritatief", true], ["Nee, DNS01 stuurt het door naar de forwarder", false]].forEach(function (o) {
+      [["Ja, SRV-DC01 is autoritatief", true], ["Nee, SRV-DC01 stuurt het door naar de forwarder", false]].forEach(function (o) {
         var b = el("button", { class: "opt", onclick: function () {
           if (done) return; done = true;
           var ok = o[1] === R.zone; if (ok) score++; total++;
           b.className = "opt " + (ok ? "ok" : "bad");
-          m.appendChild(fb(ok, ok ? "Juist" : "Niet juist", R.zone ? "De naam eindigt op campusconnect.test: DNS01 heeft daar een zone voor." : "Geen eigen zone → servercache → forwarder."));
+          m.appendChild(fb(ok, ok ? "Juist" : "Niet juist", R.zone ? "De naam eindigt op campusconnect.test: SRV-DC01 heeft daar een zone voor." : "Geen eigen zone → servercache → forwarder."));
           m.appendChild(el("button", { class: "btn mt", onclick: function () { ri++; round(); } }, [ri + 1 < rounds.length ? "Volgende ronde" : "Afronden"]));
         } }, [o[0]]);
         opts.appendChild(b);
@@ -308,7 +308,7 @@
     intro(holder, part === "exit" ? "exit" : "pred", function () { if (part === "exit") exitcheck(holder); else predict(holder); });
   }
   function exitcheck(w) {
-    w.appendChild(el("p", { class: "muted", text: "Kies voor elke query de zone, het recordtype en wie antwoordt. Alle query's komen van CLIENT01, die DNS01 als DNS-server gebruikt." }));
+    w.appendChild(el("p", { class: "muted", text: "Kies voor elke query de zone, het recordtype en wie antwoordt. Alle query's komen van ADM-W11-01, die SRV-DC01 als DNS-server gebruikt." }));
     var items = D.exitcheck, i = 0, score = 0, total = items.length * 3 + 1;
     var box = el("div"); w.appendChild(box);
     function show() {
@@ -399,9 +399,9 @@
 
   /* ---------- 4. Querypad-simulatie ---------- */
   var NODES = [
-    { id: "client", n: "CLIENT01", s: "clientcache", cls: "int" },
-    { id: "hosts", n: "hosts-bestand", short: "hosts", s: "op CLIENT01", cls: "int" },
-    { id: "dns01", n: "DNS01", s: "zone campusconnect.test + servercache", cls: "int" },
+    { id: "client", n: "ADM-W11-01", s: "clientcache", cls: "int" },
+    { id: "hosts", n: "hosts-bestand", short: "hosts", s: "op ADM-W11-01", cls: "int" },
+    { id: "dns01", n: "SRV-DC01", s: "zone campusconnect.test + servercache", cls: "int" },
     { id: "fwd", n: "Forwarder", s: "extern", cls: "" },
     { id: "root", n: "Root-server", short: "root", s: "“.”", cls: "ext" },
     { id: "com", n: ".com-server", short: ".com", s: "TLD", cls: "ext" },
@@ -422,12 +422,12 @@
       nodeEls[N.id] = n; net.appendChild(n);
     });
     var cpanel = el("div", { class: "caches" });
-    cpanel.appendChild(el("div", { class: "cbox" }, [el("b", { text: "Situatie" }), el("div", { style: "font-size:13.5px;margin-top:2px", text: "CLIENT01 gebruikt DNS01 als DNS-server. DNS01 heeft een eigen zone campusconnect.test (zie onderaan) en stuurt alle andere namen door naar een forwarder." })]));
-    [["client", "Clientcache CLIENT01"], ["hosts", "hosts-bestand CLIENT01"], ["dns01", "Servercache DNS01"]].forEach(function (c) {
+    cpanel.appendChild(el("div", { class: "cbox" }, [el("b", { text: "Situatie" }), el("div", { style: "font-size:13.5px;margin-top:2px", text: "ADM-W11-01 gebruikt SRV-DC01 als DNS-server. SRV-DC01 heeft een eigen zone campusconnect.test (zie onderaan) en stuurt alle andere namen door naar een forwarder." })]));
+    [["client", "Clientcache ADM-W11-01"], ["hosts", "hosts-bestand ADM-W11-01"], ["dns01", "Servercache SRV-DC01"]].forEach(function (c) {
       cacheEls[c[0]] = el("div", { class: "cache" });
       cpanel.appendChild(el("div", { class: "cbox" }, [el("b", { text: c[1] }), cacheEls[c[0]]]));
     });
-    cpanel.appendChild(el("div", { class: "cbox zone" }, [el("b", { text: "Zone campusconnect.test op DNS01" }),
+    cpanel.appendChild(el("div", { class: "cbox zone" }, [el("b", { text: "Zone campusconnect.test op SRV-DC01" }),
       el("div", { class: "cache" }, D.zone.map(function (z) { return el("div", null, [el("span", { text: z })]); }))]));
     var title = el("h2"); var qbox = el("div");
     w.appendChild(net); w.appendChild(title); w.appendChild(qbox); w.appendChild(cpanel);
@@ -441,7 +441,7 @@
         });
       });
       cacheEls.hosts.innerHTML = "";
-      cacheEls.hosts.appendChild(hostsLine ? el("div", { class: "neg" }, [el("span", { text: "192.168.10.99  web01.campusconnect.test" })]) : el("div", { class: "empty", text: "geen regels" }));
+      cacheEls.hosts.appendChild(hostsLine ? el("div", { class: "neg" }, [el("span", { text: "192.168.100.99  srv-web01.campusconnect.test" })]) : el("div", { class: "empty", text: "geen regels" }));
     }
     function light(ids) { Object.keys(nodeEls).forEach(function (k) { nodeEls[k].classList.toggle("on", (ids || []).indexOf(k) > -1); }); }
     // TTL loopt echt af (1 s = 1 s) zodat studenten het zien
@@ -458,7 +458,7 @@
       if (!S) { ri++; si = 0; return step(); }
       title.textContent = R.title;
       if (S.hosts) hostsLine = true;
-      if (ri === 4 && si === 0) caches.client = caches.client.filter(function (e) { return e.name !== "web01.campusconnect.test"; });
+      if (ri === 4 && si === 0) caches.client = caches.client.filter(function (e) { return e.name !== "srv-web01.campusconnect.test"; });
       drawCache(); light(si === 0 ? ["client"] : null);
       qbox.innerHTML = "";
       var done = D.rounds.slice(0, ri).reduce(function (a, r) { return a + r.steps.length; }, 0) + si;
