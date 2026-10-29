@@ -12,13 +12,13 @@ window.DNSDATA = {
     { t: "MX",    c: "#14799B", d: "domein → mail" }
   ],
   recordQuiz: [
-    { q: "Gebruikers typen <b>intranet</b> en moeten bij WEB01 uitkomen.", h: "Er bestaat al een naam (web01) met een adres. Je wil een tweede naam die naar die naam verwijst.", a: "CNAME",
+    { q: "Gebruikers typen <b>intranet.campusconnect.test</b> en moeten uitkomen bij de webserver <b>web01.campusconnect.test</b>, die al een A-record heeft.", h: "Er bestaat al een naam (web01) met een adres. Je wil een tweede naam die naar die naam verwijst.", a: "CNAME",
       e: "Een alias wijst naar een andere naam (web01.campusconnect.test), die zelf een A-record heeft." },
     { q: "Een logboek toont <b>192.168.10.30</b>. Je wil de naam van die computer zien.", h: "Je vertrekt van een IP-adres en zoekt een naam: de omgekeerde richting.", a: "PTR",
       e: "Van IP-adres naar naam = reverse lookup = PTR-record in de reverse zone." },
     { q: "<b>file01.campusconnect.test</b> moet naar 192.168.10.30 wijzen.", h: "Je vertrekt van een naam en zoekt een IPv4-adres.", a: "A",
       e: "Naam → IPv4-adres: dat is een A-record." },
-    { q: "Welke server is verantwoordelijk (autoritatief) voor <b>campusconnect.test</b>?", h: "Welk record beschrijft wie verantwoordelijk is voor een zone?", a: "NS",
+    { q: "Je wil een lijst van <b>alle naamservers</b> die autoritatief zijn voor de zone <b>campusconnect.test</b>.", h: "Welk record beschrijft wie verantwoordelijk is voor een zone?", a: "NS",
       e: "Het NS-record wijst de naamserver van de zone aan. Die naam heeft zelf ook een A-record nodig." },
     { q: "Een secundaire server wil weten of de zone <b>gewijzigd</b> is.", h: "Dit record bevat de beheergegevens van de zone, zoals een versienummer (serial).", a: "SOA",
       e: "Het serienummer in het SOA-record stijgt bij elke wijziging." },
@@ -26,25 +26,25 @@ window.DNSDATA = {
       e: "Een MX-record wijst de mailserver van een domein aan. (Zijsprong: configureren we niet.)" },
     { q: "WEB01 moet ook bereikbaar zijn via het IPv6-adres <b>fd00::20</b>.", h: "IPv6 heeft een eigen recordtype, naast dat voor IPv4.", a: "AAAA",
       e: "AAAA is de IPv6-tegenhanger van A." },
-    { q: "nslookup op CLIENT01 toont <b>Server: UnKnown</b> voor 192.168.10.10. Welk record ontbreekt?", h: "nslookup zoekt de naam die hoort bij het IP-adres van de DNS-server.", a: "PTR",
+    { q: "nslookup toont <b>Server: UnKnown</b> bij de DNS-server <b>192.168.10.10</b>. nslookup zoekt de naam bij dat IP-adres. Welk record ontbreekt?", h: "nslookup zoekt de naam die hoort bij het IP-adres van de DNS-server.", a: "PTR",
       e: "nslookup zoekt de naam van de DNS-server op via reverse lookup. Zonder PTR voor .10: ‘UnKnown’." },
     { q: "Waar lees je hoe lang een <b>negatief antwoord</b> (‘bestaat niet’) in cache mag blijven?", h: "Dit record bevat de beheergegevens en timers van de zone.", a: "SOA",
       e: "Het laatste veld van het SOA-record (minimum TTL) bepaalt de negatieve caching." },
-    { q: "<b>www.campusconnect.test</b> moet hetzelfde tonen als web01, zonder een tweede IP-adres te beheren.", h: "Je wil een extra naam die verwijst naar een bestaande naam.", a: "CNAME",
+    { q: "<b>www.campusconnect.test</b> moet naar dezelfde server leiden als <b>web01.campusconnect.test</b>, zonder dat je een tweede IP-adres moet bijhouden.", h: "Je wil een extra naam die verwijst naar een bestaande naam.", a: "CNAME",
       e: "Met een alias pas je het adres maar op één plaats aan: in het A-record van web01." }
   ],
 
   /* ---------- 2. FQDN-puzzel (dia 10) ---------- */
   fqdnTiles: ["web01", "file01", "www", "dns01", "campusconnect", "hogent", "microsoft",
-              "test", "be", "com", ".", ".", ".", ".", "https://", "/index.html", ":443", "192.168.10.20"],
+              "test", "be", "com", "https://", "/index.html", ":443", "192.168.10.20"],
   fqdnRounds: [
-    { prompt: "De interne webserver van CampusConnect", target: ["web01", ".", "campusconnect", ".", "test", "."],
+    { prompt: "De interne webserver", url: "https://web01.campusconnect.test:443/index.html", target: ["web01", ".", "campusconnect", ".", "test", "."],
       labels: { "web01": "hostlabel", "campusconnect": "domein", "test": "TLD", ".": "root" }, zone: true },
-    { prompt: "De website van HOGENT", target: ["www", ".", "hogent", ".", "be", "."],
+    { prompt: "De website van HOGENT", url: "https://www.hogent.be/index.html", target: ["www", ".", "hogent", ".", "be", "."],
       labels: { "www": "hostlabel", "hogent": "domein", "be": "TLD", ".": "root" }, zone: false },
-    { prompt: "De bestandsserver van CampusConnect", target: ["file01", ".", "campusconnect", ".", "test", "."],
+    { prompt: "De bestandsserver", url: "\\\\file01.campusconnect.test\\gedeeld", target: ["file01", ".", "campusconnect", ".", "test", "."],
       labels: { "file01": "hostlabel", "campusconnect": "domein", "test": "TLD", ".": "root" }, zone: true },
-    { prompt: "De website van Microsoft", target: ["www", ".", "microsoft", ".", "com", "."],
+    { prompt: "De website van Microsoft", url: "https://www.microsoft.com:443/", target: ["www", ".", "microsoft", ".", "com", "."],
       labels: { "www": "hostlabel", "microsoft": "domein", "com": "TLD", ".": "root" }, zone: false }
   ],
   fqdnDistractors: {
@@ -85,13 +85,13 @@ window.DNSDATA = {
     { cmd: "Resolve-DnsName printer99.campusconnect.test -Server 192.168.10.10", h: "Staat printer99 in de zone? En kan DNS01 dat met zekerheid zeggen?",
       o: ["time-out", "DNS name does not exist", "A  0.0.0.0", "antwoord van de forwarder"], a: 1,
       e: "DNS01 is autoritatief en weet zeker dat printer99 niet bestaat: een negatief antwoord, geen time-out." },
-    { cmd: "Resolve-DnsName 192.168.10.20 -Server 192.168.10.10   (er is nog géén reverse zone)", h: "Een A-record werkt alleen van naam naar adres.",
+    { s: "Stel: de reverse zone 10.168.192.in-addr.arpa bestaat nog <b>niet</b>.", cmd: "Resolve-DnsName 192.168.10.20 -Server 192.168.10.10", h: "Een A-record werkt alleen van naam naar adres.",
       o: ["web01.campusconnect.test", "Geen naam: er bestaat geen PTR", "A  192.168.10.20", "intranet.campusconnect.test"], a: 1,
       e: "Een A-record helpt niet in de omgekeerde richting. Je hebt een reverse zone met een PTR-record nodig." },
-    { cmd: "Resolve-DnsName web01.campusconnect.test -Server 192.168.10.10   (de DNS-service is gestopt)", h: "Een gestopte service kan helemaal niets terugsturen.",
+    { s: "Stel: de DNS-service op DNS01 is <b>gestopt</b> (de server zelf staat aan).", cmd: "Resolve-DnsName web01.campusconnect.test -Server 192.168.10.10", h: "Een gestopte service kan helemaal niets terugsturen.",
       o: ["DNS name does not exist", "time-out: geen antwoord", "A  192.168.10.20 uit cache van DNS01", "antwoord van de forwarder"], a: 1,
       e: "Een gestopte service antwoordt helemaal niet: time-out. Een negatief antwoord zou betekenen dat de service wél draait." },
-    { cmd: "Er is een forwarder ingesteld. Gaat de query voor web01.campusconnect.test naar de forwarder?", h: "Is DNS01 zelf verantwoordelijk (autoritatief) voor campusconnect.test?",
+    { s: "DNS01 heeft een forwarder ingesteld.", cmd: "Gaat de query voor web01.campusconnect.test naar de forwarder?", h: "Is DNS01 zelf verantwoordelijk (autoritatief) voor campusconnect.test?",
       o: ["Ja, alle query's gaan naar de forwarder", "Nee, DNS01 is autoritatief voor campusconnect.test", "Alleen als de cache leeg is", "Alleen bij een gerichte query"], a: 1,
       e: "Alleen wat niet in de eigen zones of de cache staat, wordt doorgestuurd." }
   ],
@@ -105,6 +105,10 @@ window.DNSDATA = {
   },
 
 
+  /* ---------- Situatie (zichtbaar bij elke vraag) ---------- */
+  situatie: "<p><b>CLIENT01</b> (192.168.10.100) gebruikt <b>DNS01</b> (192.168.10.10) als DNS-server. DNS01 heeft twee eigen zones en stuurt alle andere namen door naar een <b>forwarder</b>.</p>" +
+    "<pre>Zone campusconnect.test\n@         SOA    dns01.campusconnect.test.\n@         NS     dns01.campusconnect.test.\ndns01     A      192.168.10.10\nweb01     A      192.168.10.20\nfile01    A      192.168.10.30\nintranet  CNAME  web01.campusconnect.test.\n\nZone 10.168.192.in-addr.arpa\n10        PTR    dns01.campusconnect.test.\n20        PTR    web01.campusconnect.test.\n30        PTR    file01.campusconnect.test.</pre>",
+
   /* ---------- Introschermen per spel ---------- */
   intros: {
     recordquiz: { t: "Welk record?", p: [
@@ -114,7 +118,7 @@ window.DNSDATA = {
     fqdn: { t: "FQDN-puzzel", p: [
       "Een <b>FQDN</b> (Fully Qualified Domain Name) is de volledige naam van een computer, bv. <code>web01.campusconnect.test.</code>",
       "Je leest hem van <b>rechts naar links</b>: root (het puntje achteraan) → TLD (<code>test</code>) → domein (<code>campusconnect</code>) → hostlabel (<code>web01</code>).",
-      "Per ronde bouw je een FQDN met tegels, benoem je elk deel en beslis je of DNS01 de naam zelf kan beantwoorden. Opgelet: tussen de tegels zitten afleiders die niet in een FQDN horen."],
+      "Per ronde krijg je een adres (een URL of een netwerkpad). Haal daar de FQDN van de server uit. Je bouwt de naam zoals DNS hem leest: <b>van rechts naar links</b>. De root (het puntje) staat al klaar; tik eerst het <b>TLD</b>, dan het <b>domein</b>, dan de <b>host</b>. De puntjes ertussen komen vanzelf.", "Daarna benoem je elk deel en beslis je of DNS01 de naam zelf kan beantwoorden. Opgelet: tussen de tegels zitten afleiders die niet in een FQDN horen."],
       cs: "fqdn" },
     exit: { t: "Exitcheck: welke zone, welk record, wie antwoordt?", p: [
       "CLIENT01 gebruikt DNS01 als DNS-server. DNS01 heeft twee eigen zones: <b>campusconnect.test</b> en de reverse zone <b>10.168.192.in-addr.arpa</b>. Voor alle andere namen stuurt DNS01 de vraag door naar een <b>forwarder</b>.",
@@ -125,7 +129,7 @@ window.DNSDATA = {
       "Voorspel wat er terugkomt. Let vooral op het verschil tussen een <b>negatief antwoord</b> (“DNS name does not exist”) en een <b>time-out</b>."],
       cs: "fail" },
     sim: { t: "Het querypad", p: [
-      "Je volgt CLIENT01 die een naam opzoekt. Bovenaan zie je alle machines; de machine die aan zet is, licht oranje op. Onderaan zie je de caches, het hosts-bestand en de zone van DNS01.",
+      "Je volgt CLIENT01 die een naam opzoekt. CLIENT01 gebruikt DNS01 als DNS-server; DNS01 heeft een eigen zone campusconnect.test en een forwarder voor alle andere namen. Bovenaan zie je alle machines; de machine die aan zet is, licht oranje op. Onderaan zie je de caches, het hosts-bestand en de zone van DNS01.",
       "Volgorde op de client: <b>clientcache → hosts-bestand → DNS-server</b>. DNS01 antwoordt zelf voor zijn eigen zone (autoritatief) en stuurt andere vragen door naar de <b>forwarder</b>, die vanaf de root verder zoekt.",
       "5 rondes: interne naam, externe naam, dezelfde vraag opnieuw, een naam die niet bestaat en een bonus over het hosts-bestand."],
       cs: "path" }
