@@ -432,7 +432,7 @@
   /* ---------- router ---------- */
   function route() {
     var r = (location.hash || "#/").replace(/^#\//, "");
-    ({ "": home, records: function () { records(); }, fqdn: fqdn, check: function () { check(); }, sim: sim }[r] || home)();
+    ({ "": home, records: function () { records(); }, fqdn: fqdn, check: function () { check(); }, check2: function () { check("pred"); }, sim: sim }[r] || home)();
     app.focus({ preventScroll: true });
   }
   window.addEventListener("hashchange", route);
