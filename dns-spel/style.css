@@ -104,8 +104,8 @@ code,.mono{font-family:var(--mono);font-size:.92em}
 .tl{appearance:none;border:0;border-radius:10px;background:#000;color:#fff;font-family:var(--mono);font-weight:700;
   font-size:17px;padding:11px 13px;min-height:46px;min-width:46px;cursor:pointer}
 .tl.used{visibility:hidden}
-.answer .tl{background:var(--olive);font-size:14.5px;padding:9px 8px;min-width:0;min-height:42px}
-.answer .sep{font-size:18px}
+.answer .tl{background:var(--olive);font-size:13px;padding:8px 6px;min-width:0;min-height:40px}
+.answer .sep{font-size:16px}
 .parts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;font-family:var(--mono);font-weight:700;font-size:18px}
 .parts span{padding:8px 10px;border-radius:9px;background:#e9e9e9}
 .parts span.cur{background:#000;color:#fff}
