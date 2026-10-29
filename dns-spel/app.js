@@ -160,22 +160,26 @@
     function round() {
       box.innerHTML = "";
       if (ri >= rounds.length) return outro();
-      var R = rounds[ri], built = [], tiles = shuffle(D.fqdnTiles.map(function (t, k) { return { t: t, k: k, used: false }; }));
+      var R = rounds[ri], built = [], tiles = shuffle(D.fqdnTiles.filter(function (t) { return t !== "."; }).map(function (t, k) { return { t: t, k: k, used: false }; }));
+      var want = R.target.filter(function (t) { return t !== "."; }).reverse(); // van rechts naar links: TLD, domein, host
       var tries = 0;
       box.appendChild(el("div", { class: "muted", text: "Ronde " + (ri + 1) + " van " + rounds.length + " · stap 1: bouwen" }));
       box.appendChild(progress(ri, rounds.length));
       box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: "Bouw de volledige FQDN van: <b>" + R.prompt + "</b>" }),
-        el("div", { class: "muted", text: "Tip: een échte FQDN eindigt op de root." })]));
+        el("div", { class: "muted", text: "Bouw van rechts naar links: de root staat al klaar. Tik eerst het topdomein (TLD), dan het domein, dan de host." })]));
       var ans = el("div", { class: "answer", "aria-live": "polite" });
       var bank = el("div", { class: "bank" });
       var msg = el("div");
       function draw() {
         ans.innerHTML = ""; bank.innerHTML = ""; ans.className = "answer";
-        built.forEach(function (o, idx) {
-          ans.appendChild(el("button", { class: "tl" + (o.t === "." ? " dot" : ""), "aria-label": "Verwijder " + o.t, onclick: function () { o.used = false; built.splice(idx, 1); draw(); } }, [o.t]));
+        if (!built.length) ans.appendChild(el("span", { class: "ph", text: "← begin hier met het TLD" }));
+        built.slice().reverse().forEach(function (o) {
+          ans.appendChild(el("button", { class: "tl", "aria-label": "Verwijder " + o.t, onclick: function () { o.used = false; built.splice(built.indexOf(o), 1); draw(); } }, [o.t]));
+          ans.appendChild(el("span", { class: "sep", text: "." }));
         });
+        ans.appendChild(el("span", { class: "tl root", title: "root" }, [".", el("small", { text: "root" })]));
         tiles.forEach(function (o) {
-          bank.appendChild(el("button", { class: "tl" + (o.t === "." ? " dot" : "") + (o.used ? " used" : ""), "aria-hidden": o.used ? "true" : null, tabindex: o.used ? -1 : null,
+          bank.appendChild(el("button", { class: "tl" + (o.used ? " used" : ""), "aria-hidden": o.used ? "true" : null, tabindex: o.used ? -1 : null,
             onclick: function () { if (o.used) return; o.used = true; built.push(o); draw(); } }, [o.t]));
         });
       }
@@ -189,7 +193,7 @@
       function check() {
         var s = built.map(function (o) { return o.t; });
         msg.innerHTML = ""; tries++;
-        var ok = s.join("") === R.target.join("");
+        var ok = s.join("|") === want.join("|");
         if (ok) {
           if (tries === 1) score++; total++;
           ans.className = "answer ok";
@@ -201,7 +205,8 @@
         var hint = "Nog niet. ";
         var bad = s.filter(function (t) { return D.fqdnDistractors[t]; });
         if (bad.length) hint += "<code>" + bad[0] + "</code> is " + D.fqdnDistractors[bad[0]] + ".";
-        else if (s.join("") === R.target.slice(0, -1).join("")) hint += "Bijna! Vergeet de root niet: het puntje helemaal achteraan.";
+        else if (s.join("|") === want.slice().reverse().join("|")) hint += "Je bouwde van links naar rechts. Begin bij de root: tik eerst het topdomein (TLD), dan het domein, dan de host.";
+        else if (s.length && s[0] !== want[0]) hint += "Net naast de root hoort het topdomein (TLD). Welk topdomein heeft deze naam?";
         else hint += "Lees van rechts naar links: root → TLD → domein → host.";
         msg.appendChild(fb(false, "Probeer opnieuw", hint));
         if (tries === 1) total++;
