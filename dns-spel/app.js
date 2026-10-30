@@ -268,11 +268,14 @@
       box.appendChild(el("div", { class: "muted", text: "Ronde " + (ri + 1) + " · stap 3" }));
       box.appendChild(progress(ri + 0.8, rounds.length));
       var name = R.target.join("");
-      box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: "Kan SRV-DC01 <code>" + name + "</code> zelf beantwoorden uit de zone <b>campusconnect.test</b>?" })]));
+      box.appendChild(el("div", { class: "scen", html: "<b>Situatie:</b> SRV-DC01 is de DNS-server van CampusConnect. Hij beheert één eigen zone: <b>campusconnect.test</b>. Voor namen in die zone kent hij zelf het antwoord (hij is <b>autoritatief</b>). Alle andere namen kent hij niet en stuurt hij door naar een <b>forwarder</b>." }));
+      box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", html: "Een client vraagt <code style=\"white-space:nowrap\">" + name + "</code> aan SRV-DC01. Kan SRV-DC01 die naam zelf beantwoorden?" })]));
+      var hb = hint("Kijk naar het rechterdeel van de naam (TLD + domein). Eindigt de naam op campusconnect.test, dan hoort ze in de eigen zone van SRV-DC01.");
+      if (hb) box.appendChild(hb);
       var opts = el("div", { class: "opts" }), m = el("div"), done = false;
-      [["Ja, SRV-DC01 is autoritatief", true], ["Nee, SRV-DC01 stuurt het door naar de forwarder", false]].forEach(function (o) {
+      [["Ja, de naam hoort in zijn eigen zone (autoritatief)", true], ["Nee, hij stuurt de vraag door naar de forwarder", false]].forEach(function (o) {
         var b = el("button", { class: "opt", onclick: function () {
-          if (done) return; done = true;
+          if (done) return; done = true; if (hb) hb.remove();
           var ok = o[1] === R.zone; if (ok) score++; total++;
           b.className = "opt " + (ok ? "ok" : "bad");
           m.appendChild(fb(ok, ok ? "Juist" : "Niet juist", R.zone ? "De naam eindigt op campusconnect.test: SRV-DC01 heeft daar een zone voor." : "Geen eigen zone → servercache → forwarder."));
