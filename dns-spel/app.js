@@ -237,7 +237,7 @@
         parts.forEach(function (p) {
           var idx = order.indexOf(p);
           var cls = idx < pi ? "lab" : (idx === pi ? "cur" : "");
-          view.appendChild(el("span", { class: cls }, [p === "." ? ". (root)" : p, idx < pi ? el("em", { text: R.labels[p] }) : null]));
+          view.appendChild(el("span", { class: cls }, [p, idx < pi ? el("em", { text: R.labels[p] }) : null]));
         });
         qbox.innerHTML = "";
         if (pi >= order.length) {
@@ -249,7 +249,7 @@
         var p = order[pi];
         qbox.appendChild(el("p", { html: "Wat is <code>" + (p === "." ? ". (het laatste puntje)" : p) + "</code>?" }));
         var opts = el("div", { class: "opts" }), m = el("div");
-        ["hostlabel", "domein", "TLD", "root"].forEach(function (lab) {
+        shuffle(["hostlabel", "domein", "TLD", "root"]).forEach(function (lab) {
           opts.appendChild(el("button", { class: "opt", onclick: function (e) {
             if (lab === R.labels[p]) { pi++; draw(); }
             else { wrong++; e.currentTarget.className = "opt bad"; m.innerHTML = ""; m.appendChild(fb(false, "Nog niet", hintFor(R.labels[p]))); }
