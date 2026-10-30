@@ -57,7 +57,15 @@
     var b1 = el("button", { class: "btn", onclick: function () { box.remove(); b1.remove(); b2.remove(); start(); } }, ["Start"]);
     var b2 = el("button", { class: "btn sec mt", onclick: function () { openCheat(I.cs); } }, ["ⓘ Info bekijken"]);
     w.appendChild(b1); w.appendChild(b2);
+    var x = EXTRA_FOR[key];
+    if (x && D.extra) {
+      var b3 = el("a", { href: "#/extra/" + x, class: "btn sec mt", style: "display:block;text-align:center;text-decoration:none" }, ["Extra oefenen: 10 willekeurige vragen"]);
+      w.appendChild(b3);
+      b1.addEventListener("click", function () { b3.remove(); });
+    }
   }
+  var EXTRA_FOR = { recordquiz: "records", fqdn: "fqdn", exit: "uitvoer", pred: "uitvoer", sim: "querypad" };
+  var EXTRA_T = { records: ["Welk record?", "recordquiz"], fqdn: ["FQDN-puzzel", "fqdn"], uitvoer: ["Voorspel de uitvoer", "check"], querypad: ["Het querypad", "sim"] };
   var ctxOpen = true;
   function situatie() {
     var d = el("details", { class: "ctx" }, [el("summary", { text: "Situatie: wat staat er op DNS01?" }), el("div", { html: D.situatie })]);
@@ -761,9 +769,48 @@
     intro(box, "exitticket", show);
   }
 
+
+  /* ---------- 10. Extra oefenen: 10 willekeurige vragen uit een poel van 30 ---------- */
+  function extraPage(topic) {
+    var pool = D.extra && D.extra[topic], T = EXTRA_T[topic];
+    if (!pool || !T) return home();
+    clear(); crumb.textContent = T[0] + " · extra oefenen";
+    var w = wrap();
+    w.appendChild(el("h1", { text: T[0] }));
+    w.appendChild(el("p", { class: "muted", text: "Extra oefenen: 10 willekeurige vragen uit een poel van " + pool.length + ". Elke ronde krijg je andere vragen." }));
+    var box = el("div"); w.appendChild(box);
+    var qs = shuffle(pool).slice(0, 10).map(function (q) {
+      if (q.o) return q;
+      // recordvraag: juist type + 3 willekeurige andere types
+      var types = D.records.map(function (r) { return r.t; });
+      var opts = [q.a].concat(shuffle(types.filter(function (t) { return t !== q.a; })).slice(0, 3));
+      var lab = function (t) { return D.records.filter(function (r) { return r.t === t; })[0].l; };
+      return { q: q.q, o: opts, a: 0, w: opts.map(function (t, k) { return k === 0 ? null : t + " vertaalt " + lab(t) + ". Dat is hier niet wat je nodig hebt."; }),
+        e: q.a + " vertaalt " + lab(q.a) + ". " + q.e };
+    });
+    var i = 0, score = 0;
+    function show() {
+      box.innerHTML = ""; window.scrollTo(0, 0);
+      if (i >= qs.length) {
+        finish(box, "extra_" + topic, score, qs.length, function () { extraPage(topic); });
+        box.insertBefore(el("a", { href: "#/" + T[1], class: "btn sec", style: "display:block;text-align:center;text-decoration:none;margin-top:12px" }, ["Terug naar " + T[0]]), box.lastChild);
+        return;
+      }
+      box.appendChild(el("div", { class: "muted", text: "Vraag " + (i + 1) + " van " + qs.length }));
+      box.appendChild(progress(i, qs.length));
+      if (topic === "uitvoer") box.appendChild(situatie());
+      mcq(box, qs[i], function (ok) {
+        if (ok) score++;
+        box.appendChild(el("button", { class: "btn mt", onclick: function () { i++; show(); } }, [i + 1 < qs.length ? "Volgende" : "Resultaat"]));
+      }, !!qs[i].cmd);
+    }
+    show();
+  }
+
   /* ---------- router ---------- */
   function route() {
     var r = (location.hash || "#/").replace(/^#\//, "");
+    if (r.indexOf("extra/") === 0) { extraPage(r.slice(6)); app.focus({ preventScroll: true }); return; }
     ({ "": home, records: function () { records("vote"); }, recordquiz: function () { records("quiz"); }, fqdn: fqdn, check: function () { check(); }, check2: function () { check("pred"); }, sim: sim,
        demo: function () { demoPage(); }, status: statusPage, fout: function () { foutPage(); }, ticket: function () { ticketPage(); }, exitticket: exitTicketPage }[r] || home)();
     app.focus({ preventScroll: true });
