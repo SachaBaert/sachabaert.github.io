@@ -125,6 +125,11 @@
       el("b", { text: "Labomgeving" }),
       el("p", { class: "muted", html: "DNS01 <code>192.168.10.10</code> · CLIENT01 <code>192.168.10.100</code> · RTR01 <code>192.168.10.1</code><br>Records: WEB01 <code>.20</code> · FILE01 <code>.30</code> · intranet → web01" })
     ]));
+    w.appendChild(el("button", { class: "btn sec mt", onclick: function () {
+      if (!window.confirm("Al je scores, voorspellingen en ingevulde gegevens van deze DNS-app wissen?")) return;
+      try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("dns.") === 0) localStorage.removeItem(k); }); } catch (e) {}
+      home();
+    } }, ["Mijn resultaten wissen"]));
   }
 
   /* ---------- 1. Welk record? ---------- */
