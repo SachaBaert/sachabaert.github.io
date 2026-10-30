@@ -79,6 +79,13 @@
     { r: "check", t: "Voorspel de uitvoer", s: "Exitcheck blok 1 + begripscheck 2", c: "#EB6008", i: "?" },
     { r: "sim", t: "Het querypad", s: "Volg een DNS-query stap voor stap", c: "#7C5EAC", i: "→" }
   ];
+  var LES = [
+    { r: "demo", t: "Voorspel de demo", s: "Demo's 0–6: eerst voorspellen, dan het bewijs", c: "#EB6008", i: "1" },
+    { r: "status", t: "Status", s: "Toon je status naast je laptop", c: "#000", i: "●" },
+    { r: "fout", t: "Foutenpracticum", s: "Foutkaarten voor saboteur en slachtoffer", c: "#A6090F", i: "!" },
+    { r: "ticket", t: "Ticketformulier", s: "Symptoom → bewijs → hypothese → wijziging", c: "#14799B", i: "#" },
+    { r: "exitticket", t: "Exit ticket", s: "Drie vragen om af te sluiten", c: "#919E2C", i: "✓" }
+  ];
   function scoreTag(r) {
     if (r === "check") {
       var a = store("check"), b = store("check2"), t = [];
@@ -94,7 +101,7 @@
     var w = wrap();
     w.appendChild(el("span", { class: "tag olive", text: "CampusConnect" }));
     w.appendChild(el("h1", { text: "DNS op Windows Server" }));
-    w.appendChild(el("p", { class: "muted", text: "Vier oefeningen bij de les DNS. Elk spel begint met korte uitleg, en via de knop ‘ⓘ Info’ (rechtsboven) vind je altijd de theorie. Gebruik die gerust: opzoeken hoort bij het vak. Je resultaten blijven alleen op dit toestel." }));
+    w.appendChild(el("p", { class: "muted", text: "Oefeningen en hulpmiddelen bij de les DNS. Elk onderdeel begint met korte uitleg, en via de knop ‘ⓘ Info’ (rechtsboven) vind je altijd de theorie. Gebruik die gerust: opzoeken hoort bij het vak. Je resultaten blijven alleen op dit toestel." }));
     var t = el("div", { class: "tiles" });
     GAMES.forEach(function (g) {
       t.appendChild(el("a", { class: "tile", href: "#/" + g.r }, [
@@ -104,6 +111,16 @@
       ]));
     });
     w.appendChild(t);
+    w.appendChild(el("h2", { text: "Tijdens de les" }));
+    var t2 = el("div", { class: "tiles" });
+    LES.forEach(function (g) {
+      t2.appendChild(el("a", { class: "tile", href: "#/" + g.r }, [
+        el("span", { class: "ico", style: "background:" + g.c, text: g.i }),
+        el("span", null, [el("b", { text: g.t }), el("small", { text: g.s })]),
+        g.r === "exitticket" ? scoreTag("exitticket") : null
+      ]));
+    });
+    w.appendChild(t2);
     w.appendChild(el("div", { class: "card mt" }, [
       el("b", { text: "Labomgeving" }),
       el("p", { class: "muted", html: "DNS01 <code>192.168.10.10</code> · CLIENT01 <code>192.168.10.100</code> · RTR01 <code>192.168.10.1</code><br>Records: WEB01 <code>.20</code> · FILE01 <code>.30</code> · intranet → web01" })
@@ -511,10 +528,239 @@
     }
   }
 
+
+  /* ---------- 5. Voorspel de demo (vervangt de papieren voorspelkaart) ---------- */
+  function demoPage(start) {
+    clear(); crumb.textContent = "Voorspel de demo";
+    var w = wrap();
+    w.appendChild(el("h1", { text: "Voorspel de demo" }));
+    var box = el("div"); w.appendChild(box);
+    var saved = store("demos") || {};
+    function save() { store("demos", saved); }
+    function list() {
+      box.innerHTML = ""; window.scrollTo(0, 0);
+      box.appendChild(el("p", { class: "muted", text: "Kies de demo die de docent nu toont. Voorspel vóór het commando uitgevoerd wordt." }));
+      var g = el("div", { class: "opts" });
+      D.demos.forEach(function (d, i) {
+        var sv = saved[d.n], tg = !sv ? "" : (sv.shown ? (sv.c === d.a ? "  ✔ klopte" : "  ✘ klopte niet") : "  · voorspeld");
+        g.appendChild(el("button", { class: "opt", onclick: function () { one(i); } }, [el("b", { text: "Demo " + d.n + " · " }), d.t, el("span", { class: "muted", text: tg })]));
+      });
+      box.appendChild(g);
+      var done = D.demos.filter(function (d) { return saved[d.n] && saved[d.n].shown; });
+      if (done.length) {
+        box.appendChild(el("h2", { text: "Jouw voorspelkaart" }));
+        var t = el("table", { class: "vk" }, [el("tr", null, [el("th", { text: "Demo" }), el("th", { text: "Jouw voorspelling" }), el("th", { text: "" })])]);
+        done.forEach(function (d) { var sv = saved[d.n]; t.appendChild(el("tr", null, [el("td", { text: String(d.n) }), el("td", { html: d.o[sv.c] }), el("td", { text: sv.c === d.a ? "✔" : "✘" })])); });
+        box.appendChild(el("div", { class: "card" }, [t]));
+        box.appendChild(el("button", { class: "btn sec mt", onclick: function () { saved = {}; save(); list(); } }, ["Opnieuw beginnen"]));
+      }
+      box.appendChild(back());
+    }
+    function one(i) {
+      var d = D.demos[i], sv = saved[d.n];
+      box.innerHTML = ""; window.scrollTo(0, 0);
+      box.appendChild(el("div", { class: "muted", text: "Demo " + d.n + " van " + (D.demos.length - 1) }));
+      box.appendChild(progress(i, D.demos.length));
+      box.appendChild(el("div", { class: "card" }, [el("span", { class: "tag black", text: "Voorspel" }), el("h2", { text: d.t, style: "margin-top:8px" }), el("div", { class: "q", html: d.q })]));
+      var opts = el("div", { class: "opts" });
+      d.o.forEach(function (o, k) {
+        var cls = "opt";
+        if (sv && sv.shown) cls += k === d.a ? " ok" : (k === sv.c ? " bad" : "");
+        else if (sv && sv.c === k) cls += " sel";
+        opts.appendChild(el("button", { class: cls, disabled: sv && sv.shown ? true : null, onclick: function () { saved[d.n] = { c: k }; save(); one(i); } }, [el("span", { html: o })]));
+      });
+      box.appendChild(opts);
+      if (sv && !sv.shown) {
+        box.appendChild(el("div", { class: "fb ok", style: "background:#fff8e6;border-left-color:#e0b000" }, [el("b", { text: "Je voorspelling is bewaard." }), el("span", { text: "Kijk nu naar de demo. Je mag je keuze nog wijzigen zolang het bewijs niet getoond is." })]));
+        box.appendChild(el("button", { class: "btn mt", onclick: function () { sv.shown = true; save(); one(i); } }, ["De demo is gebeurd: toon het bewijs"]));
+      } else if (sv && sv.shown) {
+        var ok = sv.c === d.a;
+        box.appendChild(fb(ok, ok ? "Je voorspelling klopte" : "Je voorspelling klopte niet",
+          (!ok && d.w[sv.c] ? "<b>Jouw voorspelling:</b> " + d.w[sv.c] + "<br>" : "") + "<b>Bewijs:</b> " + d.e));
+      } else {
+        box.appendChild(el("p", { class: "muted mt", text: "Tik op je voorspelling." }));
+      }
+      var nav = el("div", { class: "row mt" }, [el("button", { class: "btn sec", onclick: list }, ["Alle demo's"])]);
+      if (i + 1 < D.demos.length) nav.appendChild(el("button", { class: "btn", onclick: function () { one(i + 1); } }, ["Volgende demo"]));
+      box.appendChild(nav);
+    }
+    if (start) list(); else intro(box, "demo", list);
+  }
+
+  /* ---------- 6. Status (vervangt de papieren statuskaart) ---------- */
+  function statusPage() {
+    clear(); crumb.textContent = "Status";
+    var w = wrap();
+    w.appendChild(el("h1", { text: "Waar sta jij?" }));
+    var box = el("div"); w.appendChild(box);
+    function grid() {
+      var g = el("div", { class: "opts" });
+      D.status.forEach(function (st) {
+        g.appendChild(el("button", { class: "stbtn", style: "background:" + st.c, onclick: function () { show(st); } }, [
+          el("span", { class: "n", text: String(st.n) }), el("span", null, [el("b", { text: st.t }), el("small", { text: st.d })])]));
+      });
+      box.appendChild(g); box.appendChild(back());
+      var last = store("status"); if (last) box.insertBefore(el("p", { class: "muted", text: "Laatst gekozen: " + last }), g);
+    }
+    function show(st) {
+      store("status", st.n + " · " + st.t);
+      var kids = [el("div", { class: "n", text: String(st.n) }), el("div", { class: "t", text: st.t }), el("div", { class: "d", text: st.d })];
+      if (st.q) kids.push(el("ol", null, st.q.map(function (x) { return el("li", { text: x }); })));
+      kids.push(el("div", { class: "h", text: "Tik om je status te wijzigen" }));
+      var c = el("div", { class: "statuscard", style: "background:" + st.c, role: "button", tabindex: 0, "aria-label": "Status " + st.n + " " + st.t + ". Tik om te wijzigen." }, kids);
+      function close() { c.remove(); }
+      c.addEventListener("click", close);
+      c.addEventListener("keydown", function (e) { if (e.key === "Escape" || e.key === "Enter") close(); });
+      document.body.appendChild(c); c.focus();
+    }
+    intro(box, "status", grid);
+  }
+
+  /* ---------- 7. Foutenpracticum (vervangt de papieren foutkaarten) ---------- */
+  function foutPage(mode) {
+    clear(); crumb.textContent = "Foutenpracticum";
+    mode = mode || "intro";
+    var w = wrap();
+    w.appendChild(el("h1", { text: "Breek het bij je buur" }));
+    var box = el("div"); w.appendChild(box);
+    function tabs(cur) {
+      return el("div", { class: "seg", role: "tablist" }, [
+        el("button", { class: cur === "sab" ? "on" : "", role: "tab", onclick: function () { foutPage("sab"); } }, ["Saboteur"]),
+        el("button", { class: cur === "slo" ? "on" : "", role: "tab", onclick: function () { foutPage("slo"); } }, ["Slachtoffer (ticket)"])]);
+    }
+    function stars(n) { return "★★★".slice(0, n); }
+    function sab() {
+      box.appendChild(tabs("sab"));
+      var cur = store("foutSab");
+      if (!cur) {
+        box.appendChild(el("p", { class: "muted", text: "Kies een moeilijkheidsgraad en trek een foutkaart. Je buur kijkt weg." }));
+        var g = el("div", { class: "opts" });
+        [[1, "★ makkelijk (kaarten 1–2)"], [2, "★★ gemiddeld (kaarten 3–6)"], [3, "★★★ moeilijk (kaarten 7–8)"], [0, "Willekeurig"]].forEach(function (o) {
+          g.appendChild(el("button", { class: "opt", onclick: function () {
+            var pool = D.fouten.filter(function (f) { return !o[0] || f.s === o[0]; });
+            var f = pool[Math.floor(Math.random() * pool.length)];
+            store("foutSab", { nr: f.nr, hint: false, opl: false }); foutPage("sab");
+          } }, [o[1]]));
+        });
+        box.appendChild(g); return;
+      }
+      var f = D.fouten.filter(function (x) { return x.nr === cur.nr; })[0];
+      box.appendChild(el("div", { class: "card dark" }, [el("div", { class: "muted", style: "color:#ccc", text: "Geef je buur alleen dit nummer:" }),
+        el("div", { class: "score", text: "Kaart " + f.nr }), el("div", { text: stars(f.s) })]));
+      box.appendChild(el("div", { class: "card" }, [el("b", { text: "Uitvoeren bij je buur (2 min)" }), el("p", { html: f.uit })]));
+      if (cur.hint) {
+        box.appendChild(el("div", { class: "card" }, [el("b", { text: "Hint voor je buur: de laag" }), el("div", { class: "ladder" },
+          D.ladder.split(" → ").map(function (l) { return el("span", { class: l === f.laag ? "on" : "", text: l }); }))]));
+      } else box.appendChild(el("button", { class: "btn sec mt", onclick: function () { cur.hint = true; store("foutSab", cur); foutPage("sab"); } }, ["Na 10 min vast? Toon de hint (laag)"]));
+      if (cur.opl) {
+        box.appendChild(el("div", { class: "card" }, [el("b", { text: "Symptoom" }), el("p", { html: f.sym }), el("b", { text: "Oplossing" }), el("p", { html: f.opl })]));
+      } else box.appendChild(el("button", { class: "btn sec mt", onclick: function () { cur.opl = true; store("foutSab", cur); foutPage("sab"); } }, ["Toon symptoom en oplossing (achteraf)"]));
+      box.appendChild(el("button", { class: "btn mt", onclick: function () { store("foutSab", null); foutPage("sab"); } }, ["Nieuwe kaart trekken"]));
+    }
+    function slo() {
+      box.appendChild(tabs("slo"));
+      var nr = store("foutSlo");
+      box.appendChild(el("p", { class: "muted", text: "Welk kaartnummer gaf je buur je?" }));
+      var chips = el("div", { class: "chips" });
+      D.fouten.forEach(function (f) {
+        chips.appendChild(el("button", { class: "chip" + (nr === f.nr ? " sel" : ""), onclick: function () { store("foutSlo", f.nr); foutPage("slo"); } }, [String(f.nr)]));
+      });
+      box.appendChild(chips);
+      if (nr) {
+        var f = D.fouten.filter(function (x) { return x.nr === nr; })[0];
+        box.appendChild(el("div", { class: "card mt" }, [el("span", { class: "tag", text: "Ticket #" + (1100 + f.nr) }), el("p", { class: "q", style: "margin-top:10px", text: "“" + f.ticket + "”" })]));
+        box.appendChild(el("p", { class: "muted", text: "Werk het ticket af: symptoom → omvang → bewijs per laag (" + D.ladder + ") → hypothese → één wijziging → hertest." }));
+        box.appendChild(el("a", { href: "#/ticket", class: "btn", style: "display:block;text-align:center;text-decoration:none" }, ["Open het ticketformulier"]));
+      }
+    }
+    if (mode === "sab") sab(); else if (mode === "slo") slo();
+    else intro(box, "fout", function () { foutPage("sab"); });
+    box.appendChild(back());
+  }
+
+  /* ---------- 8. Ticketformulier (vervangt het papieren formulier) ---------- */
+  function ticketPage(start) {
+    clear(); crumb.textContent = "Ticketformulier";
+    var w = wrap();
+    w.appendChild(el("h1", { text: "Ticketformulier" }));
+    var box = el("div"); w.appendChild(box);
+    function form() {
+      var data = store("ticket") || {};
+      function save() { store("ticket", data); }
+      D.ticketVelden.forEach(function (f) {
+        var ta = el("textarea", { rows: f.r, placeholder: f.h, "aria-label": f.l });
+        ta.value = data[f.k] || "";
+        ta.addEventListener("input", function () { data[f.k] = ta.value; save(); });
+        box.appendChild(el("div", { class: "field" }, [el("label", { text: f.l }), ta]));
+      });
+      var chips = el("div", { class: "chips" });
+      ["Opgelost", "Niet opgelost", "Verder onderzoek"].forEach(function (o) {
+        var c = el("button", { class: "chip" + (data.status === o ? " sel" : ""), onclick: function () {
+          data.status = o; save(); Array.prototype.forEach.call(chips.children, function (x) { x.className = "chip" + (x === c ? " sel" : ""); });
+        } }, [o]);
+        chips.appendChild(c);
+      });
+      box.appendChild(el("div", { class: "field" }, [el("label", { text: "Status" }), chips]));
+      var msg = el("div");
+      function asText() {
+        return D.ticketVelden.map(function (f) { return f.l + "\n" + (data[f.k] || "") + "\n"; }).join("\n") + "\nStatus: " + (data.status || "") + "\n";
+      }
+      box.appendChild(el("div", { class: "row mt" }, [
+        el("button", { class: "btn", onclick: function () {
+          var t = asText(); msg.innerHTML = "";
+          (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { msg.appendChild(fb(true, "Gekopieerd", "Plak het nu in je werkdocument.")); },
+            function () { var ta = el("textarea", { rows: 8 }); ta.value = t; msg.appendChild(ta); ta.select(); msg.appendChild(el("p", { class: "muted", text: "Kopiëren lukte niet automatisch: selecteer de tekst hierboven en kopieer hem zelf." })); });
+        } }, ["Kopiëren"]),
+        el("button", { class: "btn sec", onclick: function () {
+          var a = el("a", { href: URL.createObjectURL(new Blob([asText()], { type: "text/plain" })), download: "ticket-dns.txt" });
+          document.body.appendChild(a); a.click(); a.remove();
+        } }, ["Downloaden (.txt)"])]));
+      box.appendChild(msg);
+      box.appendChild(el("button", { class: "btn sec mt", onclick: function () { if (window.confirm("Alles wissen en een nieuw ticket beginnen?")) { store("ticket", {}); ticketPage(true); } } }, ["Nieuw ticket (wissen)"]));
+      box.appendChild(back());
+    }
+    if (start) form(); else intro(box, "ticket", form);
+  }
+
+  /* ---------- 9. Exit ticket (zonder inzage door de docent) ---------- */
+  function exitTicketPage() {
+    clear(); crumb.textContent = "Exit ticket";
+    var w = wrap();
+    w.appendChild(el("h1", { text: "Exit ticket" }));
+    var box = el("div"); w.appendChild(box);
+    var E = D.exitTicket, i = 0, score = 0;
+    function show() {
+      box.innerHTML = ""; window.scrollTo(0, 0);
+      box.appendChild(el("div", { class: "muted", text: "Vraag " + (i + 1) + " van " + (E.mc.length + 1) }));
+      box.appendChild(progress(i, E.mc.length + 1));
+      if (i < E.mc.length) {
+        mcq(box, E.mc[i], function (ok) {
+          if (ok) score++;
+          box.appendChild(el("button", { class: "btn mt", onclick: function () { i++; show(); } }, ["Volgende"]));
+        });
+        return;
+      }
+      var ta = el("textarea", { rows: 5, "aria-label": E.open });
+      ta.value = store("exitOpen") || "";
+      ta.addEventListener("input", function () { store("exitOpen", ta.value); });
+      box.appendChild(el("div", { class: "card" }, [el("div", { class: "q", text: E.open })]));
+      box.appendChild(ta);
+      box.appendChild(el("button", { class: "btn mt", onclick: function () {
+        store("exitticket", { score: score, total: E.mc.length });
+        box.innerHTML = "";
+        box.appendChild(el("div", { class: "card", style: "text-align:center" }, [el("div", { class: "score", text: "Bedankt!" }),
+          el("p", { text: "Laat je omgeving werkend en opgeruimd achter en neem een snapshot DNS-eind." })]));
+        box.appendChild(back());
+      } }, ["Afronden"]));
+    }
+    intro(box, "exitticket", show);
+  }
+
   /* ---------- router ---------- */
   function route() {
     var r = (location.hash || "#/").replace(/^#\//, "");
-    ({ "": home, records: function () { records("vote"); }, recordquiz: function () { records("quiz"); }, fqdn: fqdn, check: function () { check(); }, check2: function () { check("pred"); }, sim: sim }[r] || home)();
+    ({ "": home, records: function () { records("vote"); }, recordquiz: function () { records("quiz"); }, fqdn: fqdn, check: function () { check(); }, check2: function () { check("pred"); }, sim: sim,
+       demo: function () { demoPage(); }, status: statusPage, fout: function () { foutPage(); }, ticket: function () { ticketPage(); }, exitticket: exitTicketPage }[r] || home)();
     app.focus({ preventScroll: true });
   }
   window.addEventListener("hashchange", route);
