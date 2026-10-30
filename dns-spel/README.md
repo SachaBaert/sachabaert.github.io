@@ -7,7 +7,7 @@ Mobiele oefeningen bij de les **DNS op Windows Server** (CampusConnect-labo).
 | Welk record? | 13 | Stemkaart voor de klas + 10 oefensituaties |
 | FQDN-puzzel | 10 | FQDN bouwen, delen benoemen, zone-vraag |
 | Voorspel de uitvoer | 23, 34 | Exitcheck blok 1 en begripscheck 2 |
-| Het querypad | 15–18, 21 | Simulatie van 5 rondes met live TTL-cache |
+| Het querypad | 18 (na uitleg op 15–17), 21 | Simulatie van 5 rondes met live TTL-cache |
 
 Elke oefening start met een introscherm. De knop **ⓘ Info** (rechtsboven) bevat de theorie en de labomgeving. Bij een fout antwoord legt de app uit waarom de keuze niet klopt en waarom het juiste antwoord wel klopt.
 
