@@ -41,8 +41,8 @@
       return el("section", { id: "cs-" + c.id, class: "card" }, [el("h2", { text: c.t, style: "margin-top:0" }), el("div", { html: c.h })]);
     })));
     var closeBtn = el("button", { type: "button", onclick: function () { s.remove(); document.getElementById("cheatBtn").focus(); } }, ["Sluiten"]);
-    var s = el("div", { class: "sheet", role: "dialog", "aria-modal": "true", "aria-label": "Spiekbrief" }, [
-      el("div", { class: "bar" }, [el("b", { text: "Spiekbrief DNS" }), closeBtn]), body]);
+    var s = el("div", { class: "sheet", role: "dialog", "aria-modal": "true", "aria-label": "Info" }, [
+      el("div", { class: "bar" }, [el("b", { text: "ⓘ Info · DNS-theorie" }), closeBtn]), body]);
     s.addEventListener("keydown", function (e) { if (e.key === "Escape") s.remove(); });
     document.body.appendChild(s); closeBtn.focus();
     if (id) { var t = document.getElementById("cs-" + id); if (t) setTimeout(function () { t.scrollIntoView(); }, 30); }
@@ -51,10 +51,11 @@
   function intro(w, key, start) {
     var I = D.intros[key];
     var box = el("div", { class: "card intro" }, [el("span", { class: "tag black", text: "Zo werkt het" }), el("h2", { text: I.t })]
-      .concat(I.p.map(function (p) { return el("p", { html: p }); })));
+      .concat(I.p.map(function (p) { return el("p", { html: p }); }))
+      .concat([el("div", { class: "infotip", html: D.infoTip })]));
     w.appendChild(box);
     var b1 = el("button", { class: "btn", onclick: function () { box.remove(); b1.remove(); b2.remove(); start(); } }, ["Start"]);
-    var b2 = el("button", { class: "btn sec mt", onclick: function () { openCheat(I.cs); } }, ["Theorie bekijken (spiekbrief)"]);
+    var b2 = el("button", { class: "btn sec mt", onclick: function () { openCheat(I.cs); } }, ["ⓘ Info bekijken"]);
     w.appendChild(b1); w.appendChild(b2);
   }
   var ctxOpen = true;
@@ -78,19 +79,28 @@
     { r: "check", t: "Voorspel de uitvoer", s: "Exitcheck blok 1 + begripscheck 2", c: "#EB6008", i: "?" },
     { r: "sim", t: "Het querypad", s: "Volg een DNS-query stap voor stap", c: "#7C5EAC", i: "→" }
   ];
+  function scoreTag(r) {
+    if (r === "check") {
+      var a = store("check"), b = store("check2"), t = [];
+      if (a) t.push("Exit " + a.score + "/" + a.total);
+      if (b) t.push("Begrip " + b.score + "/" + b.total);
+      return t.length ? el("span", { class: "done", html: t.join("<br>") }) : null;
+    }
+    var res = store(r === "recordquiz" ? "records" : r);
+    return res ? el("span", { class: "done", text: res.score + "/" + res.total }) : null;
+  }
   function home() {
     clear(); crumb.textContent = "Windows System Administration";
     var w = wrap();
     w.appendChild(el("span", { class: "tag olive", text: "CampusConnect" }));
     w.appendChild(el("h1", { text: "DNS op Windows Server" }));
-    w.appendChild(el("p", { class: "muted", text: "Vier oefeningen bij de les DNS. Elk spel begint met korte uitleg, en via ‘Spiekbrief’ (rechtsboven) vind je altijd de theorie. Je resultaten blijven alleen op dit toestel." }));
+    w.appendChild(el("p", { class: "muted", text: "Vier oefeningen bij de les DNS. Elk spel begint met korte uitleg, en via de knop ‘ⓘ Info’ (rechtsboven) vind je altijd de theorie. Gebruik die gerust: opzoeken hoort bij het vak. Je resultaten blijven alleen op dit toestel." }));
     var t = el("div", { class: "tiles" });
     GAMES.forEach(function (g) {
-      var res = store(g.r);
       t.appendChild(el("a", { class: "tile", href: "#/" + g.r }, [
         el("span", { class: "ico", style: "background:" + g.c, text: g.i }),
         el("span", null, [el("b", { text: g.t }), el("small", { text: g.s })]),
-        (res = store(g.r === "recordquiz" ? "records" : g.r)) ? el("span", { class: "done", text: res.score + "/" + res.total }) : null
+        scoreTag(g.r)
       ]));
     });
     w.appendChild(t);
@@ -146,7 +156,9 @@
           if (done) return; done = true; if (hb) hb.remove();
           var ok = r.t === q.a; if (ok) score++;
           Array.prototype.forEach.call(g.children, function (x) { x.style.opacity = x === b || x.dataset.t === q.a ? 1 : .25; });
-          box.appendChild(fb(ok, ok ? "Juist: " + q.a : "Niet juist. Het is " + q.a + ".", q.e));
+          var A = D.records.filter(function (x) { return x.t === q.a; })[0];
+          box.appendChild(ok ? fb(true, "Juist: " + q.a, q.e) : fb(false, "Niet juist. Het is " + q.a + ".",
+            "<b>Jouw keuze, " + r.t + ",</b> vertaalt " + r.l + ". Dat is hier niet wat je nodig hebt.<br><b>Waarom " + q.a + "?</b> " + q.a + " vertaalt " + A.l + ". " + q.e));
           box.appendChild(el("button", { class: "btn mt", onclick: function () { i++; show(); } }, [i + 1 < qs.length ? "Volgende" : "Resultaat"]));
         } }, [r.t, el("small", { text: r.d })]);
         b.dataset.t = r.t; g.appendChild(b);
@@ -252,13 +264,13 @@
         shuffle(["hostlabel", "domein", "TLD", "root"]).forEach(function (lab) {
           opts.appendChild(el("button", { class: "opt", onclick: function (e) {
             if (lab === R.labels[p]) { pi++; draw(); }
-            else { wrong++; e.currentTarget.className = "opt bad"; m.innerHTML = ""; m.appendChild(fb(false, "Nog niet", hintFor(R.labels[p]))); }
+            else { wrong++; e.currentTarget.className = "opt bad"; m.innerHTML = ""; m.appendChild(fb(false, "Nog niet", "<b>" + lab + "</b> is " + hintFor(lab) + " Kijk naar de plaats van <code>" + p + "</code> in de naam: hoe verder naar rechts, hoe algemener.")); }
           } }, [lab]));
         });
         qbox.appendChild(opts); qbox.appendChild(m);
       }
       function hintFor(l) {
-        return { hostlabel: "Het meest specifieke deel: één computer.", domein: "Het deel dat bij de organisatie hoort (2e niveau).", TLD: "Het topniveaudomein, net onder de root.", root: "De wortel van de boom: het puntje achteraan." }[l];
+        return { hostlabel: "het meest specifieke deel, helemaal links: de naam van één computer.", domein: "het deel van de organisatie, net links van het TLD (2e niveau).", TLD: "het topdomein, net links van de root (bv. test, be, com).", root: "de wortel van de boom: het puntje helemaal rechts." }[l];
       }
       draw();
     }
@@ -278,7 +290,10 @@
           if (done) return; done = true; if (hb) hb.remove();
           var ok = o[1] === R.zone; if (ok) score++; total++;
           b.className = "opt " + (ok ? "ok" : "bad");
-          m.appendChild(fb(ok, ok ? "Juist" : "Niet juist", R.zone ? "De naam eindigt op campusconnect.test: SRV-DC01 heeft daar een zone voor." : "Geen eigen zone → servercache → forwarder."));
+          var end = R.target[2] + "." + R.target[4];
+          m.appendChild(fb(ok, ok ? "Juist" : "Niet juist", R.zone
+            ? "De naam eindigt op <b>" + end + "</b>: dat is precies de eigen zone van SRV-DC01. Hij zoekt het record zelf op in die zone en antwoordt autoritatief. De forwarder komt er niet aan te pas."
+            : "De naam eindigt op <b>" + end + "</b>, niet op campusconnect.test. SRV-DC01 heeft geen zone voor " + end + " en kent het antwoord dus niet zelf. Hij kijkt eerst in zijn servercache; staat het daar niet, dan stuurt hij de vraag door naar de forwarder."));
           m.appendChild(el("button", { class: "btn mt", onclick: function () { ri++; round(); } }, [ri + 1 < rounds.length ? "Volgende ronde" : "Afronden"]));
         } }, [o[0]]);
         opts.appendChild(b);
@@ -304,12 +319,13 @@
     var w = wrap();
     w.appendChild(el("h1", { text: "Voorspel de uitvoer" }));
     w.appendChild(el("div", { class: "seg", role: "tablist" }, [
-      el("button", { class: part === "exit" ? "on" : "", role: "tab", onclick: function () { check("exit"); } }, ["Exitcheck blok 1"]),
-      el("button", { class: part === "pred" ? "on" : "", role: "tab", onclick: function () { check("pred"); } }, ["Begripscheck 2"])
+      el("button", { class: part === "exit" ? "on" : "", role: "tab", onclick: function () { check("exit"); } }, ["Exitcheck blok 1", tabScore("check")]),
+      el("button", { class: part === "pred" ? "on" : "", role: "tab", onclick: function () { check("pred"); } }, ["Begripscheck 2", tabScore("check2")])
     ]));
     var holder = el("div"); w.appendChild(holder);
     intro(holder, part === "exit" ? "exit" : "pred", function () { if (part === "exit") exitcheck(holder); else predict(holder); });
   }
+  function tabScore(k) { var r = store(k); return r ? el("small", { class: "tabscore", text: "laatste score " + r.score + "/" + r.total }) : null; }
   function exitcheck(w) {
     w.appendChild(el("p", { class: "muted", text: "Kies voor elke query de zone, het recordtype en wie antwoordt. Alle query's komen van ADM-W11-01, die SRV-DC01 als DNS-server gebruikt." }));
     var items = D.exitcheck, i = 0, score = 0, total = items.length * 3 + 1;
@@ -349,7 +365,12 @@
           if (sel[f] === it.f[f]) right++;
         });
         score += right;
-        m.appendChild(fb(right === 3, right + " / 3 juist", "Correct: <b>" + it.f.zone + "</b> · <b>" + it.f.type + "</b> · <b>" + it.f.who + "</b>"));
+        var html = Object.keys(groups).map(function (f) {
+          var good = sel[f] === it.f[f];
+          var why = !good && D.exitWhy[sel[f]] ? " <i>Jouw keuze ‘" + sel[f] + "’: " + D.exitWhy[sel[f]] + "</i>" : "";
+          return "<p style=\"margin:6px 0\">" + (good ? "✔" : "✘") + " <b>" + D.exitFields[f].l.replace(/\?$/, "") + ": " + it.f[f] + "</b><br>" + it.x[f] + why + "</p>";
+        }).join("");
+        m.appendChild(fb(right === 3, right + " / 3 juist", html));
         go.textContent = "Volgende";
       } }, ["Controleer"]);
       box.appendChild(go); box.appendChild(m);
@@ -376,7 +397,9 @@
         var ok = o.k === q.a;
         Array.prototype.forEach.call(opts.children, function (x, idx) { x.disabled = true; if (order[idx].k === q.a) x.className = "opt ok"; });
         if (!ok) b.className = "opt bad";
-        m.appendChild(fb(ok, ok ? "Juist" : "Niet juist", q.e));
+        var corr = q.o[q.a].replace(/<[^>]+>/g, "");
+        m.appendChild(ok ? fb(true, "Juist", q.e) : fb(false, "Niet juist",
+          (q.w && q.w[o.k] ? "<b>Jouw keuze:</b> " + q.w[o.k] + "<br>" : "") + "<b>Juist is ‘" + corr + "’.</b> " + q.e));
         done(ok);
       } }, [isCmd ? el("span", { class: /^[A-Z]{1,5}  /.test(o.t) || o.t === "time-out" ? "mono" : "", text: o.t }) : el("span", { html: o.t })]);
       opts.appendChild(b);
