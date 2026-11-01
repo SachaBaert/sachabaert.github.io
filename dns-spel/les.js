@@ -46,18 +46,18 @@
       "q": "We maken een <b>lege</b> zone campusconnect.test. Welke records staan er al in, nog vóór we er één toevoegen?",
       "o": [
         "Geen enkel record",
-        "SOA en NS",
-        "Een A-record voor dns01",
+        "Alleen SOA en NS",
+        "SOA, NS en een A-record voor dns01",
         "SOA, NS en A-records voor alle servers"
       ],
-      "a": 1,
+      "a": 2,
       "w": [
-        "Elke zone krijgt automatisch twee beheerrecords: wie verantwoordelijk is (NS) en de beheergegevens (SOA).",
+        "Elke zone krijgt automatisch beheerrecords: wie verantwoordelijk is (NS) en de beheergegevens (SOA).",
+        "Bijna. Omdat DNS01 zelf in deze zone hoort, zet Windows er ook zijn eigen A-record bij.",
         null,
-        "Het A-record voor dns01 maak je zelf. Zonder dat record kan de NS-naam niet omgezet worden.",
-        "De A-records van de servers moet je zelf toevoegen; alleen SOA en NS komen vanzelf."
+        "Alleen de server zelf krijgt automatisch een A-record. web01 en file01 voeg je zelf toe."
       ],
-      "e": "Elke zone krijgt automatisch een SOA- en een NS-record. De A-records maak je zelf, ook dat van dns01: anders kan de naam uit het NS-record niet omgezet worden."
+      "e": "Windows maakt bij een nieuwe zone automatisch een SOA- en een NS-record. Omdat DNS01 zelf in deze zone hoort (dns01.campusconnect.test), komt ook zijn A-record er meteen bij: anders kan de naam uit het NS-record niet omgezet worden. web01 en file01 voeg je zelf toe."
     },
     {
       "n": 3,
