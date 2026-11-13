@@ -137,7 +137,7 @@
     draw();
   }
   /* Velden met keuzechips: F = {k, l, o, a, x, why}. done(aantalJuist) */
-  function chipFields(box, fields, nextLabel, done) {
+  function chipFields(box, fields, nextLabel, done, onCheck) {
     var sel = {}, groups = {}, m = el("div"), checked = false, right = 0;
     fields.forEach(function (F) {
       var chips = el("div", { class: "chips" });
@@ -162,8 +162,9 @@
         });
         if (sel[F.k] === F.a) right++;
       });
+      if (onCheck) onCheck(sel);
       m.appendChild(fb(right === fields.length, right + " / " + fields.length + " juist", fields.map(function (F) {
-        var good = sel[F.k] === F.a, why = F.why && F.why[sel[F.k]];
+        var good = sel[F.k] === F.a, why = (F.why && F.why[sel[F.k]]) || (F.whyAll ? F.whyAll(sel[F.k]) : "");
         return "<p style=\"margin:6px 0\">" + (good ? "✔" : "✘") + " <b>" + F.l + ": " + F.a + "</b><br>" + F.x +
           (!good && why ? " <i>Jouw keuze ‘" + sel[F.k] + "’: " + why + "</i>" : "") + "</p>";
       }).join("")));
@@ -298,6 +299,51 @@
   }
 
   /* ---------- 2. Teken de infrastructuur (begripscheck 1) ---------- */
+  /* Tekent het schema van BrightLearning als SVG.
+     o.v: "base" (genummerde pijlen), "model", "serverdomein", "dns8", "ping"
+     o.lab: label per pijl (p1..p4), o.st: "ok"/"bad" per pijl, o.dns: tekst bij DNS van CLIENT01 */
+  function drawSchema(o) {
+    o = o || {}; var v = o.v || "base", lab = o.lab || {}, st = o.st || {};
+    var OL = "#919E2C", OR = "#EB6008", GR = "#2e7d32", RD = "#A6090F";
+    function t(x, y, txt, a) { a = a || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (a.anchor || "middle") + '" font-size="' + (a.size || 11) + '" font-weight="' + (a.w || 600) + '" fill="' + (a.fill || "#000") + '">' + txt + '</text>'; }
+    function arrow(k, x1, y1, x2, y2, bx, by, txt) {
+      var c = st[k] === "ok" ? GR : st[k] === "bad" ? RD : "#000";
+      var out = '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + c + '" stroke-width="2" marker-end="url(#ah' + (st[k] || "") + ')"/>';
+      var l = txt || lab[k];
+      if (l) {
+        var w = Math.max(40, l.length * 5.6 + 12);
+        out += '<rect x="' + (bx - w / 2) + '" y="' + (by - 10) + '" width="' + w + '" height="18" rx="9" fill="' + (st[k] === "bad" ? RD : st[k] === "ok" ? GR : OR) + '"/>' + t(bx, by + 3, l, { fill: "#fff", size: 9.5 });
+      } else {
+        out += '<circle cx="' + bx + '" cy="' + by + '" r="10" fill="' + OR + '"/>' + t(bx, by + 4, "①②③④".charAt(+k.slice(1) - 1), { fill: "#fff", size: 12 });
+      }
+      return out;
+    }
+    var g = '<svg viewBox="0 0 360 300" role="img" aria-label="Schema van de infrastructuur van BrightLearning" style="width:100%;max-width:520px;display:block;margin:6px auto 10px;font-family:Montserrat,system-ui,sans-serif">';
+    g += '<defs>' + ["", "ok", "bad"].map(function (k) { var c = k === "ok" ? GR : k === "bad" ? RD : "#000"; return '<marker id="ah' + k + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="' + c + '"/></marker>'; }).join("") + '</defs>';
+    g += '<rect x="3" y="3" width="354" height="294" rx="10" fill="#fff" stroke="#000" stroke-width="1.5"/>' + t(14, 19, "Forest", { anchor: "start", size: 11, w: 700 });
+    if (v !== "serverdomein") g += '<rect x="13" y="27" width="334" height="262" rx="8" fill="#f6f7ee" stroke="' + OL + '" stroke-width="1.5" stroke-dasharray="5 3"/>' + t(23, 43, "Domein ad.brightlearning.test", { anchor: "start", size: 11, w: 700, fill: OL });
+    // CLIENT01
+    var dns = o.dns || (v === "dns8" ? "8.8.8.8" : (v === "base" ? "⑤ ?" : "192.168.50.10"));
+    g += '<rect x="20" y="62" width="110" height="80" rx="7" fill="#fff" stroke="#000" stroke-width="1.5"/>' + t(75, 82, "CLIENT01", { w: 700, size: 12 }) + t(75, 99, "192.168.50.20") + t(75, 116, "DNS: " + dns, { fill: v === "base" ? OR : "#000", size: dns.length > 14 ? 8.5 : 10.5 }) + t(75, 132, "Windows 11", { w: 400, size: 9.5, fill: "#5a5a5a" });
+    // DC01
+    g += '<rect x="230" y="62" width="110" height="80" rx="7" fill="#000"/>' + t(285, 82, "DC01", { w: 700, size: 12, fill: "#fff" }) + t(285, 99, "192.168.50.10", { fill: "#fff" }) + t(285, 116, "AD DS + DNS", { fill: "#cfd8a8" }) + t(285, 132, "domain controller", { w: 400, size: 9.5, fill: "#bbb" });
+    // Sara
+    g += '<circle cx="75" cy="196" r="10" fill="none" stroke="#000" stroke-width="1.8"/><path d="M57,228 q18,-26 36,0" fill="none" stroke="#000" stroke-width="1.8"/>' + t(75, 244, "sara.peeters", { size: 10 }) + t(75, 257, "meldt aan op CLIENT01", { w: 400, size: 9, fill: "#5a5a5a" });
+    if (v === "serverdomein") {
+      g += '<rect x="225" y="205" width="120" height="56" rx="7" fill="#fff" stroke="#000" stroke-width="1.5"/>' + t(285, 227, "ad.brightlearning.test", { size: 10, w: 700 }) + t(285, 245, "(server)", { w: 400, size: 9.5, fill: "#5a5a5a" });
+    } else {
+      g += '<rect x="246" y="238" width="98" height="22" rx="11" fill="' + OL + '"/>' + t(295, 253, "het domein", { fill: "#fff", size: 10 });
+    }
+    if (v === "ping") {
+      g += arrow("p1", 130, 102, 230, 102, 180, 92, "ping");
+    } else {
+      g += arrow("p1", 130, 86, 230, 86, 180, 76, v === "base" ? null : (lab.p1 || "DNS-vraag"));
+      g += arrow("p2", 230, 120, 130, 120, 180, 110, v === "base" ? null : (lab.p2 || "Antwoord (SRV)"));
+      g += arrow("p3", 92, 205, 250, 145, 170, 178, v === "base" ? null : (lab.p3 || "Aanmelding"));
+      g += v === "serverdomein" ? arrow("p4", 285, 142, 285, 205, 285, 174, lab.p4 || "Biedt AD DS aan") : arrow("p4", 300, 142, 300, 238, 294, 190, v === "base" ? null : (lab.p4 || "Biedt AD DS aan"));
+    }
+    return el("div", { class: "card", html: g + "</svg>" });
+  }
   function schema() {
     clear(); crumb.textContent = "Teken de infrastructuur";
     var w = wrap();
@@ -306,13 +352,43 @@
     var S = D.schema, score = 0, total = S.fields.length + S.fout.length;
     function deel1() {
       box.innerHTML = "";
-      box.appendChild(el("div", { class: "muted", text: "Deel 1 van 2 · Relaties en gegevens" }));
+      box.appendChild(el("div", { class: "muted", text: "Deel 1 van 2 · Labels op het schema" }));
       box.appendChild(progress(0, 2));
       box.appendChild(el("div", { class: "scen", html: S.intro }));
-      chipFields(box, S.fields, "Deel 2: drie foute schema's", function (r) { score += r; deel2(); });
+      var pic = drawSchema({ v: "base" }); box.appendChild(pic);
+      var F = S.fields.map(function (f) {
+        var g = { k: f.k, l: f.l, a: f.a, x: f.x, o: f.o || S.labels, why: f.why };
+        if (!f.o) g.whyAll = function (c) { var o = S.fields.filter(function (z) { return z.a === c; })[0]; return o ? "dat label hoort bij " + o.l.split(" ").slice(0, 2).join(" ") + "." : ""; };
+        return g;
+      });
+      chipFields(box, F, "Deel 2: drie foute schema's", function (r) { score += r; deel2(); }, function (sel) {
+        var lab = {}, st = {};
+        S.fields.forEach(function (f) { if (!f.o) { lab[f.k] = f.a; st[f.k] = sel[f.k] === f.a ? "ok" : "bad"; } });
+        var np = drawSchema({ v: "model", lab: lab, st: st, dns: "192.168.50.10" });
+        pic.replaceWith(np); pic = np;
+      });
     }
     function deel2() {
-      series(box, S.fout, "schema", schema, "Fout schema", function (s) { finish(box, "schema", score + s, total, schema); });
+      var i = 0;
+      function show() {
+        box.innerHTML = ""; window.scrollTo(0, 0);
+        if (i >= S.fout.length) {
+          finish(box, "schema", score, total, schema);
+          box.insertBefore(el("div", null, [el("h2", { text: "Modelschema" }), el("p", { class: "muted", text: "Leg dit naast je eigen tekening: kaders voor forest en domein, machines met IP en DNS, en pijlen met een betekenis." }), drawSchema({ v: "model" })]), box.firstChild);
+          return;
+        }
+        var q = S.fout[i];
+        box.appendChild(el("div", { class: "muted", text: "Deel 2 van 2 · Fout schema " + (i + 1) + " van " + S.fout.length }));
+        box.appendChild(progress(1, 2));
+        box.appendChild(drawSchema({ v: q.v }));
+        mcq(box, q, function (ok) {
+          if (ok) score++;
+          box.appendChild(el("p", { class: "muted", text: "Zo hoort het:" }));
+          box.appendChild(drawSchema({ v: "model" }));
+          next(box, i + 1 < S.fout.length ? "Volgende" : "Resultaat", function () { i++; show(); });
+        });
+      }
+      show();
     }
     intro(box, "schema", deel1);
   }

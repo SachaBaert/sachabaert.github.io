@@ -10,15 +10,15 @@
     "q": "Wat is AD DS?",
     "o": [
      "De directorydienst van Windows Server",
-     "Een DNS-server",
-     "Een server met de naam DC01",
-     "Een cloudidentiteitsdienst"
+     "De DNS-server van een Windows-domein",
+     "De naam van de eerste domain controller",
+     "De identiteitsdienst van Microsoft in de cloud"
     ],
     "a": 0,
     "w": [
      null,
      "DNS helpt clients AD vinden, maar is een andere dienst.",
-     "Een server wordt pas DC door AD DS te draaien.",
+     "Een server wordt pas domain controller doordat hij AD DS draait.",
      "Dat is Microsoft Entra ID."
     ],
     "e": "AD DS bewaart objecten centraal en maakt ze beschikbaar."
@@ -26,17 +26,17 @@
    {
     "q": "Wat is het verschil tussen een directory en een directorydienst?",
     "o": [
-     "De directory is het gegevensarchief; de dienst levert de functies om ermee te werken",
-     "Er is geen verschil",
-     "De directory is de server, de dienst het netwerk",
-     "De dienst bevat alleen gebruikers"
+     "Directory = de gegevens; dienst = de functies erop",
+     "Directory = de server; dienst = het netwerk ertussen",
+     "Er is geen verschil: het zijn twee namen voor hetzelfde",
+     "Directory = gebruikers; dienst = computers en groepen"
     ],
     "a": 0,
     "w": [
      null,
-     "Het zijn verwante maar verschillende begrippen.",
      "Een directory is geen server.",
-     "AD DS bevat veel meer dan gebruikers."
+     "Het zijn verwante maar verschillende begrippen.",
+     "Beide bevatten alle soorten objecten."
     ],
     "e": "Opslaan, vinden, beveiligen, beheren: dat doet de dienst."
    },
@@ -44,60 +44,60 @@
     "q": "Wat is de hoogste logische structuur in AD DS?",
     "o": [
      "Het forest",
-     "Het domein",
-     "De domain controller",
-     "De OU"
+     "Het domein, met daarin alle forests",
+     "De eerste domain controller",
+     "De bovenste OU van het domein"
     ],
     "a": 0,
     "w": [
      null,
-     "Een domein zit in een forest.",
+     "Een domein zit in een forest, niet omgekeerd.",
      "Een DC is een server, geen logische structuur.",
      "Een OU zit in een domein."
     ],
     "e": "Forest → domein → OU → object."
    },
    {
-    "q": "Hoeveel domeinen bevat het forest van BrightLearning?",
+    "q": "BrightLearning heeft één forest met als enige domein ad.brightlearning.test. Hoeveel domeinen bevat dat forest?",
     "o": [
-     "Eén: ad.brightlearning.test",
+     "Eén",
      "Twee: ad en brightlearning",
      "Drie: ad, brightlearning en test",
-     "Geen: het labo heeft enkel een DC"
+     "Geen, er is enkel een DC"
     ],
     "a": 0,
     "w": [
      null,
-     "De delen van een FQDN zijn geen afzonderlijke domeinen in het forest.",
-     "‘test’ is gereserveerd voor labo's, geen AD-domein.",
+     "De delen van een DNS-naam zijn geen afzonderlijke AD-domeinen.",
+     "‘test’ is een gereserveerd topleveldomein, geen AD-domein.",
      "Een DC biedt altijd een domein aan."
     ],
-    "e": "In een klein labo vallen forest en domein bijna samen."
+    "e": "In een klein labo vallen forest en domein bijna samen, maar het blijven twee begrippen."
    },
    {
-    "q": "Wat is ‘dc01.ad.brightlearning.test’?",
+    "q": "Server DC01 is lid van het domein ad.brightlearning.test. Wat is dan ‘dc01.ad.brightlearning.test’?",
     "o": [
-     "De volledige DNS-naam (FQDN) van de server DC01",
+     "De FQDN van DC01",
      "De naam van het domein",
      "De naam van het forest",
-     "Een SRV-record"
+     "De naam van een SRV-record"
     ],
     "a": 0,
     "w": [
      null,
      "Het domein heet ad.brightlearning.test.",
      "Het forest heet zoals zijn eerste domein.",
-     "Het is een hostnaam; een SRV-naam begint met _ldap._tcp…"
+     "Een SRV-naam begint met _ldap._tcp…"
     ],
-    "e": "Computernaam + domeinnaam."
+    "e": "Computernaam + domeinnaam = FQDN."
    },
    {
     "q": "Waarom gebruikt een productieomgeving meestal minstens twee DC's?",
     "o": [
-     "Beschikbaarheid: als één DC uitvalt, blijven de domeindiensten werken",
-     "Omdat één DC maximaal 100 gebruikers aankan",
-     "Omdat replicatie een back-up vervangt",
-     "Omdat DNS twee servers vereist"
+     "Beschikbaarheid: één DC mag uitvallen",
+     "Eén DC kan maximaal honderd gebruikers aan",
+     "Replicatie tussen DC's vervangt een back-up",
+     "DNS vereist altijd twee aparte servers"
     ],
     "a": 0,
     "w": [
@@ -111,10 +111,10 @@
    {
     "q": "Is replicatie tussen DC's een back-up?",
     "o": [
-     "Nee: ook een foutieve verwijdering wordt gerepliceerd",
-     "Ja, een volwaardige",
-     "Ja, als er drie DC's zijn",
-     "Alleen voor het schema"
+     "Nee: een foute verwijdering wordt ook gerepliceerd",
+     "Ja, een volwaardige back-up van alle gegevens",
+     "Ja, op voorwaarde dat er drie DC's of meer zijn",
+     "Alleen voor het schema, niet voor de objecten"
     ],
     "a": 0,
     "w": [
@@ -126,12 +126,12 @@
     "e": "Meerdere DC's vervangen geen back-upstrategie."
    },
    {
-    "q": "Waarom heet het domein ‘…test’?",
+    "q": "Waarom eindigt een labodomein vaak op ‘.test’?",
     "o": [
-     ".test is gereserveerd voor test- en labo-omgevingen",
+     ".test is gereserveerd voor tests",
      "Omdat het domein nog niet af is",
-     "Omdat Windows dat verplicht",
-     "Om internettoegang te blokkeren"
+     "Omdat Windows dat suffix verplicht",
+     "Om internettoegang te blokkeren voor clients"
     ],
     "a": 0,
     "w": [
@@ -143,12 +143,12 @@
     "e": "Zo kan de naam nooit botsen met een echt internetdomein."
    },
    {
-    "q": "Welke functie heeft het schema?",
+    "q": "Welke functie heeft het schema van AD DS?",
     "o": [
-     "Bepalen welke objectklassen en attributen kunnen bestaan",
-     "De IP-adressen van DC's bewaren",
-     "De wachtwoorden versleutelen",
-     "De OU-structuur tekenen"
+     "Het bepaalt welke objectklassen en attributen kunnen bestaan",
+     "Het bewaart de IP-adressen van alle domain controllers",
+     "Het versleutelt de wachtwoorden van alle gebruikers",
+     "Het tekent de OU-structuur van het domein uit"
     ],
     "a": 0,
     "w": [
@@ -162,10 +162,10 @@
    {
     "q": "Wat is een security principal?",
     "o": [
-     "Een object waaraan rechten en machtigingen gekoppeld kunnen worden",
+     "Een object dat rechten kan krijgen",
      "De hoofdbeheerder van het domein",
-     "Een DNS-record",
-     "Een OU met beveiliging"
+     "Een record in de DNS-zone van AD",
+     "Een OU waarop beveiliging staat"
     ],
     "a": 0,
     "w": [
@@ -177,10 +177,10 @@
     "e": "Gebruikers, computers en security groups."
    },
    {
-    "q": "Wat beantwoordt authenticatie?",
+    "q": "Welke vraag beantwoordt authenticatie?",
     "o": [
      "Wie ben je?",
-     "Wat mag je?",
+     "Wat mag je doen?",
      "Waar sta je in AD?",
      "Welke DNS-server gebruik je?"
     ],
@@ -194,12 +194,12 @@
     "e": "Eerst authenticatie, dan autorisatie."
    },
    {
-    "q": "Sara is succesvol aangemeld. Heeft ze nu toegang tot elke map?",
+    "q": "Een gebruiker is net succesvol aangemeld in het domein. Heeft hij nu toegang tot elke gedeelde map?",
     "o": [
-     "Nee: autorisatie bepaalt per resource wat ze mag",
+     "Nee, autorisatie bepaalt dat per map",
      "Ja, aanmelden geeft volledige toegang",
-     "Ja, binnen haar OU",
-     "Alleen tot mappen op DC01"
+     "Ja, tot alle mappen binnen zijn OU",
+     "Alleen tot de mappen op de DC zelf"
     ],
     "a": 0,
     "w": [
@@ -211,7 +211,7 @@
     "e": "Een badge opent niet elke deur."
    },
    {
-    "q": "Welk protocol bewijst in een domein cryptografisch de identiteit?",
+    "q": "Welk protocol bewijst in een Windows-domein cryptografisch je identiteit?",
     "o": [
      "Kerberos",
      "DHCP",
@@ -230,10 +230,10 @@
    {
     "q": "Wat doet een SRV-record voor AD?",
     "o": [
-     "Het vertelt welke server een dienst (bv. LDAP) voor het domein aanbiedt",
+     "Het wijst naar de server die een dienst aanbiedt",
      "Het koppelt een hostnaam aan een IP-adres",
-     "Het koppelt een IP-adres aan een naam",
-     "Het bewaart de gebruikers"
+     "Het koppelt een IP-adres terug aan een naam",
+     "Het bewaart de gebruikers van het domein"
     ],
     "a": 0,
     "w": [
@@ -247,10 +247,10 @@
    {
     "q": "Wat betekent ‘_tcp’ in _ldap._tcp.dc._msdcs.ad.brightlearning.test?",
     "o": [
-     "Het gebruikte transportprotocol",
+     "Het transportprotocol",
      "De naam van de server",
-     "Het domein",
-     "Een foutcode"
+     "De naam van het domein",
+     "Een foutcode van DNS"
     ],
     "a": 0,
     "w": [
@@ -262,34 +262,34 @@
     "e": "_ldap = dienst, _tcp = protocol, dc = domain controller, _msdcs = Microsoft-records."
    },
    {
-    "q": "Waarom gebruikt CLIENT01 192.168.50.10 als DNS-server?",
+    "q": "DC01 (192.168.50.10) host de DNS-zone van het domein. Waarom gebruikt CLIENT01 192.168.50.10 als DNS-server?",
     "o": [
-     "DC01 host de interne zone en de locatorrecords",
-     "Omdat dat de gateway is",
-     "Omdat elke client zichzelf moet gebruiken",
-     "Om internet te kunnen gebruiken"
+     "Alleen DC01 kent de interne zone en de SRV-records",
+     "Omdat 192.168.50.10 ook de standaardgateway is",
+     "Omdat elke client een DC als DNS moet hebben",
+     "Omdat CLIENT01 anders geen internet krijgt"
     ],
     "a": 0,
     "w": [
      null,
      "Er is geen gateway in dit labo.",
-     "CLIENT01 is geen DNS-server.",
+     "Het gaat niet om ‘een DC’ maar om de server die de zone kent.",
      "Internet is voor AD niet nodig."
     ],
     "e": "Een publieke DNS-server kent ad.brightlearning.test niet."
    },
    {
-    "q": "Een client opent websites, maar vindt het domein niet. Wat is waarschijnlijk?",
+    "q": "Een client opent websites, maar vindt het domein niet. Wat is het meest waarschijnlijk?",
     "o": [
      "Hij gebruikt een externe DNS-server",
-     "DC01 staat uit",
-     "De client heeft geen IP-adres",
-     "Het domein bestaat niet"
+     "De domain controller staat uit",
+     "De client heeft geen geldig IP-adres",
+     "Het domein is uit AD verwijderd"
     ],
     "a": 0,
     "w": [
      null,
-     "Dat kan je hier niet zomaar besluiten; DNS-instelling eerst.",
+     "Daar is geen aanwijzing voor; eerst de DNS-instelling.",
      "Websites openen lukt, dus hij heeft een adres.",
      "Het domein bestaat wel; de client vraagt de verkeerde server."
     ],
@@ -298,10 +298,10 @@
    {
     "q": "Wat is het verschil tussen centralisatie en automatisering?",
     "o": [
-     "Centraal = één beheeromgeving; automatisering = handelingen zonder manueel werk",
-     "Er is geen verschil",
-     "Automatisering is altijd centraal",
-     "Centralisatie vereist PowerShell"
+     "Centraal = één beheerplek; automatisch = zonder handwerk",
+     "Er is geen verschil: centraal beheer is altijd geautomatiseerd",
+     "Automatisering kan alleen als alles centraal staat",
+     "Centralisatie vereist altijd PowerShell-scripts"
     ],
     "a": 0,
     "w": [
@@ -313,11 +313,11 @@
     "e": "Een script dat accounts uit een lijst maakt, is automatisering."
    },
    {
-    "q": "Bestaat PC-ADMIN-01\\jelle ook op PC-ADMIN-02?",
+    "q": "Op PC-ADMIN-01 bestaat de lokale account jelle. Bestaat die account ook op PC-ADMIN-02?",
     "o": [
-     "Nee: een lokale account bestaat op één computer",
+     "Nee, die bestaat enkel op PC-ADMIN-01",
      "Ja, lokale accounts worden gesynchroniseerd",
-     "Ja, als het wachtwoord gelijk is",
+     "Ja, als het wachtwoord op beide pc's gelijk is",
      "Alleen als beide pc's in dezelfde werkgroep zitten"
     ],
     "a": 0,
@@ -330,7 +330,7 @@
     "e": "Ook een account ‘jelle’ op een andere pc is een andere identiteit."
    },
    {
-    "q": "Welke vier kernfuncties heeft AD DS in deze cursus?",
+    "q": "Welke vier kernfuncties heeft AD DS?",
     "o": [
      "Opslaan, vinden, beveiligen, beheren",
      "Routeren, filteren, cachen, loggen",
@@ -347,34 +347,34 @@
     "e": "Ze komen terug in elke beheertaak."
    },
    {
-    "q": "In welke OU staat DC01 na de promotie?",
+    "q": "Waar staat een domain controller standaard na de promotie?",
     "o": [
-     "Domain Controllers",
-     "Computers",
-     "Users",
-     "BrightLearning › Computers"
+     "In OU Domain Controllers",
+     "In de container Computers",
+     "In de container Users",
+     "In de container Builtin"
     ],
     "a": 0,
     "w": [
      null,
-     "Computers is een container voor gewone domeinleden.",
+     "Computers is voor gewone domeinleden.",
      "Users bevat gebruikers en groepen.",
-     "Die OU bestaat nog niet en DC01 hoort er niet."
+     "Builtin bevat ingebouwde groepen."
     ],
     "e": "Laat DC's in Domain Controllers."
    },
    {
-    "q": "Is ‘Users’ een OU?",
+    "q": "Is ‘Users’ in een nieuw domein een OU?",
     "o": [
-     "Nee, een standaardcontainer (CN=Users)",
+     "Nee, een container (CN=Users)",
      "Ja, de eerste OU van elk domein",
      "Ja, maar alleen voor beheerders",
-     "Het is een groep"
+     "Nee, het is een security group"
     ],
     "a": 0,
     "w": [
      null,
-     "Domain Controllers is wél een OU.",
+     "Domain Controllers is wél een OU; Users niet.",
      "Het is geen OU.",
      "Het is een container, geen groep."
     ],
@@ -383,27 +383,27 @@
    {
     "q": "Wat bevat de container Builtin?",
     "o": [
-     "Ingebouwde groepen voor beheer en rechten",
+     "Ingebouwde groepen",
      "Nieuwe computeraccounts",
-     "De DNS-zones",
-     "Het schema"
+     "De DNS-zones van AD",
+     "Het schema van het forest"
     ],
     "a": 0,
     "w": [
      null,
      "Die komen in Computers.",
      "Die staan in DNS.",
-     "Het schema is forestbreed."
+     "Het schema is forestbreed en staat niet in Builtin."
     ],
     "e": "Wijzig ingebouwde objecten niet zonder reden."
    },
    {
     "q": "Wat doet View › Advanced Features in ADUC?",
     "o": [
-     "Extra tabbladen en containers tonen, zonder iets aan objecten te wijzigen",
-     "Geavanceerde rechten toekennen",
-     "De console in beheerdersmodus starten",
-     "Het domein upgraden"
+     "Extra tabbladen en containers tonen",
+     "Extra rechten aan beheerders geven",
+     "De console als administrator starten",
+     "Het functionele niveau verhogen"
     ],
     "a": 0,
     "w": [
@@ -415,12 +415,12 @@
     "e": "Nodig voor de tabbladen Object en Security."
    },
    {
-    "q": "Met welke account meld je na de promotie van de eerste DC aan?",
+    "q": "Je promoveert server DC01 tot eerste DC van het nieuwe domein AD. Met welke account meld je daarna aan?",
     "o": [
-     "AD\\Administrator (wachtwoord van de vroegere lokale Administrator)",
-     "DC01\\Administrator",
-     "De DSRM-account",
-     "Een account die de wizard aanmaakt"
+     "AD\\Administrator, met het oude lokale wachtwoord",
+     "DC01\\Administrator, zoals vóór de promotie",
+     "De DSRM-account met het Safe Mode-wachtwoord",
+     "Een nieuwe account die de wizard aanmaakt"
     ],
     "a": 0,
     "w": [
@@ -434,10 +434,10 @@
    {
     "q": "Waarvoor dient het DSRM-wachtwoord?",
     "o": [
-     "Aanmelden in Directory Services Restore Mode voor herstel",
-     "Aanmelden als domeinbeheerder",
-     "De DNS-zone beveiligen",
-     "Gebruikers resetten"
+     "Herstel in Directory Services Restore Mode",
+     "Aanmelden als beheerder van het domein",
+     "De DNS-zone van het domein beveiligen",
+     "Wachtwoorden van gebruikers resetten"
     ],
     "a": 0,
     "w": [
@@ -449,12 +449,12 @@
     "e": "Bewaar het veilig."
    },
    {
-    "q": "Welke zones maakt een nieuwe forestpromotie met -InstallDns?",
+    "q": "Je promoveert de eerste DC van het nieuwe forest ad.brightlearning.test met -InstallDns. Welke zones ontstaan?",
     "o": [
      "ad.brightlearning.test en _msdcs.ad.brightlearning.test",
-     "Alleen een reverse zone",
-     "Geen enkele",
-     "Een zone per gebruiker"
+     "Alleen een reverse zone voor het subnet van de DC",
+     "Geen: alle zones maak je achteraf zelf aan",
+     "Eén zone per gebruiker en per computer"
     ],
     "a": 0,
     "w": [
@@ -468,10 +468,10 @@
    {
     "q": "Wat is een objectklasse?",
     "o": [
-     "Het type object, bv. user of computer",
-     "De OU waarin een object staat",
-     "Een groep objecten",
-     "Een beveiligingsniveau"
+     "Het type object, bv. user",
+     "De OU van het object",
+     "Een groep gelijke objecten",
+     "Het beveiligingsniveau van een object"
     ],
     "a": 0,
     "w": [
@@ -485,10 +485,10 @@
    {
     "q": "Is AD DS hetzelfde als Microsoft Entra ID?",
     "o": [
-     "Nee: AD DS is de klassieke directorydienst voor domeinomgevingen",
-     "Ja, alleen een nieuwe naam",
+     "Nee, het zijn verschillende diensten",
+     "Ja, Entra ID is enkel de nieuwe naam",
      "Ja, als je een cloudlicentie hebt",
-     "Nee: Entra ID is een DNS-dienst"
+     "Nee: Entra ID is de DNS-dienst van Azure"
     ],
     "a": 0,
     "w": [
@@ -500,12 +500,12 @@
     "e": "Daarom kies je bij de join expliciet ‘local Active Directory domain’."
    },
    {
-    "q": "Waarom komt de DNS-rol mee met de promotie?",
+    "q": "Waarom installeer je DNS mee bij de promotie van de eerste DC?",
     "o": [
-     "AD DS heeft DNS nodig om DC's en diensten vindbaar te maken",
-     "Om internettoegang te geven",
-     "Omdat elke server DNS moet draaien",
-     "Voor DHCP"
+     "Clients vinden de DC via DNS",
+     "Om de clients internet te geven",
+     "Elke server moet DNS draaien",
+     "Omdat DHCP er afhankelijk van is"
     ],
     "a": 0,
     "w": [
@@ -539,24 +539,24 @@
     "e": "Security groups kunnen machtigingen krijgen."
    },
    {
-    "q": "Welk bereik past bij GG_Administratie?",
+    "q": "GG_Administratie verzamelt de medewerkers van de afdeling Administratie. Welk bereik past?",
     "o": [
      "Global",
      "Domain Local",
      "Universal",
-     "Local"
+     "Lokaal op de server"
     ],
     "a": 0,
     "w": [
      null,
-     "Domain Local is voor resourcetoegang.",
+     "Domain Local is voor toegang tot een resource.",
      "Universal is voor meerdere domeinen.",
      "Lokale groepen bestaan op één computer."
     ],
     "e": "Een afdeling uit het eigen domein."
    },
    {
-    "q": "Welk bereik past bij DL_Lesmateriaal_Read?",
+    "q": "DL_Lesmateriaal_Read stelt ‘leestoegang tot de map Lesmateriaal’ voor. Welk bereik past?",
     "o": [
      "Domain Local",
      "Global",
@@ -566,14 +566,14 @@
     "a": 0,
     "w": [
      null,
-     "Global verzamelt accounts.",
+     "Global verzamelt accounts met een rol.",
      "Niet nodig in één domein.",
      "Distribution is een type, geen bereik."
     ],
     "e": "Een toegangsniveau op een resource."
    },
    {
-    "q": "Wat betekent de P in AGDLP?",
+    "q": "Waar staat de P voor in AGDLP?",
     "o": [
      "Permissions",
      "Policies",
@@ -590,12 +590,12 @@
     "e": "Accounts → Global → Domain Local → Permissions."
    },
    {
-    "q": "Waar zie je van welke groepen Sara rechtstreeks lid is?",
+    "q": "Waar zie je in ADUC van welke groepen een gebruiker rechtstreeks lid is?",
     "o": [
-     "Tabblad Member Of van Sara",
-     "Tabblad Members van Sara",
-     "Tabblad General",
-     "In DNS"
+     "Member Of, bij de gebruiker",
+     "Members, bij de gebruiker",
+     "General, bij de gebruiker",
+     "In de DNS-zone van het domein"
     ],
     "a": 0,
     "w": [
@@ -607,29 +607,29 @@
     "e": "Members (groep) en Member Of (object) tonen dezelfde relatie vanuit twee kanten."
    },
    {
-    "q": "Sara is net aan een groep toegevoegd en ziet geen effect. Eerste stap?",
+    "q": "Een gebruiker is net aan een groep toegevoegd en merkt geen verschil. Wat is de eerste stap?",
     "o": [
-     "Volledig afmelden en opnieuw aanmelden",
+     "Afmelden en opnieuw aanmelden",
      "De groep opnieuw aanmaken",
-     "DC01 herstarten",
-     "Sara verwijderen en opnieuw aanmaken"
+     "De domain controller herstarten",
+     "De gebruiker opnieuw aanmaken"
     ],
     "a": 0,
     "w": [
      null,
      "De groep is in orde; het token is oud.",
      "Niet nodig.",
-     "Dat geeft een nieuwe SID: geen goed idee."
+     "Dan krijgt hij een nieuwe SID: geen goed idee."
     ],
     "e": "Nieuw token = nieuwe groepsinformatie."
    },
    {
-    "q": "Wat staat er in een access token?",
+    "q": "Wat staat er onder meer in een access token?",
     "o": [
-     "Onder meer de user SID en de SID's van security groups",
+     "De SID's van gebruiker en groepen",
      "Het wachtwoord in leesbare tekst",
-     "De OU van de gebruiker",
-     "De GPO's"
+     "De OU waarin de gebruiker staat",
+     "De lijst van toegepaste GPO's"
     ],
     "a": 0,
     "w": [
@@ -643,10 +643,10 @@
    {
     "q": "Wat toont whoami /groups?",
     "o": [
-     "De groepen in het huidige access token",
-     "Alle groepen van het domein",
-     "De Member Of-lijst uit ADUC, altijd actueel",
-     "De lokale groepen van DC01"
+     "De groepen in het token van je sessie",
+     "Alle groepen die in het domein bestaan",
+     "Member Of uit ADUC, altijd actueel",
+     "De lokale groepen van de domain controller"
     ],
     "a": 0,
     "w": [
@@ -660,10 +660,10 @@
    {
     "q": "Wat is effectieve toegang?",
     "o": [
-     "Het uiteindelijke resultaat van identiteit, groepen en alle toepasselijke regels",
+     "Het resultaat van alle regels samen",
      "De machtiging van de laatst toegevoegde groep",
-     "Alle Allow-regels samen, Deny telt niet",
-     "De toegang van Domain Admins"
+     "Alle Allow-regels samen; Deny telt niet mee",
+     "De toegang die Domain Admins hebben"
     ],
     "a": 0,
     "w": [
@@ -675,12 +675,12 @@
     "e": "Controleer lidmaatschap én machtigingen."
    },
    {
-    "q": "Waarom voorzichtig met een expliciete Deny?",
+    "q": "Waarom wees je voorzichtig met een expliciete Deny op een map?",
     "o": [
-     "Ze heeft voorrang en treft via groepen soms meer gebruikers dan bedoeld",
-     "Deny werkt niet in Windows",
-     "Deny verwijdert de groep",
-     "Deny geldt alleen voor beheerders"
+     "Ze wint, en treft via groepen soms te veel",
+     "Deny-regels worden door Windows genegeerd",
+     "Een Deny verwijdert de groep uit Active Directory",
+     "Een Deny geldt alleen voor beheerders"
     ],
     "a": 0,
     "w": [
@@ -695,43 +695,43 @@
     "q": "Wat is indirect lidmaatschap?",
     "o": [
      "Lid zijn via een geneste groep",
-     "Lid zijn van een uitgeschakelde groep",
-     "Lid zijn van een distribution group",
+     "Lid zijn van een lege groep",
+     "Lid zijn van een distributiegroep",
      "In dezelfde OU staan als de groep"
     ],
     "a": 0,
     "w": [
      null,
-     "Een groep heeft geen status uitgeschakeld.",
+     "Een lege groep zegt niets over jouw lidmaatschap.",
      "Dat is nog steeds direct lidmaatschap.",
      "OU-locatie is geen lidmaatschap."
     ],
-    "e": "sara → GG_Opleiding → DL_Lesmateriaal_Modify."
+    "e": "Gebruiker → GG_ → DL_."
    },
    {
-    "q": "Welke opdracht toont alle leden, ook via nesting?",
+    "q": "Welke opdracht toont alle leden van DL_Lesmateriaal_Modify, ook via geneste groepen?",
     "o": [
      "Get-ADGroupMember DL_Lesmateriaal_Modify -Recursive",
-     "Get-ADUser -Recursive",
-     "whoami /all",
-     "Get-ADGroup -Members"
+     "Get-ADUser DL_Lesmateriaal_Modify -Recursive",
+     "whoami /groups /recursive DL_Lesmateriaal_Modify",
+     "Get-ADGroup DL_Lesmateriaal_Modify -Members"
     ],
     "a": 0,
     "w": [
      null,
-     "Get-ADUser heeft geen -Recursive.",
+     "Get-ADUser zoekt gebruikers, geen groepsleden.",
      "whoami toont jouw eigen token.",
      "Die parameter bestaat niet zo."
     ],
     "e": "Zonder -Recursive zie je enkel de directe leden."
    },
    {
-    "q": "Een gebruiker heeft onverwacht toegang. Welke twee plaatsen controleer je minstens?",
+    "q": "Een gebruiker heeft onverwacht toegang tot een map. Wat controleer je minstens?",
     "o": [
-     "Alle directe en indirecte lidmaatschappen én de machtigingen op de resource",
-     "Zijn OU en zijn wachtwoord",
-     "DNS en DHCP",
-     "Zijn profiel en zijn bureaublad"
+     "Zijn groepen en de machtigingen op de map",
+     "Zijn OU-locatie en de leeftijd van zijn wachtwoord",
+     "De DNS- en DHCP-instellingen van zijn pc",
+     "Zijn profiel en zijn bureaubladinstellingen"
     ],
     "a": 0,
     "w": [
@@ -743,29 +743,29 @@
     "e": "Een andere groep verleent mogelijk de toegang."
    },
    {
-    "q": "Read werkt, Modify niet. Wat is de eerste hypothese?",
+    "q": "Een gebruiker kan een document lezen, maar niet wijzigen. Wat is je eerste hypothese?",
     "o": [
-     "Er is alleen een leesmachtiging of een beperkende regel",
-     "Het wachtwoord is fout",
-     "DNS werkt niet",
-     "De gebruiker staat in de verkeerde OU"
+     "Hij heeft enkel Read",
+     "Zijn wachtwoord is fout",
+     "DNS werkt niet goed",
+     "Hij staat in de verkeerde OU"
     ],
     "a": 0,
     "w": [
      null,
-     "Dan zou Read ook falen.",
+     "Dan zou ook lezen mislukken.",
      "Dan zou de map niet bereikbaar zijn.",
      "De OU bepaalt geen bestandsrechten."
     ],
     "e": "Vergelijk effectieve toegang en de machtigingen."
    },
    {
-    "q": "Wat doe je bij Disable Account?",
+    "q": "Wat gebeurt er bij Disable Account?",
     "o": [
-     "Nieuwe aanmeldingen blokkeren; object en groepen blijven",
-     "Het object verwijderen",
-     "Het wachtwoord wissen",
-     "De gebruiker naar Users verplaatsen"
+     "Aanmelden wordt geblokkeerd",
+     "Het object wordt uit AD verwijderd",
+     "Het wachtwoord wordt leeggemaakt",
+     "Het object verhuist naar de container Users"
     ],
     "a": 0,
     "w": [
@@ -779,10 +779,10 @@
    {
     "q": "Een gebruiker is zijn wachtwoord vergeten. Wat doet de beheerder?",
     "o": [
-     "Reset Password, na controle van de identiteit van de aanvrager",
+     "Reset, na controle van de aanvrager",
      "Change Password met het oude wachtwoord",
-     "De account verwijderen",
-     "Password never expires aanzetten"
+     "De account verwijderen en opnieuw maken",
+     "‘Password never expires’ aanvinken"
     ],
     "a": 0,
     "w": [
@@ -796,10 +796,10 @@
    {
     "q": "Een account wordt na ontgrendelen meteen opnieuw vergrendeld. Wat onderzoek je?",
     "o": [
-     "Oude opgeslagen credentials op een ander toestel, service of taak",
-     "Of DNS werkt",
-     "Of de OU beschermd is",
-     "De tijdzone van DC01"
+     "Oude opgeslagen wachtwoorden elders",
+     "Of de DNS-server van de client correct is",
+     "Of de OU beschermd is tegen verwijderen",
+     "De tijdzone van de domain controller"
     ],
     "a": 0,
     "w": [
@@ -808,15 +808,15 @@
      "Bescherming tegen verwijderen heeft daar niets mee te maken.",
      "Tijd geeft andere fouten."
     ],
-    "e": "Los niet alleen het symptoom op."
+    "e": "Ook een service of geplande taak kan oude credentials gebruiken."
    },
    {
-    "q": "Waarom eerst uitschakelen en pas later verwijderen?",
+    "q": "Waarom schakel je een account bij vertrek eerst uit en verwijder je hem pas later?",
     "o": [
-     "Afhankelijkheden, gegevens en eigenaarschap eerst afhandelen; fouten blijven herstelbaar",
-     "Verwijderen kan pas na 30 dagen technisch",
-     "Uitgeschakelde accounts tellen niet mee voor licenties",
-     "Om de SID te bewaren voor een nieuwe medewerker"
+     "Zo blijven gegevens en fouten herstelbaar",
+     "Verwijderen kan pas na 30 dagen",
+     "Zo telt hij niet meer voor licenties",
+     "Zo kan een opvolger dezelfde SID krijgen"
     ],
     "a": 0,
     "w": [
@@ -833,7 +833,7 @@
      "User must change password at next logon",
      "Password never expires",
      "User cannot change password",
-     "Account is disabled (terwijl ze vandaag start)"
+     "Account is disabled, ook al start ze vandaag"
     ],
     "a": 0,
     "w": [
@@ -847,10 +847,10 @@
    {
     "q": "Wat is het verschil tussen Full name en User logon name?",
     "o": [
-     "Full name is de weergavenaam; logon name is de aanmeldnaam",
-     "Er is geen verschil",
-     "Full name is de UPN",
-     "Logon name is het e-mailadres"
+     "Weergavenaam tegenover aanmeldnaam",
+     "Er is geen verschil tussen beide",
+     "Full name is de UPN van de gebruiker",
+     "Logon name is altijd het e-mailadres"
     ],
     "a": 0,
     "w": [
@@ -862,46 +862,46 @@
     "e": "Sara Peeters · sara.peeters."
    },
    {
-    "q": "Wat is de UPN van Lina?",
+    "q": "Lina heeft als aanmeldnaam lina.desmet in het domein ad.brightlearning.test (NetBIOS: AD). Wat is haar UPN?",
     "o": [
      "lina.desmet@ad.brightlearning.test",
      "AD\\lina.desmet",
      "Lina De Smet",
-     "lina.desmet@brightlearning.be"
+     "lina.desmet@brightlearning.test"
     ],
     "a": 0,
     "w": [
      null,
      "Dat is de NetBIOS-notatie.",
      "Dat is de volledige naam.",
-     "Het suffix is het domein ad.brightlearning.test."
+     "Het suffix is het volledige domein ad.brightlearning.test."
     ],
     "e": "Logon name + @ + UPN-suffix."
    },
    {
-    "q": "Waarom laten we spaties weg in youssef.elamrani?",
+    "q": "Een organisatie spreekt af: aanmeldnamen zijn voornaam.familienaam, kleine letters, zonder spaties. Hoe wordt de aanmeldnaam van Youssef El Amrani?",
     "o": [
-     "Afgesproken cursusconventie; een organisatie documenteert zulke regels",
-     "Windows laat geen spaties toe in namen",
-     "Spaties breken DNS",
-     "Om de naam korter te maken dan 8 tekens"
+     "youssef.elamrani",
+     "youssef.el amrani",
+     "Youssef.ElAmrani",
+     "yelamrani"
     ],
     "a": 0,
     "w": [
      null,
-     "Een Full name mag spaties bevatten.",
-     "Aanmeldnamen staan niet in DNS.",
-     "Er is geen limiet van 8 tekens."
+     "Spaties horen niet in de afspraak.",
+     "De afspraak zegt kleine letters.",
+     "De afspraak is voornaam.familienaam."
     ],
-    "e": "Denk vooraf aan dubbele namen, samengestelde namen, lange namen."
+    "e": "Documenteer ook hoe je samengestelde en dubbele namen behandelt."
    },
    {
-    "q": "Mag een gewone gebruiker rechtstreeks in DL_Lesmateriaal_Read?",
+    "q": "Mag een gebruiker rechtstreeks lid worden van DL_Lesmateriaal_Read?",
     "o": [
-     "Technisch wel, maar het breekt AGDLP",
-     "Nee, Windows weigert dat",
-     "Ja, dat is de bedoeling",
-     "Alleen met Enforced"
+     "Het kan, maar het breekt AGDLP",
+     "Nee, Windows weigert dat altijd",
+     "Ja, dat is net de bedoeling",
+     "Alleen als de link Enforced is"
     ],
     "a": 0,
     "w": [
@@ -913,12 +913,12 @@
     "e": "Geen losse uitzonderingen."
    },
    {
-    "q": "Wat moet je bij een mover controleren naast Department?",
+    "q": "Een medewerker verandert van afdeling. Wat controleer je naast het attribuut Department?",
     "o": [
-     "Groepslidmaatschappen, effectieve toegang en eventueel de OU",
-     "Alleen de weergavenaam",
-     "Het wachtwoord",
-     "Niets, Department volstaat"
+     "Groepen, effectieve toegang en eventueel de OU",
+     "Alleen de weergavenaam van de gebruiker",
+     "Alleen het wachtwoord van de gebruiker",
+     "Niets, Department volstaat voor de toegang"
     ],
     "a": 0,
     "w": [
@@ -930,12 +930,12 @@
     "e": "Oude rechten weg, nieuwe gericht toevoegen."
    },
    {
-    "q": "Wanneer maak je een account vooraf uitgeschakeld?",
+    "q": "Wanneer maak je een nieuwe account aan in de uitgeschakelde toestand?",
     "o": [
-     "Wanneer de medewerker pas later start",
-     "Voor elke beheerder",
-     "Bij een vergeten wachtwoord",
-     "Na een functiewijziging"
+     "Als de medewerker pas later start",
+     "Voor elke nieuwe beheerder in het domein",
+     "Bij een vergeten wachtwoord van een gebruiker",
+     "Na een functiewijziging binnen het bedrijf"
     ],
     "a": 0,
     "w": [
@@ -949,10 +949,10 @@
    {
     "q": "Waarom deel je geen persoonlijke account tussen collega's?",
     "o": [
-     "Toegangscontrole en acties moeten aan één identiteit gekoppeld zijn",
-     "Het kost een extra licentie",
+     "Acties moeten aan één persoon te koppelen zijn",
+     "Een gedeelde account kost een extra licentie",
      "Windows laat maar één aanmelding per dag toe",
-     "Het profiel wordt te groot"
+     "Het gedeelde profiel wordt dan veel te groot"
     ],
     "a": 0,
     "w": [
@@ -964,12 +964,12 @@
     "e": "Elke persoon een eigen account."
    },
    {
-    "q": "Wat geeft lidmaatschap van een distribution group?",
+    "q": "Welke rechten geeft lidmaatschap van een distribution group?",
     "o": [
      "Geen beveiligingsrechten",
-     "Read op alle mappen",
-     "Beheerrechten op de OU",
-     "Een mailbox"
+     "Read op alle gedeelde mappen",
+     "Beheerrechten op de eigen OU",
+     "Een eigen mailbox op de mailserver"
     ],
     "a": 0,
     "w": [
@@ -981,29 +981,29 @@
     "e": "Distribution = e-mail."
    },
    {
-    "q": "GG_Opleiding is lid van DL_Lesmateriaal_Modify. Wie beheert je bij een nieuwe docent?",
+    "q": "GG_Opleiding is lid van DL_Lesmateriaal_Modify, en DL_Lesmateriaal_Modify heeft Modify op de map. Er start een nieuwe docent. Wat pas je aan?",
     "o": [
-     "Alleen het lidmaatschap van GG_Opleiding",
+     "Het lidmaatschap van GG_Opleiding",
      "De machtigingen op de map",
-     "DL_Lesmateriaal_Modify",
-     "De OU Groepen"
+     "De leden van DL_Lesmateriaal_Modify",
+     "De OU waarin de groepen staan"
     ],
     "a": 0,
     "w": [
      null,
      "De map hoeft niet te veranderen.",
-     "Die nest blijft gelijk.",
+     "Die nesting blijft gelijk.",
      "De OU verandert niets aan toegang."
     ],
     "e": "Precies het voordeel van AGDLP."
    },
    {
-    "q": "Wat is het voordeel van groepsgebaseerd toegangsbeheer?",
+    "q": "Wat is het voordeel van toegang via groepen?",
     "o": [
-     "Eén vermelding op de resource; lidmaatschap centraal beheerd",
-     "Snellere aanmelding",
-     "Minder DNS-verkeer",
-     "Geen wachtwoorden meer nodig"
+     "Eén vermelding op de map",
+     "Gebruikers melden sneller aan",
+     "Er is minder DNS-verkeer op het netwerk",
+     "Gebruikers hebben geen wachtwoord meer nodig"
     ],
     "a": 0,
     "w": [
@@ -1015,12 +1015,12 @@
     "e": "Beter controleerbaar en minder vergeten toegang."
    },
    {
-    "q": "Wat is Universal in dit labo?",
+    "q": "Je hebt één domein. Heb je dan een Universal group nodig?",
     "o": [
-     "Niet nodig: het is voor meerdere domeinen in een forest",
-     "Verplicht voor beheergroepen",
-     "Het standaardbereik",
-     "Een type distribution group"
+     "Nee, dat dient voor meerdere domeinen",
+     "Ja, voor elke beheergroep in het domein",
+     "Ja, Universal is het standaardbereik",
+     "Ja, voor elke distributiegroep"
     ],
     "a": 0,
     "w": [
@@ -1039,10 +1039,10 @@
    {
     "q": "Wat is een OU vooral?",
     "o": [
-     "Een beheermodel voor structuur, delegatie en beleid",
-     "Een security group",
-     "Een kopie van het organigram",
-     "Een container die automatisch ontstaat"
+     "Een beheermodel voor delegatie en beleid",
+     "Een security group voor toegang tot mappen",
+     "Een kopie van het organigram van het bedrijf",
+     "Een container die AD zelf automatisch maakt"
     ],
     "a": 0,
     "w": [
@@ -1057,7 +1057,7 @@
     "q": "Kan een gebruiker in twee OU's tegelijk staan?",
     "o": [
      "Nee, wel in meerdere groepen",
-     "Ja",
+     "Ja, in zoveel OU's als nodig",
      "Alleen als hij beheerder is",
      "Ja, via een snelkoppeling"
     ],
@@ -1071,29 +1071,29 @@
     "e": "Locatie ≠ lidmaatschap."
    },
    {
-    "q": "Waarom geen OU per team en project?",
+    "q": "Waarom maak je geen OU per team en per project?",
     "o": [
-     "Veel niveaus zonder beheerdoel en veel verplaatsingen bij reorganisaties",
-     "Windows laat maar 3 OU's toe",
-     "OU's vertragen DNS",
-     "Het kan niet onder een andere OU"
+     "Veel niveaus zonder beheerdoel",
+     "Windows laat maar drie OU's toe",
+     "OU's vertragen de DNS-resolutie",
+     "Geneste OU's zijn niet mogelijk"
     ],
     "a": 0,
     "w": [
      null,
-     "Er is geen limiet van 3.",
+     "Er is geen limiet van drie.",
      "OU's hebben geen invloed op DNS.",
      "Geneste OU's kunnen wel."
     ],
-    "e": "Hou de structuur eenvoudig."
+    "e": "Bij elke reorganisatie zou je objecten moeten verplaatsen."
    },
    {
     "q": "Wat doet ‘Protect container from accidental deletion’?",
     "o": [
-     "Het bemoeilijkt onbedoeld verwijderen; het is geen back-up",
-     "Het maakt een back-up",
-     "Het verbergt de OU",
-     "Het blokkeert GPO's"
+     "Het verwijderen bemoeilijken",
+     "Een back-up van de OU maken",
+     "De OU verbergen voor gebruikers",
+     "GPO-links op de OU blokkeren"
     ],
     "a": 0,
     "w": [
@@ -1102,15 +1102,15 @@
      "Het verbergt niets.",
      "Het heeft geen invloed op beleid."
     ],
-    "e": "Een bevoegde beheerder kan het bewust uitschakelen."
+    "e": "Een bevoegde beheerder kan het bewust uitschakelen. Het is geen back-up."
    },
    {
-    "q": "Waar maak je de hoofd-OU BrightLearning?",
+    "q": "Waar maak je in het domein ad.brightlearning.test de hoofd-OU BrightLearning?",
     "o": [
      "Rechtstreeks onder de domeinroot",
-     "In Users",
-     "In Domain Controllers",
-     "In Builtin"
+     "In de standaardcontainer Users",
+     "In OU Domain Controllers",
+     "In de container Builtin"
     ],
     "a": 0,
     "w": [
@@ -1122,29 +1122,29 @@
     "e": "Rechtsklik op ad.brightlearning.test → New → Organizational Unit."
    },
    {
-    "q": "Welke objecten verplaats je naar BrightLearning › Gebruikers?",
+    "q": "In Users staan: Administrator, Guest, krbtgt en je eigen gebruikers Sara, Youssef en Lina. Welke verplaats je naar OU BrightLearning › Gebruikers?",
     "o": [
-     "Sara, Youssef, Lina (de eigen cursusgebruikers)",
-     "Ook Administrator, Guest en krbtgt",
-     "Alle objecten uit Users, ook groepen",
-     "DC01"
+     "Sara, Youssef en Lina",
+     "Alle objecten uit Users",
+     "Ook Administrator en Guest",
+     "Alleen Administrator"
     ],
     "a": 0,
     "w": [
      null,
+     "Ook de ingebouwde accounts en groepen zouden meegaan.",
      "Ingebouwde accounts blijven in Users.",
-     "Groepen gaan naar OU Groepen; ingebouwde groepen blijven.",
-     "DC01 blijft in Domain Controllers."
+     "Ingebouwde accounts blijven in Users."
     ],
-    "e": "Alleen eigen objecten."
+    "e": "Verplaats alleen je eigen objecten."
    },
    {
-    "q": "Wat lees je in OU=Gebruikers,OU=BrightLearning,DC=ad,…?",
+    "q": "Wat lees je uit de DN OU=Gebruikers,OU=BrightLearning,DC=ad,DC=brightlearning,DC=test?",
     "o": [
-     "Gebruikers is een sub-OU van BrightLearning",
-     "BrightLearning is een sub-OU van Gebruikers",
-     "Het zijn twee groepen",
-     "Het is een DNS-naam"
+     "Gebruikers zit in BrightLearning",
+     "BrightLearning zit in Gebruikers",
+     "Het zijn twee security groups",
+     "Het is de DNS-naam van een server"
     ],
     "a": 0,
     "w": [
@@ -1156,12 +1156,12 @@
     "e": "Van klein naar groot."
    },
    {
-    "q": "Wat verandert bij het verplaatsen van een object?",
+    "q": "Wat verandert er wanneer je een gebruiker naar een andere OU verplaatst?",
     "o": [
-     "De DN; mogelijk ook beleid en delegatie",
-     "De SID",
-     "De groepslidmaatschappen",
-     "Het wachtwoord"
+     "De DN, en mogelijk het beleid",
+     "De SID van de gebruiker",
+     "Zijn groepslidmaatschappen",
+     "Het wachtwoord van de gebruiker"
     ],
     "a": 0,
     "w": [
@@ -1173,12 +1173,12 @@
     "e": "Controleer na iedere wijziging locatie én relaties."
    },
    {
-    "q": "Wat is delegatie?",
+    "q": "Wat is delegatie in AD?",
     "o": [
-     "Een beperkte beheertaak binnen een afgebakende scope toewijzen",
-     "Iemand Domain Admin maken",
-     "Een GPO koppelen",
-     "Een gebruiker naar een andere OU verplaatsen"
+     "Een beperkte taak op één OU toewijzen",
+     "Een gebruiker Domain Admin maken",
+     "Een GPO aan een OU koppelen",
+     "Een gebruiker naar een OU verplaatsen"
     ],
     "a": 0,
     "w": [
@@ -1190,45 +1190,45 @@
     "e": "Wie + wat + waar."
    },
    {
-    "q": "Waarom delegeer je aan GG_ServiceDesk en niet aan servicedesk.test?",
+    "q": "Servicedeskmedewerker servicedesk.test is lid van GG_ServiceDesk. Aan wie delegeer je de taak ‘wachtwoorden resetten’?",
     "o": [
-     "De groep stelt de rol voor; bij een wissel pas je enkel het lidmaatschap aan",
-     "Gebruikers kunnen geen rechten krijgen",
-     "De wizard laat geen gebruikers toe",
-     "Groepen hebben meer rechten"
+     "Aan GG_ServiceDesk",
+     "Aan servicedesk.test",
+     "Aan Domain Users",
+     "Aan Domain Admins"
     ],
     "a": 0,
     "w": [
      null,
-     "Het kan technisch wel.",
-     "De wizard laat het toe.",
-     "Een groep heeft de rechten die je geeft."
+     "Bij een personeelswissel moet je dan de delegatie aanpassen.",
+     "Dan krijgt iedereen de taak.",
+     "Die hebben al alle rechten; dat is geen delegatie."
     ],
-    "e": "Rolgebaseerd beheer."
+    "e": "Rolgebaseerd beheer: bij een wissel pas je enkel het lidmaatschap aan."
    },
    {
-    "q": "Waar start je de Delegation of Control Wizard voor wachtwoordreset van gewone medewerkers?",
+    "q": "De gewone medewerkers staan in OU BrightLearning › Gebruikers. Waar start je de Delegation of Control Wizard voor wachtwoordreset?",
     "o": [
      "Op OU BrightLearning › Gebruikers",
-     "Op het domein",
-     "Op GG_ServiceDesk",
-     "Op Builtin"
+     "Op het domein ad.brightlearning.test",
+     "Op de groep GG_ServiceDesk",
+     "Op de container Builtin"
     ],
     "a": 0,
     "w": [
      null,
-     "Te brede scope.",
+     "Te brede scope: ook beheeraccounts vallen eronder.",
      "De groep is de ontvanger, niet de scope.",
      "Daar staan geen gewone gebruikers."
     ],
     "e": "De plaats waar je de wizard start, bepaalt de scope."
    },
    {
-    "q": "Waarom test je delegatie niet met een Domain Admin?",
+    "q": "Waarom test je een delegatie niet met een Domain Admin?",
     "o": [
-     "Dan slaagt de test door de krachtige rechten en bewijs je niets",
-     "Domain Admins kunnen geen wachtwoorden resetten",
-     "Het is verboden in Windows",
+     "Dan lukt alles en bewijs je niets",
+     "Domain Admins kunnen niet resetten",
+     "Windows verbiedt dat soort tests",
      "Dan wordt de delegatie verwijderd"
     ],
     "a": 0,
@@ -1241,12 +1241,12 @@
     "e": "Gebruik een niet-administratieve testaccount."
    },
    {
-    "q": "Wat is een geslaagde negatieve test?",
+    "q": "Wat is een geslaagde negatieve test bij delegatie?",
     "o": [
-     "Een niet-toegestane handeling wordt geweigerd",
-     "Een handeling die lukt",
-     "Een test die je overslaat",
-     "Een foutmelding van DNS"
+     "Een verboden handeling wordt geweigerd",
+     "Een toegestane handeling lukt gewoon",
+     "Een test die je bewust overslaat",
+     "Een foutmelding van de DNS-server"
     ],
     "a": 0,
     "w": [
@@ -1261,21 +1261,21 @@
     "q": "Waar wordt een delegatie technisch opgeslagen?",
     "o": [
      "Als ACE's in de ACL van de OU",
-     "In DNS",
-     "In de groep GG_ServiceDesk",
+     "Als record in de DNS-zone",
+     "Als attribuut van de groep",
      "In de Default Domain Policy"
     ],
     "a": 0,
     "w": [
      null,
      "DNS bevat geen rechten.",
-     "De groep is de principal, de regels staan op de OU.",
+     "De groep is de principal; de regels staan op de OU.",
      "Delegatie is geen GPO."
     ],
     "e": "Bekijk ze via Security › Advanced of dsacls."
    },
    {
-    "q": "Waarom zie je het tabblad Security van een OU niet?",
+    "q": "Je ziet het tabblad Security van een OU niet in ADUC. Waarom?",
     "o": [
      "Advanced Features staat uit",
      "Je bent geen Domain Admin",
@@ -1292,11 +1292,11 @@
     "e": "View › Advanced Features."
    },
    {
-    "q": "Waarom verschijnt één wizardtaak als meerdere ACE's?",
+    "q": "Je delegeert één wizardtaak, maar ziet daarna meerdere ACE's op de OU. Waarom?",
     "o": [
-     "Een taak vereist meerdere onderliggende directorymachtigingen",
-     "De wizard maakt een fout",
-     "Er zijn meerdere DC's",
+     "Eén taak vraagt meerdere rechten",
+     "De wizard maakte een fout",
+     "Er zijn meerdere DC's in het domein",
      "Elke gebruiker krijgt een eigen ACE"
     ],
     "a": 0,
@@ -1309,29 +1309,29 @@
     "e": "Bv. Reset Password + schrijven op pwdLastSet."
    },
    {
-    "q": "Een servicedeskmedewerker verlaat de rol. Wat doe je?",
+    "q": "De taak ‘wachtwoorden resetten’ is gedelegeerd aan GG_ServiceDesk. Een medewerker verlaat de servicedesk. Wat doe je?",
     "o": [
-     "Hem uit GG_ServiceDesk verwijderen; de delegatie blijft voor de groep",
+     "Hem uit GG_ServiceDesk halen",
      "De delegatie op de OU verwijderen",
-     "De OU verwijderen",
-     "Zijn account resetten"
+     "De OU met gebruikers verwijderen",
+     "Het wachtwoord van de OU resetten"
     ],
     "a": 0,
     "w": [
      null,
      "Dan verliezen ook de andere leden hun taak.",
      "Veel te ingrijpend.",
-     "Dat verandert zijn rechten niet."
+     "Een OU heeft geen wachtwoord."
     ],
     "e": "Rol beëindigen ≠ delegatie verwijderen."
    },
    {
-    "q": "Waar verwijder je een overgeërfde regel bij voorkeur?",
+    "q": "Waar verwijder je een overgeërfde toegangsregel bij voorkeur?",
     "o": [
-     "Bij de bron: het bovenliggende object waar ze ingesteld werd",
-     "Op elk onderliggend object afzonderlijk",
-     "In DNS",
-     "In de groep"
+     "Bij de bron, waar ze ingesteld werd",
+     "Op elk onderliggend object apart",
+     "In de DNS-zone van het domein",
+     "In de groep die de regel kreeg"
     ],
     "a": 0,
     "w": [
@@ -1343,12 +1343,12 @@
     "e": "Beheer delegatie waar ze ingesteld is."
    },
    {
-    "q": "Wat doe je met dsacls in deze cursus?",
+    "q": "Waarvoor gebruik je dsacls in deze cursus?",
     "o": [
-     "Toegangsregels tekstueel bekijken, niet wijzigen",
+     "Toegangsregels bekijken",
      "ACL's in bulk aanpassen",
-     "Gebruikers aanmaken",
-     "DNS-records bekijken"
+     "Gebruikers in bulk aanmaken",
+     "DNS-records van de zone opvragen"
     ],
     "a": 0,
     "w": [
@@ -1360,29 +1360,29 @@
     "e": "GUI en opdrachtregel vullen elkaar aan."
    },
    {
-    "q": "Je maakt later een sub-OU onder OU Gebruikers. Wat controleer je?",
+    "q": "Op OU Gebruikers staat een delegatie. Je maakt eronder een sub-OU Stagiairs. Wat controleer je?",
     "o": [
-     "Of de bestaande delegatie overerft en of dat gewenst is",
-     "Of DNS de OU kent",
-     "Of de sub-OU een IP-adres heeft",
-     "Niets"
+     "Of de delegatie overerft en dat gewenst is",
+     "Of DNS de nieuwe sub-OU al kent",
+     "Of de sub-OU een IP-adres heeft gekregen",
+     "Niets: een sub-OU erft nooit iets"
     ],
     "a": 0,
     "w": [
      null,
      "DNS kent geen OU's.",
      "OU's hebben geen IP-adres.",
-     "Gedelegeerde rechten kunnen doorwerken."
+     "Gedelegeerde rechten kunnen wel doorwerken."
     ],
     "e": "Maak niet gedachteloos sub-OU's."
    },
    {
-    "q": "Waarom staat DC01 niet in OU Computers?",
+    "q": "Waarom laat je een domain controller in OU Domain Controllers staan?",
     "o": [
-     "DC's horen in Domain Controllers, waar specifiek DC-beleid geldt",
-     "OU Computers is te klein",
-     "DC01 is geen computer",
-     "Dat kan pas met twee DC's"
+     "Daar geldt het specifieke DC-beleid",
+     "OU Computers is daarvoor te klein",
+     "Een DC is geen computerobject",
+     "Pas met twee DC's mag hij weg"
     ],
     "a": 0,
     "w": [
@@ -1394,12 +1394,12 @@
     "e": "Verplaats DC's niet."
    },
    {
-    "q": "Welke OU gebruik je voor CLIENT01?",
+    "q": "Een domein heeft de container Computers en de OU BrightLearning › Computers. Het werkplekbeleid moet via een GPO-link komen. Waar zet je CLIENT01?",
     "o": [
-     "BrightLearning › Computers",
-     "Computers (de container)",
-     "Domain Controllers",
-     "BrightLearning › Gebruikers"
+     "In OU BrightLearning › Computers",
+     "In de container Computers",
+     "In OU Domain Controllers",
+     "In OU BrightLearning › Gebruikers"
     ],
     "a": 0,
     "w": [
@@ -1411,29 +1411,29 @@
     "e": "Zo kan computerbeleid gericht toegepast worden."
    },
    {
-    "q": "Wat kan de servicedesk na deze delegatie níét?",
+    "q": "De servicedesk kreeg via de wizard enkel ‘Reset user passwords and force password change at next logon’ op OU Gebruikers. Wat kan ze niet?",
     "o": [
-     "Een gebruiker verwijderen of groepen beheren",
-     "Een wachtwoord resetten in OU Gebruikers",
-     "Een wachtwoordwijziging afdwingen",
-     "Zich aanmelden"
+     "Gebruikers verwijderen",
+     "Wachtwoorden resetten",
+     "Wijziging afdwingen",
+     "Zelf aanmelden"
     ],
     "a": 0,
     "w": [
      null,
      "Dat is net de taak.",
      "Dat hoort bij de taak.",
-     "Aanmelden is gewone gebruikersfunctie."
+     "Aanmelden is een gewone gebruikersfunctie."
     ],
     "e": "Precies één taak."
    },
    {
     "q": "Wat is least privilege?",
     "o": [
-     "Alleen de rechten die nodig zijn voor de taak, binnen de nodige scope",
-     "Zo weinig mogelijk gebruikers",
-     "Zo weinig mogelijk OU's",
-     "Geen beheerders"
+     "Enkel de rechten die de taak vraagt",
+     "Zo weinig mogelijk gebruikersaccounts",
+     "Zo weinig mogelijk OU's in het domein",
+     "Helemaal geen beheerders meer"
     ],
     "a": 0,
     "w": [
@@ -1447,10 +1447,10 @@
    {
     "q": "Waarom documenteer je een delegatie?",
     "o": [
-     "De wizard biedt geen overzicht van eerdere delegaties",
+     "De wizard toont achteraf niets",
      "Omdat Windows het verplicht",
-     "Voor DNS",
-     "Om de OU te beschermen"
+     "Omdat DNS de documentatie nodig heeft",
+     "Om de OU te beschermen tegen verwijderen"
     ],
     "a": 0,
     "w": [
@@ -1464,10 +1464,10 @@
    {
     "q": "Wat is het verschil tussen een OU en een security group?",
     "o": [
-     "OU = beheer en beleid; groep = rechten en machtigingen",
-     "Er is geen verschil",
-     "Een OU heeft leden, een groep niet",
-     "Een groep kan GPO-links krijgen"
+     "OU: beheer en beleid; groep: rechten",
+     "Er is geen verschil tussen beide",
+     "Een OU heeft leden, een groep heeft er geen",
+     "Een groep kan een GPO-link krijgen, een OU niet"
     ],
     "a": 0,
     "w": [
@@ -1479,12 +1479,12 @@
     "e": "Verplaats nooit iemand naar een OU om toegang te geven."
    },
    {
-    "q": "Een reset door de servicedesk wordt geweigerd voor één gebruiker. Wat controleer je eerst?",
+    "q": "De wachtwoordreset is gedelegeerd op OU Gebruikers. Een reset door de servicedesk wordt geweigerd voor één gebruiker. Wat controleer je eerst?",
     "o": [
-     "Of die gebruiker binnen de gedelegeerde OU staat",
-     "DNS op CLIENT01",
-     "De tijd van DC01",
-     "De GPO-links"
+     "Of die gebruiker in OU Gebruikers staat",
+     "De DNS-server van de pc van de servicedesk",
+     "De tijd van de domain controller",
+     "De GPO-links op het domein"
     ],
     "a": 0,
     "w": [
@@ -1496,12 +1496,12 @@
     "e": "Objectlocatie en delegatiescope."
    },
    {
-    "q": "De test met servicedesk.test slaagt altijd, ook voor verboden acties. Wat is waarschijnlijk?",
+    "q": "Een test met servicedesk.test slaagt altijd, ook voor acties die verboden zouden moeten zijn. Wat is waarschijnlijk?",
     "o": [
-     "De testaccount heeft al krachtige beheerrechten",
-     "De delegatie is te klein",
-     "DNS is fout",
-     "De OU is beschermd"
+     "De testaccount heeft al meer rechten",
+     "De delegatie is te beperkt ingesteld",
+     "De DNS-server van de DC is verkeerd ingesteld",
+     "De OU is beschermd tegen onbedoeld verwijderen"
     ],
     "a": 0,
     "w": [
@@ -1510,15 +1510,15 @@
      "DNS verklaart dat niet.",
      "Bescherming zou net meer weigeren."
     ],
-    "e": "Controleer Domain Admins, Account Operators …"
+    "e": "Controleer lid van Domain Admins, Account Operators …"
    },
    {
-    "q": "Waarom gebruik je in de demo -Credential in plaats van aanmelden op DC01?",
+    "q": "Je test een delegatie op DC01 met PowerShell en -Credential AD\\servicedesk.test, in plaats van als servicedesk.test op DC01 aan te melden. Waarom?",
     "o": [
-     "Een gewone gebruiker mag standaard niet lokaal aanmelden op een DC",
-     "-Credential is sneller",
-     "Zo wordt de delegatie actief",
-     "Aanmelden op DC01 wist het token"
+     "Gebruikers mogen niet aanmelden op een DC",
+     "-Credential is veel sneller dan aanmelden",
+     "Pas zo wordt de delegatie echt actief",
+     "Aanmelden op een DC wist het access token"
     ],
     "a": 0,
     "w": [
@@ -1530,12 +1530,12 @@
     "e": "Zo test je eerlijk met de rechten van servicedesk.test."
    },
    {
-    "q": "Wat bewijst de positieve delegatietest?",
+    "q": "Wat bewijst een positieve delegatietest?",
     "o": [
-     "Dat de bedoelde handeling met een niet-administratieve account werkt",
-     "Dat de servicedesk niets anders kan",
-     "Dat DNS werkt",
-     "Dat de OU beschermd is"
+     "Dat de taak lukt zonder beheerrechten",
+     "Dat de servicedesk verder niets kan",
+     "Dat de DNS-server correct werkt",
+     "Dat de OU beschermd is tegen verwijderen"
     ],
     "a": 0,
     "w": [
@@ -1569,12 +1569,12 @@
     "e": "Controleer Settings › System › About › Edition."
    },
    {
-    "q": "Waarom hernoem je de client vóór de join?",
+    "q": "Waarom hernoem je een client vóór de domain join?",
     "o": [
-     "Zo krijgt het computerobject meteen een herkenbare naam",
-     "Na de join kan het niet meer",
-     "De join vereist een naam met cijfers",
-     "Om de SID te wijzigen"
+     "Het object krijgt meteen de juiste naam",
+     "Na de join kan hernoemen niet meer",
+     "Een join vereist cijfers in de naam",
+     "Hernoemen geeft de pc een nieuwe SID"
     ],
     "a": 0,
     "w": [
@@ -1586,28 +1586,28 @@
     "e": "Minder beheerstappen en foutmogelijkheden."
    },
    {
-    "q": "CLIENT01 toont 169.254.x.x. Wat betekent dat?",
+    "q": "Een client toont het IPv4-adres 169.254.12.7. Wat betekent dat?",
     "o": [
-     "Geen geldige IP-configuratie",
-     "Het domein is gevonden",
-     "CLIENT01 is al lid",
-     "DNS werkt"
+     "Er is geen geldige IP-configuratie",
+     "Het domein werd gevonden via DNS",
+     "De client is al lid van het domein",
+     "De DNS-server antwoordt correct"
     ],
     "a": 0,
     "w": [
      null,
      "Met APIPA vindt de client niets.",
      "Dat zie je niet in het IP-adres.",
-     "Een APIPA-adres zegt niets over DNS behalve dat er geen geldige configuratie is."
+     "Een APIPA-adres wijst op een ontbrekende configuratie."
     ],
     "e": "Laag 1 eerst."
    },
    {
-    "q": "Wat test nltest /dsgetdc?",
+    "q": "Wat test nltest /dsgetdc:ad.brightlearning.test /force?",
     "o": [
-     "Of Windows via het DC-locatorproces een DC vindt",
-     "De secure channel",
-     "Of de tijd klopt",
+     "Of de client via DC Locator een DC vindt",
+     "Of de secure channel van de client werkt",
+     "Of de klok van de client gelijk loopt",
      "Of de gebruiker mag aanmelden"
     ],
     "a": 0,
@@ -1620,12 +1620,12 @@
     "e": "Sterker dan een ping."
    },
    {
-    "q": "A-record werkt, SRV-query niet. Wat is waarschijnlijk?",
+    "q": "nslookup dc01.ad.brightlearning.test lukt, de SRV-query _ldap._tcp.dc._msdcs.ad.brightlearning.test niet. Wat is waarschijnlijk?",
     "o": [
-     "Onvolledige AD-DNS-registratie of je vraagt de verkeerde DNS-server",
-     "De client heeft geen IP",
-     "De tijd wijkt af",
-     "Het wachtwoord is fout"
+     "De SRV-records ontbreken op die server",
+     "De client heeft geen geldig IP-adres",
+     "De klok van de client wijkt af",
+     "Het wachtwoord van de beheerder is fout"
     ],
     "a": 0,
     "w": [
@@ -1634,49 +1634,49 @@
      "Tijd speelt pas bij authenticatie.",
      "Credentials komen later."
     ],
-    "e": "Controleer welke server antwoordt."
+    "e": "Controleer ook welke server antwoordt: misschien vraag je de verkeerde."
    },
    {
-    "q": "Welke naam vul je in bij de join?",
+    "q": "Het domein heet ad.brightlearning.test (NetBIOS: AD), de DC heet DC01. Welke naam vul je in bij de join?",
     "o": [
-     "ad.brightlearning.test (FQDN)",
+     "ad.brightlearning.test",
      "AD",
-     "DC01",
-     "brightlearning"
+     "dc01.ad.brightlearning.test",
+     "brightlearning.test"
     ],
     "a": 0,
     "w": [
      null,
      "NetBIOS kan, maar de FQDN sluit aan bij DNS en DC Locator.",
-     "DC01 is de server, niet het domein.",
-     "Dat is geen domein in het forest."
+     "Dat is de FQDN van de server, niet van het domein.",
+     "Het domein heet ad.brightlearning.test; brightlearning.test is geen AD-domein."
     ],
     "e": "Gebruik de DNS-domeinnaam."
    },
    {
-    "q": "Welke optie kies je in Settings › Access work or school?",
+    "q": "Welke optie kies je in Settings › Accounts › Access work or school voor een klassieke domain join?",
     "o": [
-     "Join this device to a local Active Directory domain",
+     "Join to a local AD domain",
      "Connect (werk- of schoolaccount)",
-     "Join this device to Microsoft Entra ID",
+     "Join to Microsoft Entra ID",
      "Add a Microsoft account"
     ],
     "a": 0,
     "w": [
      null,
      "Dat is accountregistratie of Entra ID.",
-     "Dat is de cloud, niet DC01.",
+     "Dat is de cloud, niet je DC.",
      "Dat is een persoonlijk account."
     ],
     "e": "Local Active Directory ≠ Microsoft Entra ID."
    },
    {
-    "q": "Welke twee bevoegdheden heb je nodig voor een join?",
+    "q": "Welke twee bevoegdheden heb je nodig voor een domain join?",
     "o": [
-     "Lokale beheerrechten op de client en domeinrechten om het computerobject te maken",
-     "Alleen Domain Admin",
-     "Alleen lokale rechten",
-     "Rechten op DNS"
+     "Lokale admin + joinrechten in AD",
+     "Alleen lidmaatschap van Domain Admins",
+     "Alleen lokale beheerrechten op de client",
+     "Schrijfrechten op de DNS-zone van AD"
     ],
     "a": 0,
     "w": [
@@ -1688,24 +1688,24 @@
     "e": "De join wijzigt de client én AD."
    },
    {
-    "q": "Wordt de joinaccount lokale administrator van CLIENT01?",
+    "q": "Je voegt een client toe met de account AD\\joinbeheer (geen Domain Admin). Wordt joinbeheer daardoor lokale admin?",
     "o": [
      "Nee",
      "Ja, automatisch",
      "Alleen tot de herstart",
-     "Alleen als het Domain Admin is"
+     "Ja, voor 24 uur"
     ],
     "a": 0,
     "w": [
      null,
      "Credentials autoriseren de join, niet het lokale beheer.",
      "Er verandert niets na de herstart.",
-     "Domain Admins zijn wel lid van de lokale Administrators, maar dat komt door de join-configuratie, niet doordat ze de join deden."
+     "Zo'n tijdslimiet bestaat niet."
     ],
     "e": "Beheer lokale groepen afzonderlijk."
    },
    {
-    "q": "Wat is de sAMAccountName van het computerobject CLIENT01?",
+    "q": "Wat is de sAMAccountName van het computerobject van CLIENT01?",
     "o": [
      "CLIENT01$",
      "CLIENT01",
@@ -1722,12 +1722,12 @@
     "e": "Een computer is ook een security principal."
    },
    {
-    "q": "Waarvoor dient het machine account password?",
+    "q": "Waarvoor dient het wachtwoord van een computeraccount?",
     "o": [
-     "De computer authenticeert zich via een secure channel bij het domein",
+     "De secure channel met het domein",
      "Gebruikers melden ermee aan",
-     "Het beveiligt DNS",
-     "Het is het lokale Administrator-wachtwoord"
+     "Het beveiligt de DNS-zone",
+     "Het is het lokale adminwachtwoord"
     ],
     "a": 0,
     "w": [
@@ -1739,12 +1739,12 @@
     "e": "Komen de kopieën niet overeen: trust relationship failed."
    },
    {
-    "q": "Waar komt een niet-prestaged computerobject terecht?",
+    "q": "Je voegt een client toe zonder het computerobject vooraf aan te maken. Waar komt het object terecht?",
     "o": [
      "In de container Computers",
-     "In OU Computers",
-     "In Users",
-     "In Domain Controllers"
+     "In een OU met de naam Computers",
+     "In de container Users",
+     "In OU Domain Controllers"
     ],
     "a": 0,
     "w": [
@@ -1758,10 +1758,10 @@
    {
     "q": "Wat is prestaging?",
     "o": [
-     "Het computerobject vooraf in de juiste OU aanmaken",
-     "De client vooraf hernoemen",
-     "De DNS-server vooraf instellen",
-     "Een snapshot nemen"
+     "Het computerobject vooraf in de OU maken",
+     "De client vooraf een nieuwe naam geven",
+     "De DNS-server vooraf correct instellen",
+     "Een snapshot nemen vóór de join"
     ],
     "a": 0,
     "w": [
@@ -1773,12 +1773,12 @@
     "e": "Optioneel; let op eigenaarschap en join hardening."
    },
    {
-    "q": "Waar staat het joinlogboek?",
+    "q": "Waar staat het logboek van de domain join?",
     "o": [
      "C:\\Windows\\Debug\\Netsetup.log",
-     "Event Viewer › Security",
-     "C:\\Users\\Public\\join.txt",
-     "In ADUC"
+     "Event Viewer › Windows Logs › Security",
+     "C:\\Users\\Public\\Documents\\join.txt",
+     "In ADUC, bij het computerobject"
     ],
     "a": 0,
     "w": [
@@ -1790,58 +1790,58 @@
     "e": "Zoek rond het tijdstip naar de eerste fout."
    },
    {
-    "q": "Melding ‘The specified domain either does not exist or could not be contacted’. Eerste controle?",
+    "q": "De join meldt: ‘The specified domain either does not exist or could not be contacted’. Wat controleer je eerst?",
     "o": [
-     "Preferred DNS, SRV-query en nltest",
-     "Het wachtwoord",
-     "Het computerobject verwijderen",
-     "De tijdzone"
+     "DNS-server, SRV-query en nltest",
+     "Het wachtwoord van de joinaccount",
+     "Of het computerobject al bestaat",
+     "De tijdzone van de client"
     ],
     "a": 0,
     "w": [
      null,
      "Het domein wordt niet eens gevonden.",
-     "Verwijder niets zonder onderzoek.",
+     "Dat speelt pas als het domein gevonden is.",
      "Tijd komt later."
     ],
     "e": "DNS of DC Locator."
    },
    {
-    "q": "Melding ‘Access is denied’ bij de join. Wat is mogelijk?",
+    "q": "De join meldt ‘Access is denied’. Wat is een mogelijke oorzaak?",
     "o": [
-     "Ontbrekende joinrechten of een bestaand object dat niet hergebruikt mag worden",
-     "Het domein bestaat niet",
-     "De client heeft geen IP",
-     "DNS is fout"
+     "Ontbrekende joinrechten",
+     "Het domein bestaat niet in DNS",
+     "De client heeft een APIPA-adres",
+     "De client gebruikt 8.8.8.8 als DNS-server"
     ],
     "a": 0,
     "w": [
      null,
      "Dan krijg je een andere melding.",
      "Dan vind je het domein niet.",
-     "Het domein werd gevonden."
+     "Het domein werd gevonden; DNS is hier niet het probleem."
     ],
     "e": "Niet automatisch een fout wachtwoord."
    },
    {
-    "q": "Waarom herstart de client na de join?",
+    "q": "Waarom herstart de client na een domain join?",
     "o": [
-     "Om het gewijzigde lidmaatschap volledig actief te maken",
-     "Om de SID te wijzigen",
-     "Om DNS te herstarten",
-     "Om het profiel te wissen"
+     "Om het lidmaatschap actief te maken",
+     "Om de computer een nieuwe SID te geven",
+     "Om de DNS-cache van de DC te wissen",
+     "Om alle lokale profielen te wissen"
     ],
     "a": 0,
     "w": [
      null,
      "De SID van de computer verandert niet door de herstart.",
-     "DNS draait op DC01.",
+     "DNS draait op de DC.",
      "Profielen blijven."
     ],
     "e": "Daarna kan je domeinaanmelding kiezen."
    },
    {
-    "q": "Hoe meld je expliciet lokaal aan?",
+    "q": "Op CLIENT01 bestaat de lokale account lokalebeheerder. Hoe meld je expliciet met die lokale account aan?",
     "o": [
      ".\\lokalebeheerder",
      "AD\\lokalebeheerder",
@@ -1858,29 +1858,29 @@
     "e": "De punt verwijst naar de lokale computer."
    },
    {
-    "q": "Waarom krijgt Sara een nieuw profiel bij de eerste aanmelding?",
+    "q": "Een domeingebruiker meldt voor het eerst aan op een client. Waarom krijgt hij een nieuw profiel?",
     "o": [
-     "Haar domeinaccount heeft een andere SID dan elke lokale account",
-     "Profielen worden centraal op DC01 bewaard",
-     "Omdat ze haar wachtwoord wijzigde",
-     "Omdat CLIENT01 herstart is"
+     "Zijn domeinaccount heeft een eigen SID",
+     "Profielen staan standaard op de DC",
+     "Omdat hij zijn wachtwoord wijzigde",
+     "Omdat de client herstart is"
     ],
     "a": 0,
     "w": [
      null,
-     "Standaard staat het profiel lokaal op CLIENT01.",
+     "Standaard staat het profiel lokaal op de client.",
      "Het wachtwoord heeft niets met het profiel te maken.",
      "Een herstart maakt geen nieuw profiel."
     ],
     "e": "Het profiel hangt aan de SID."
    },
    {
-    "q": "Waar staat de profielregistratie?",
+    "q": "Waar registreert Windows welke profielmap bij welke SID hoort?",
     "o": [
-     "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList",
-     "HKCU\\Profiles",
-     "In AD bij het gebruikersobject",
-     "In NTUSER.DAT van Administrator"
+     "HKLM\\…\\CurrentVersion\\ProfileList",
+     "HKCU\\Software\\Microsoft\\Windows\\Profiles",
+     "Bij het gebruikersobject in Active Directory",
+     "In NTUSER.DAT van de Administrator"
     ],
     "a": 0,
     "w": [
@@ -1892,12 +1892,12 @@
     "e": "ProfileImagePath per SID."
    },
    {
-    "q": "Windows meldt een tijdelijk profiel. Wat doe je?",
+    "q": "Windows meldt na het aanmelden een tijdelijk profiel. Wat doe je?",
     "o": [
-     "Stoppen met normaal werken en de profielstatus laten onderzoeken",
-     "Gewoon verder werken en opslaan",
-     "ProfileList meteen wijzigen",
-     "De account verwijderen"
+     "Stoppen en de oorzaak laten onderzoeken",
+     "Gewoon verder werken en alles opslaan",
+     "ProfileList in het register meteen aanpassen",
+     "De account meteen verwijderen"
     ],
     "a": 0,
     "w": [
@@ -1909,12 +1909,12 @@
     "e": "Noteer de melding, meld niet onnodig af."
    },
    {
-    "q": "Wat toont echo %LOGONSERVER%?",
+    "q": "Wat toont echo %LOGONSERVER% in een domeinsessie?",
     "o": [
-     "De aanmeldserver van de huidige sessie, bv. \\\\DC01",
-     "Het IP van CLIENT01",
-     "De DNS-server",
-     "De naam van het profiel"
+     "De DC die je aanmelding verwerkte",
+     "Het IP-adres van de client zelf",
+     "De DNS-server die de client gebruikt",
+     "Het volledige pad van je eigen profielmap"
     ],
     "a": 0,
     "w": [
@@ -1926,12 +1926,12 @@
     "e": "Bevestigt dat een DC de aanmelding verwerkte."
    },
    {
-    "q": "Test-ComputerSecureChannel geeft False. Wat eerst?",
+    "q": "Test-ComputerSecureChannel geeft False. Wat doe je eerst?",
     "o": [
-     "DNS, tijd, computerobject en bevoegdheden controleren, dan eventueel -Repair",
-     "Meteen leave and rejoin",
-     "Het computerobject verwijderen",
-     "De DC herstarten"
+     "DNS, tijd en het object controleren",
+     "Meteen uit het domein halen en opnieuw joinen",
+     "Het computerobject in AD verwijderen",
+     "De domain controller herstarten"
     ],
     "a": 0,
     "w": [
@@ -1940,13 +1940,13 @@
      "Verwijder niets zonder onderzoek.",
      "Dat lost een kapot machinegeheim niet op."
     ],
-    "e": "Test eerst, herstel niet blind."
+    "e": "Test eerst, herstel daarna eventueel met -Repair."
    },
    {
-    "q": "Waarom is tijd belangrijk voor een domeinaanmelding?",
+    "q": "Waarom is de klok belangrijk bij een domeinaanmelding?",
     "o": [
-     "Kerberos-authenticatie is tijdgevoelig",
-     "DNS weigert verkeer met een foute tijd",
+     "Kerberos is tijdgevoelig",
+     "DNS weigert een foute tijd",
      "GPO's worden per uur verwerkt",
      "De SID bevat een tijdstempel"
     ],
@@ -1960,46 +1960,46 @@
     "e": "Een verkeerde klok kan een gezonde omgeving onbruikbaar doen lijken."
    },
    {
-    "q": "Welke tijdbron gebruikt een normaal domeinlid?",
+    "q": "Welke tijdbron gebruikt een gewoon domeinlid?",
     "o": [
-     "De domeintijdhiërarchie (een DC)",
+     "De domeinhiërarchie (een DC)",
      "Altijd time.windows.com",
-     "De BIOS-klok",
-     "De DNS-server"
+     "De BIOS-klok van de pc",
+     "De DHCP-server van het netwerk"
     ],
     "a": 0,
     "w": [
      null,
      "Dat kan vóór de join.",
      "Niet als bron na de join.",
-     "Ook al is DC01 DNS-server, de bron is de domeinhiërarchie."
+     "DHCP levert geen tijd aan Windows-domeinleden."
     ],
-    "e": "w32tm /query /source → DC01."
+    "e": "w32tm /query /source → een DC."
    },
    {
-    "q": "Waarom gebruik je geen publieke DNS als alternatieve DNS-server op een client?",
+    "q": "Waarom zet je geen publieke DNS-server als alternatieve DNS op een domeinclient?",
     "o": [
-     "Windows kan die gebruiken en dan geen antwoord krijgen voor de interne zone",
-     "Het is verboden",
-     "Het vertraagt de ping",
-     "Het verwijdert SRV-records"
+     "Die kent de interne zone niet",
+     "Dat is verboden door Microsoft",
+     "Dan wordt ping trager",
+     "Dan verdwijnen de SRV-records"
     ],
     "a": 0,
     "w": [
      null,
      "Het is niet verboden, wel onverstandig.",
-     "Ping gebruikt geen DNS bij een IP-adres.",
+     "Ping op een IP-adres gebruikt geen DNS.",
      "Een client wijzigt geen records op de server."
     ],
-    "e": "Externe namen via forwarders op de interne DNS."
+    "e": "Windows kan de alternatieve server gebruiken en dan geen antwoord krijgen. Externe namen via forwarders op de interne DNS."
    },
    {
-    "q": "Wat bewijst systeminfo | findstr /B /C:\"Domain\" met ad.brightlearning.test?",
+    "q": "systeminfo toont ‘Domain: ad.brightlearning.test’. Wat bewijst dat?",
     "o": [
-     "Dat de client zichzelf als domeinlid ziet",
+     "Dat de client zich als domeinlid ziet",
      "Dat de secure channel werkt",
-     "Dat Sara aangemeld is",
-     "Dat de GPO werkt"
+     "Dat Sara op dit moment aangemeld is",
+     "Dat het werkplek-GPO werkt"
     ],
     "a": 0,
     "w": [
@@ -2011,29 +2011,29 @@
     "e": "Combineer met het object in ADUC."
    },
    {
-    "q": "Een snapshot van CLIENT01 terugzetten zonder DC01: risico?",
+    "q": "Je zet een snapshot van een domeinclient terug, maar niet van de DC. Wat is het risico?",
     "o": [
-     "Het machinegeheim kan niet meer overeenkomen met AD (trust failed)",
-     "Geen enkel",
-     "De DNS-zone verdwijnt",
-     "De gebruikers verdwijnen"
+     "Het machinegeheim klopt niet meer",
+     "Er is geen enkel risico",
+     "De DNS-zone van het domein verdwijnt",
+     "Alle gebruikers verdwijnen uit AD"
     ],
     "a": 0,
     "w": [
      null,
      "Het machinegeheim wordt periodiek vernieuwd.",
-     "DNS staat op DC01.",
-     "Gebruikers staan op DC01."
+     "DNS staat op de DC.",
+     "Gebruikers staan op de DC."
     ],
     "e": "Zet domeinlid en DC samen terug."
    },
    {
-    "q": "Wat doe je eerst bij een fout?",
+    "q": "Wat doe je eerst bij een foutmelding?",
     "o": [
      "Exacte melding en tijdstip noteren",
-     "DNS wijzigen naar 8.8.8.8",
-     "De firewall uitschakelen",
-     "Het object verwijderen"
+     "De DNS-server naar 8.8.8.8 zetten",
+     "De Windows-firewall volledig uitschakelen",
+     "Het computerobject meteen verwijderen"
     ],
     "a": 0,
     "w": [
@@ -2045,12 +2045,12 @@
     "e": "Verander één variabele per keer."
    },
    {
-    "q": "Wanneer is escaleren correct?",
+    "q": "Wanneer is escaleren de juiste keuze?",
     "o": [
-     "Als je het probleem afgebakend hebt maar de oplossing buiten je bevoegdheid valt",
-     "Bij elke fout",
-     "Nooit",
-     "Na het verwijderen van het object"
+     "Als de oplossing buiten je bevoegdheid valt",
+     "Meteen bij elke foutmelding",
+     "Nooit, je lost alles zelf op",
+     "Nadat je het computerobject verwijderd hebt"
     ],
     "a": 0,
     "w": [
@@ -2070,9 +2070,9 @@
     "q": "Wat is een GPO?",
     "o": [
      "Een verzameling beleidsinstellingen",
-     "Een koppeling naar een OU",
-     "Een groep computers",
-     "Een OU met beleid"
+     "Een koppeling van beleid aan een OU",
+     "Een groep computers met hetzelfde beleid",
+     "Een OU waarop beleid van toepassing is"
     ],
     "a": 0,
     "w": [
@@ -2084,12 +2084,12 @@
     "e": "Het object zelf bepaalt nog niet waar het geldt."
    },
    {
-    "q": "Waaraan kan je een domein-GPO koppelen?",
+    "q": "Waaraan kan je een GPO koppelen?",
     "o": [
      "Site, domein of OU",
-     "Security group",
-     "Container Users",
-     "Gebruiker"
+     "Een security group",
+     "De container Users",
+     "Een gebruikersobject"
     ],
     "a": 0,
     "w": [
@@ -2101,11 +2101,11 @@
     "e": "LSDOU."
    },
    {
-    "q": "Welke helft volgt de locatie van het computerobject?",
+    "q": "Welke helft van een GPO volgt de plaats van het computerobject?",
     "o": [
      "Computer Configuration",
      "User Configuration",
-     "Beide",
+     "Beide helften",
      "Geen van beide"
     ],
     "a": 0,
@@ -2120,10 +2120,10 @@
    {
     "q": "Wanneer wordt computerbeleid verwerkt?",
     "o": [
-     "Bij het opstarten en bij achtergrondvernieuwing",
-     "Alleen bij aanmelden",
-     "Alleen met gpupdate",
-     "Alleen 's nachts"
+     "Bij opstarten en op de achtergrond",
+     "Alleen wanneer een gebruiker aanmeldt",
+     "Alleen na een gpupdate /force",
+     "Alleen 's nachts tijdens onderhoud"
     ],
     "a": 0,
     "w": [
@@ -2135,7 +2135,7 @@
     "e": "Gebruikersbeleid: bij aanmelden + achtergrond."
    },
    {
-    "q": "Wat betekent LSDOU?",
+    "q": "Waar staat LSDOU voor?",
     "o": [
      "Local, Site, Domain, OU",
      "Link, Scope, Domain, Object",
@@ -2152,12 +2152,12 @@
     "e": "Later verwerkt wint doorgaans bij een conflict."
    },
    {
-    "q": "Wat doet Enforced?",
+    "q": "Wat doet Enforced op een GPO-link?",
     "o": [
-     "Onderliggende containers kunnen de instellingen van die link niet gewoon overschrijven",
-     "Het GPO wordt op alle computers toegepast",
-     "Het blokkeert alle andere GPO's",
-     "Het maakt de link inactief"
+     "Lagere niveaus kunnen het niet overschrijven",
+     "Het GPO geldt voor alle computers in het domein",
+     "Alle andere GPO's worden geblokkeerd",
+     "De link wordt tijdelijk uitgeschakeld"
     ],
     "a": 0,
     "w": [
@@ -2173,8 +2173,8 @@
     "o": [
      "Op een domein of OU",
      "Op een GPO-link",
-     "Op een GPO",
-     "Op een groep"
+     "In een GPO zelf",
+     "Op een security group"
     ],
     "a": 0,
     "w": [
@@ -2188,10 +2188,10 @@
    {
     "q": "Wat is het verschil tussen Link Enabled en GPO Status?",
     "o": [
-     "Link Enabled geldt voor één link; GPO Status voor alle links van het GPO",
-     "Er is geen verschil",
+     "Eén link tegenover alle links",
+     "Er is geen verschil tussen beide",
      "GPO Status geldt voor één OU",
-     "Link Enabled schakelt de User-helft uit"
+     "Link Enabled schakelt User uit"
     ],
     "a": 0,
     "w": [
@@ -2203,12 +2203,12 @@
     "e": "Controleer ze afzonderlijk."
    },
    {
-    "q": "Wat gebeurt als je alleen de link verwijdert?",
+    "q": "Je verwijdert de link van een GPO op een OU. Wat gebeurt er met het GPO?",
     "o": [
-     "Het GPO blijft bestaan onder Group Policy Objects",
-     "Het GPO wordt verwijderd",
+     "Het blijft bestaan",
+     "Het wordt verwijderd",
      "Alle links verdwijnen",
-     "De OU verdwijnt"
+     "De OU verdwijnt mee"
     ],
     "a": 0,
     "w": [
@@ -2220,12 +2220,12 @@
     "e": "Veilige eerste rollback: link uitschakelen."
    },
    {
-    "q": "Waarom werk je niet in Default Domain Policy?",
+    "q": "Waarom werk je niet in de Default Domain Policy?",
     "o": [
-     "Een eigen GPO is duidelijker te testen, documenteren en terug te draaien",
-     "Default Domain Policy kan je niet bewerken",
-     "Het geldt niet voor clients",
-     "Het wordt na 30 dagen gewist"
+     "Een eigen GPO is beter te testen en terug te draaien",
+     "De Default Domain Policy kan je niet bewerken",
+     "De Default Domain Policy geldt niet voor clients",
+     "De Default Domain Policy wordt maandelijks gewist"
     ],
     "a": 0,
     "w": [
@@ -2237,10 +2237,10 @@
     "e": "Eén doel per GPO."
    },
    {
-    "q": "Wat is Not Configured?",
+    "q": "Wat betekent Not Configured bij een instelling?",
     "o": [
-     "Dit GPO legt geen waarde op",
-     "De instelling is uitgeschakeld",
+     "Dit GPO legt niets op",
+     "De instelling staat uit",
      "De instelling is verboden",
      "Hetzelfde als Disabled"
     ],
@@ -2256,7 +2256,7 @@
    {
     "q": "Wat toont gpresult /r?",
     "o": [
-     "Een beknopte RSoP-samenvatting",
+     "Een beknopte RSoP",
      "Een HTML-rapport",
      "Alle GPO's van het domein",
      "Alleen de fouten"
@@ -2273,10 +2273,10 @@
    {
     "q": "Waarom voer je gpresult /r /scope computer verhoogd uit?",
     "o": [
-     "Voor volledige computer-RSoP-informatie zijn beheerrechten nodig",
-     "Anders werkt gpresult niet",
-     "Om het beleid te wijzigen",
-     "Om DNS te omzeilen"
+     "Computer-RSoP vraagt beheerrechten",
+     "Anders werkt gpresult helemaal niet",
+     "Om het beleid tegelijk te wijzigen",
+     "Om de DNS-cache te omzeilen"
     ],
     "a": 0,
     "w": [
@@ -2285,14 +2285,14 @@
      "gpresult wijzigt niets.",
      "Niet relevant."
     ],
-    "e": "Alleen user-resultaten? Verhoogd opnieuw proberen."
+    "e": "Alleen gebruikersresultaten? Verhoogd opnieuw proberen."
    },
    {
-    "q": "Een GPO staat bij Denied. Is dat altijd een fout?",
+    "q": "Een GPO staat in gpresult bij ‘filtered out’ (Denied). Is dat altijd een fout?",
     "o": [
-     "Nee: scope of filtering kan het bewust uitsluiten",
-     "Ja, altijd",
-     "Ja, tenzij Enforced",
+     "Nee, het kan bewust uitgesloten zijn",
+     "Ja, Denied wijst altijd op een fout",
+     "Ja, tenzij de link Enforced is",
      "Nee, Denied betekent toegepast"
     ],
     "a": 0,
@@ -2305,12 +2305,12 @@
     "e": "Een correct geweigerd GPO bewijst dat de afbakening werkt."
    },
    {
-    "q": "Group Policy Results tegenover Modeling?",
+    "q": "Wat is het verschil tussen Group Policy Results en Modeling?",
     "o": [
-     "Results = werkelijk verwerkt; Modeling = simulatie",
-     "Hetzelfde",
-     "Modeling = werkelijkheid",
-     "Results werkt alleen op DC's"
+     "Werkelijk resultaat tegenover simulatie",
+     "Geen verschil: twee namen voor hetzelfde",
+     "Modeling toont wat werkelijk gebeurde",
+     "Results werkt enkel op domain controllers"
     ],
     "a": 0,
     "w": [
@@ -2322,9 +2322,9 @@
     "e": "Modeling vóór een wijziging, Results voor validatie."
    },
    {
-    "q": "Waar vind je gedetailleerde GPO-verwerking op de client?",
+    "q": "Waar vind je de gedetailleerde GPO-verwerking op een client?",
     "o": [
-     "Event Viewer › Microsoft › Windows › GroupPolicy › Operational",
+     "GroupPolicy › Operational",
      "Netsetup.log",
      "DNS Manager",
      "ADUC › Advanced Features"
@@ -2336,15 +2336,15 @@
      "Niet relevant.",
      "ADUC toont geen verwerking."
     ],
-    "e": "Volg één verwerking met Activity ID."
+    "e": "Event Viewer › Microsoft › Windows › GroupPolicy › Operational; volg één verwerking met Activity ID."
    },
    {
-    "q": "Waarvoor dient Activity ID?",
+    "q": "Waarvoor dient de Activity ID in de GroupPolicy-logs?",
     "o": [
-     "Gebeurtenissen van één verwerkingspoging samenbrengen",
-     "Een GPO identificeren",
+     "Eén verwerking samen volgen",
+     "Een GPO uniek identificeren",
      "De gebruiker identificeren",
-     "De link identificeren"
+     "Een link identificeren"
     ],
     "a": 0,
     "w": [
@@ -2356,29 +2356,29 @@
     "e": "Begin, verwerking en einde van één poging."
    },
    {
-    "q": "Het aanmeldbericht is een instelling in…",
+    "q": "Waar stel je een aanmeldbericht (vóór iemand aanmeldt) in?",
     "o": [
-     "Computer Configuration › Security Settings › Local Policies › Security Options",
-     "User Configuration › Desktop",
-     "Computer Configuration › Preferences › Drive Maps",
-     "Default Domain Controllers Policy"
+     "Computer › Security Options",
+     "User › Admin Templates › Desktop",
+     "Computer › Preferences › Drive Maps",
+     "In de Default Domain Controllers Policy"
     ],
     "a": 0,
     "w": [
      null,
      "Het bericht verschijnt vóór er een gebruiker is.",
      "Drive maps zijn iets anders.",
-     "We maken een eigen GPO voor de clients."
+     "Maak een eigen GPO voor de clients."
     ],
     "e": "Interactive logon: Message title / text."
    },
    {
-    "q": "Waarom koppel je het werkplekbeleid niet op het domein?",
+    "q": "Waarom koppel je werkplekbeleid niet aan het domein?",
     "o": [
-     "Dan zouden ook servers en DC's in scope komen",
-     "Het domein kan geen links hebben",
-     "Dan werkt gpupdate niet",
-     "Dan heb je Enforced nodig"
+     "Dan krijgen ook servers en DC's het",
+     "Een domein kan geen links hebben",
+     "Dan werkt gpupdate niet meer",
+     "Dan heb je altijd Enforced nodig"
     ],
     "a": 0,
     "w": [
@@ -2392,10 +2392,10 @@
    {
     "q": "Wat doet gpupdate /force?",
     "o": [
-     "Het beleid opnieuw ophalen en alle instellingen opnieuw toepassen",
-     "Alle GPO's verwijderen",
-     "Beleid op DC01 bewerken",
-     "De link activeren"
+     "Alle instellingen opnieuw toepassen",
+     "Alle GPO's van de client verwijderen",
+     "Het beleid op de DC bewerken",
+     "De GPO-link activeren"
     ],
     "a": 0,
     "w": [
@@ -2407,29 +2407,29 @@
     "e": "Lees de uitvoer: soms vraagt het afmelden of herstarten."
    },
    {
-    "q": "Het GPO staat bij Applied, maar het effect ontbreekt. Wat controleer je?",
+    "q": "Een GPO staat bij Applied, maar je ziet het effect niet. Wat controleer je?",
     "o": [
-     "Instellingspad, winnende GPO en of afmelden/herstarten nodig is",
-     "Of het GPO bestaat",
-     "De DNS-server",
-     "Het groepslidmaatschap van DC01"
+     "Winnende GPO en afmelden/herstart",
+     "Of het GPO wel bestaat in GPMC",
+     "De DNS-server van de client",
+     "De groepen van de domain controller"
     ],
     "a": 0,
     "w": [
      null,
      "Het staat bij Applied, dus het bestaat.",
      "De verwerking lukte al.",
-     "DC01 doet hier niet ter zake."
+     "De DC doet hier niet ter zake."
     ],
-    "e": "Applied ≠ zichtbaar resultaat."
+    "e": "Applied ≠ zichtbaar resultaat; controleer ook het instellingspad."
    },
    {
-    "q": "Security Filtering voegt een groep toe. Komt een gebruiker buiten de gekoppelde OU nu in scope?",
+    "q": "Een GPO is gekoppeld aan OU Gebruikers. Je voegt via Security Filtering een groep toe met een gebruiker uit OU Stagiairs. Krijgt die gebruiker het GPO?",
     "o": [
-     "Nee: filtering beperkt binnen de linkscope",
-     "Ja",
-     "Alleen met Enforced",
-     "Alleen voor computers"
+     "Nee, hij staat buiten de link",
+     "Ja, via de groep in de filter",
+     "Alleen als de link Enforced is",
+     "Alleen het computerdeel"
     ],
     "a": 0,
     "w": [
@@ -2438,15 +2438,15 @@
      "Enforced verandert de scope niet.",
      "Dat geldt voor beide helften."
     ],
-    "e": "Read + Apply Group Policy binnen de linkscope."
+    "e": "Read + Apply Group Policy werkt alleen binnen de linkscope."
    },
    {
     "q": "Wat doet loopback processing?",
     "o": [
-     "Gebruikersbeleid laten afhangen van de OU van de computer",
-     "Computerbeleid herhalen",
-     "GPO's sneller verwerken",
-     "DNS-vragen herhalen"
+     "Gebruikersbeleid volgt de OU van de pc",
+     "Het computerbeleid wordt tweemaal verwerkt",
+     "GPO's worden sneller verwerkt",
+     "DNS-vragen worden lokaal herhaald"
     ],
     "a": 0,
     "w": [
@@ -2460,10 +2460,10 @@
    {
     "q": "Wanneer gebruik je een WMI-filter?",
     "o": [
-     "Als toepassing afhangt van een technische eigenschap van de client",
-     "Om een afdeling te selecteren",
-     "Om GPO's sneller te maken",
-     "Altijd, als extra veiligheid"
+     "Als een eigenschap van de pc telt",
+     "Om de leden van een afdeling te selecteren",
+     "Om GPO's sneller te laten verwerken",
+     "Altijd, als extra beveiliging"
     ],
     "a": 0,
     "w": [
@@ -2475,34 +2475,34 @@
     "e": "Spaarzaam."
    },
    {
-    "q": "Welke link heeft binnen dezelfde OU de hoogste voorrang?",
+    "q": "Twee GPO's hangen aan dezelfde OU, met link order 1 en 2. Welke heeft voorrang bij een conflict?",
     "o": [
-     "De link met de laagste link-orderwaarde (1)",
-     "De link met de hoogste waarde",
-     "De oudste link",
-     "De link met Enforced"
+     "Link order 1",
+     "Link order 2",
+     "De oudste link op de OU",
+     "De link die laatst gewijzigd is"
     ],
     "a": 0,
     "w": [
      null,
      "Laagste nummer = hoogste voorrang.",
      "Ouderdom speelt geen rol.",
-     "Enforced is een andere uitzondering; de vraag gaat over link order."
+     "Ouderdom speelt geen rol."
     ],
     "e": "Hogere voorrang wordt later verwerkt."
    },
    {
-    "q": "CLIENT01 staat in OU Computers, het GPO ook. gpresult toont het niet. Eerste controle?",
+    "q": "CLIENT01 staat in OU Computers, en BL - C - Aanmeldbericht is aan OU Computers gekoppeld. gpresult toont het GPO niet. Wat controleer je eerst?",
     "o": [
-     "Is de link ingeschakeld en is de computerhelft niet uitgeschakeld?",
-     "De UPN van Sara",
-     "De tijdzone van DC01",
+     "Link Enabled en GPO Status",
+     "De UPN van de gebruiker",
+     "De tijdzone van de DC",
      "De naam van het GPO"
     ],
     "a": 0,
     "w": [
      null,
-     "Computerbeleid hangt niet af van Sara.",
+     "Computerbeleid hangt niet van de gebruiker af.",
      "Tijd geeft andere symptomen.",
      "De naam doet er niet toe."
     ],
@@ -2511,10 +2511,10 @@
    {
     "q": "Waarom bewaar je een gpresult-rapport als HTML?",
     "o": [
-     "Leesbaar bewijs met Applied, Denied, Component Status en winnende GPO",
-     "Om het beleid te wijzigen",
-     "Omdat /r niet werkt",
-     "Om het naar DC01 te kopiëren"
+     "Leesbaar bewijs met Applied en Denied",
+     "Om het beleid er later mee te wijzigen",
+     "Omdat gpresult /r niet werkt op clients",
+     "Om het naar de DC te kunnen kopiëren"
     ],
     "a": 0,
     "w": [
@@ -2528,10 +2528,10 @@
    {
     "q": "Wat is RSoP?",
     "o": [
-     "Het resulterende beleid voor een concrete gebruiker en computer",
-     "Een lijst van alle GPO's",
-     "Een GPO-sjabloon",
-     "Een type link"
+     "Het beleid dat werkelijk geldt",
+     "Een lijst van alle GPO's in het domein",
+     "Een sjabloon om nieuwe GPO's te maken",
+     "Een speciaal type link op een OU"
     ],
     "a": 0,
     "w": [
@@ -2540,12 +2540,12 @@
      "Dat is een Starter GPO.",
      "Niet relevant."
     ],
-    "e": "Resultant Set of Policy."
+    "e": "Resultant Set of Policy, voor een concrete gebruiker en computer."
    },
    {
-    "q": "Een lokaal account op CLIENT01 meldt aan. Krijgt het Sara's gebruikers-GPO?",
+    "q": "BL - U - Bureaublad (User Configuration) hangt aan OU Gebruikers. De lokale account CLIENT01\\lokaletest meldt aan op CLIENT01. Krijgt die het GPO?",
     "o": [
-     "Nee: het is geen gebruikersobject in OU Gebruikers",
+     "Nee",
      "Ja, op dezelfde computer",
      "Ja, als de naam gelijk is",
      "Alleen met loopback"
@@ -2553,19 +2553,19 @@
     "a": 0,
     "w": [
      null,
-     "Gebruikersbeleid volgt het gebruikersobject in AD.",
+     "Gebruikersbeleid volgt een gebruikersobject in AD.",
      "De SID telt, niet de naam.",
-     "Loopback werkt op domeingebruikers via de computer-OU."
+     "Loopback werkt voor domeingebruikers via de computer-OU."
     ],
-    "e": "Negatieve controle uit de praktijkopdracht."
+    "e": "Een lokale account heeft geen object in OU Gebruikers."
    },
    {
-    "q": "Wat is een veilige eerste rollback van een GPO-test?",
+    "q": "Een GPO-test gaf een ongewenst effect. Wat is een veilige eerste rollback?",
     "o": [
-     "De link uitschakelen of de instelling op Not Configured zetten",
+     "De link uitschakelen",
      "Het GPO verwijderen",
      "De OU verwijderen",
-     "DC01 terugzetten naar een snapshot"
+     "De DC terugzetten"
     ],
     "a": 0,
     "w": [
@@ -2574,7 +2574,7 @@
      "Veel te ingrijpend.",
      "Te ingrijpend voor één instelling."
     ],
-    "e": "Controleer daarna de impact met gpresult."
+    "e": "Of de instelling op Not Configured zetten. Controleer daarna de impact met gpresult."
    }
   ]
  }

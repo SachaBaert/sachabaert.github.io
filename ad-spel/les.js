@@ -8,9 +8,9 @@
    "t": "DC01 promoveren tot domain controller",
    "q": "We promoveren DC01 tot eerste domain controller van <b>ad.brightlearning.test</b>. Na de automatische herstart: met welke account meld je aan?",
    "o": [
-    "AD\\Administrator, met het wachtwoord van de vroegere lokale Administrator",
-    "DC01\\Administrator, zoals voorheen",
-    "Een nieuwe beheeraccount die de wizard tijdens de promotie aanmaakt",
+    "AD\\Administrator, met het oude lokale wachtwoord",
+    "DC01\\Administrator, zoals vóór de promotie",
+    "Een nieuwe beheeraccount die de wizard aanmaakt",
     "De DSRM-account, met het Safe Mode-wachtwoord"
    ],
    "a": 0,
@@ -27,16 +27,16 @@
    "t": "Het resultaat van de promotie",
    "q": "DC01 is herstart. Welke DNS-zones vind je nu in DNS Manager op DC01?",
    "o": [
-    "ad.brightlearning.test en _msdcs.ad.brightlearning.test, maar geen reverse zone voor 192.168.50.0/24",
-    "Geen enkele: zones moet je na de promotie zelf aanmaken",
-    "Alleen ad.brightlearning.test; de SRV-records staan in het register van DC01",
-    "ad.brightlearning.test en een reverse zone 50.168.192.in-addr.arpa"
+    "ad.brightlearning.test en _msdcs.ad.brightlearning.test",
+    "Geen: zones maak je na de promotie zelf aan",
+    "Alleen ad.brightlearning.test, zonder SRV-records",
+    "ad.brightlearning.test en 50.168.192.in-addr.arpa"
    ],
    "a": 0,
    "w": [
     null,
     "Met -InstallDns maakt de promotie de AD-geïntegreerde zones zelf aan, inclusief de locatorrecords.",
-    "De SRV-records staan in DNS; anders kan een client ze niet opvragen.",
+    "De promotie maakt ook de forestzone _msdcs aan, met de SRV-records waarmee clients een DC vinden.",
     "Een reverse zone maakt de promotie niet aan. Die maak je zelf, zoals in de DNS-les."
    ],
    "e": "De promotie maakt de zone <b>ad.brightlearning.test</b> en de forestzone <b>_msdcs.ad.brightlearning.test</b> met de SRV-records waarmee clients een DC vinden. Een reverse zone voor 192.168.50.0/24 is er niet: daarom toont nslookup straks ‘Server: UnKnown’."
@@ -84,9 +84,9 @@
    "t": "OU-structuur maken en objecten verplaatsen",
    "q": "We verplaatsen Sara van de container Users naar OU Gebruikers. Wat verandert er aan haar object?",
    "o": [
-    "Haar DN (het pad); haar SID en groepslidmaatschappen blijven gelijk",
-    "Ze krijgt een nieuwe SID, want ze staat op een nieuwe plaats",
-    "Ze verliest haar groepslidmaatschappen",
+    "Haar DN; SID en groepen blijven gelijk",
+    "Ze krijgt een nieuwe SID op de nieuwe plaats",
+    "Ze verliest al haar groepslidmaatschappen",
     "Niets: verplaatsen verandert in AD nooit iets"
    ],
    "a": 0,
@@ -122,7 +122,7 @@
    "t": "Ping is niet genoeg",
    "q": "CLIENT01 gebruikt per vergissing <b>192.168.50.99</b> als DNS-server (dat toestel bestaat niet). <code>ping 192.168.50.10</code> lukt. Wat geeft <code>nltest /dsgetdc:ad.brightlearning.test /force</code>?",
    "o": [
-    "Een fout: ERROR_NO_SUCH_DOMAIN, het domein wordt niet gevonden",
+    "Een fout: het domein wordt niet gevonden",
     "DC01, want de ping bewijst dat DC01 bereikbaar is",
     "DC01, maar pas na een time-out van 30 seconden",
     "Een fout over de tijd: de klokken lopen niet gelijk"
@@ -217,10 +217,10 @@
    "t": "Het GPO koppelen en het bericht zien",
    "q": "Het GPO is nu gekoppeld aan OU Computers en <code>gpupdate /force</code> meldt succes. Waar en wanneer zie je het aanmeldbericht?",
    "o": [
-    "Bij de volgende aanmelding, vóór je je wachtwoord intypt (afmelden of herstarten)",
+    "Op het aanmeldscherm, na afmelden of herstarten",
     "Meteen in een pop-up op het bureaublad van de huidige sessie",
     "Pas na 90 minuten, bij de volgende achtergrondvernieuwing",
-    "Nooit: berichten zijn gebruikersinstellingen en Sara staat niet in OU Computers"
+    "Nooit: Sara staat niet in OU Computers"
    ],
    "a": 0,
    "w": [
@@ -236,10 +236,10 @@
    "t": "Effectief beleid bewijzen",
    "q": "Wat toont <code>gpresult /r /scope computer</code> op <b>DC01</b> over BL - C - Aanmeldbericht?",
    "o": [
-    "Niets: het GPO staat niet in de lijst, want DC01 staat in OU Domain Controllers",
+    "Niets: het GPO staat helemaal niet in de lijst",
     "Het staat bij Applied, want DC01 is ook een computer",
     "Het staat bij ‘filtered out’ met de reden ‘Denied (Security)’",
-    "Het staat bij Applied, maar het bericht wordt niet getoond op een server"
+    "Het staat bij Applied, maar een server toont het niet"
    ],
    "a": 0,
    "w": [
@@ -466,27 +466,27 @@
    {
     "q": "Een GPO verschijnt niet in <code>gpresult</code> van CLIENT01. Wat controleer je <b>eerst</b>?",
     "o": [
-     "Waar het computerobject CLIENT01 in AD staat (DN/OU)",
+     "De OU waarin CLIENT01 staat",
      "De DNS-server van DC01",
-     "Of Sara lid is van GG_Opleiding",
-     "De link op Enforced zetten"
+     "De groepen van de gebruiker",
+     "Of de link Enforced is"
     ],
     "a": 0,
     "e": "Volg object → OU-pad → link → filtering → verwerking → resultaat. Zonder object in het pad van de link is er geen scope.",
     "w": [
      null,
      "DNS is een goede controle bij een domain join; hier kent de client het domein al.",
-     "Het computerdeel van een GPO hangt niet af van Sara's groepen.",
-     "Enforced lost niets op als het object buiten de scope staat, en maakt beleid moeilijker te voorspellen."
+     "Het computerdeel van een GPO hangt niet af van de groepen van de gebruiker.",
+     "Enforced lost niets op als het object buiten de scope staat."
     ]
    },
    {
     "q": "<code>ping 192.168.50.10</code> lukt, maar de domain join meldt dat het domein niet gevonden wordt. Wat is je eerste hypothese?",
     "o": [
-     "De client gebruikt een DNS-server die de AD-zone en SRV-records niet kent",
-     "De Windows-editie ondersteunt geen domain join",
+     "De client vraagt de verkeerde DNS-server",
+     "De editie ondersteunt geen domain join",
      "DC01 staat in de verkeerde OU",
-     "Het wachtwoord van AD\\Administrator is fout"
+     "Het wachtwoord van de joinaccount is fout"
     ],
     "a": 0,
     "e": "IP werkt, dus de volgende laag: Preferred DNS, SRV-query en nltest /dsgetdc.",

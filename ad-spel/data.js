@@ -62,7 +62,7 @@ window.ADDATA = {
     {
      "q": "Een gebruiker <b>jelle</b> op PC-ADMIN-01 én een gebruiker <b>jelle</b> op PC-ADMIN-02.",
      "a": "Lokaal",
-     "e": "Twee afzonderlijke accounts met elk een eigen wachtwoord en een eigen SID, ook al is de naam gelijk."
+     "e": "Twee afzonderlijke accounts, elk in de lokale accountdatabase van een andere pc, met een eigen wachtwoord. Ook hun SID verschilt, want die begint met de unieke SID van de computer (controleer met <code>whoami /user</code>). Zelfde naam, andere identiteit."
     },
     {
      "q": "Het profiel <b>C:\\Users\\sara.peeters</b> op CLIENT01.",
@@ -365,79 +365,41 @@ window.ADDATA = {
   }
  },
  "schema": {
-  "intro": "Je tekende de infrastructuur van BrightLearning. Benoem nu de relaties en de gegevens zoals ze in een goed diagram moeten staan.",
+  "intro": "Hieronder staat een schema van BrightLearning. De pijlen hebben een nummer in plaats van een label. Kies voor elke pijl wat er gebeurt, en vul de twee gegevens aan.",
+  "labels": [
+   "DNS-vraag",
+   "Antwoord (SRV)",
+   "Aanmelding",
+   "Biedt AD DS aan"
+  ],
   "fields": [
    {
-    "k": "r1",
-    "l": "Pijl CLIENT01 → DNS op DC01",
-    "o": [
-     "DNS-vraag",
-     "Aanmelding",
-     "Replicatie",
-     "Biedt AD DS aan"
-    ],
+    "k": "p1",
+    "l": "Pijl ① CLIENT01 → DC01",
     "a": "DNS-vraag",
-    "x": "CLIENT01 vraagt aan DNS op DC01 welke server de domeindiensten aanbiedt.",
-    "why": {
-     "Aanmelding": "Aanmelden kan pas nadat de client een DC gevonden heeft.",
-     "Replicatie": "Replicatie gebeurt tussen domain controllers, niet met een client.",
-     "Biedt AD DS aan": "Dat is de relatie tussen DC01 en het domein."
-    }
+    "x": "CLIENT01 vraagt aan de DNS-server op DC01 welke server de domeindiensten aanbiedt."
    },
    {
-    "k": "r2",
-    "l": "Pijl DNS → DC01",
-    "o": [
-     "Locatorrecord (SRV)",
-     "A-record van CLIENT01",
-     "DHCP-lease",
-     "GPO-link"
-    ],
-    "a": "Locatorrecord (SRV)",
-    "x": "Het SRV-record _ldap._tcp.dc._msdcs… verwijst naar DC01.",
-    "why": {
-     "A-record van CLIENT01": "Dat helpt anderen CLIENT01 vinden, niet de DC.",
-     "DHCP-lease": "In dit labo werken we met vaste adressen; DHCP speelt geen rol.",
-     "GPO-link": "Een GPO-link hoort bij beleid, niet bij DNS."
-    }
+    "k": "p2",
+    "l": "Pijl ② DC01 → CLIENT01",
+    "a": "Antwoord (SRV)",
+    "x": "DNS antwoordt met het locatorrecord _ldap._tcp.dc._msdcs…: dc01.ad.brightlearning.test."
    },
    {
-    "k": "r3",
-    "l": "Pijl domeingebruiker (op CLIENT01) → DC01",
-    "o": [
-     "Aanmelding: DC01 controleert de identiteit",
-     "DNS-vraag",
-     "Autorisatie op een map",
-     "Domain join"
-    ],
-    "a": "Aanmelding: DC01 controleert de identiteit",
-    "x": "Authenticatie: de DC controleert de domeinidentiteit.",
-    "why": {
-     "DNS-vraag": "De DNS-vraag komt van de computer, vóór de aanmelding.",
-     "Autorisatie op een map": "Autorisatie volgt pas na authenticatie, bij het openen van een resource.",
-     "Domain join": "De join is een handeling van de computer, niet van de gebruiker."
-    }
+    "k": "p3",
+    "l": "Pijl ③ Sara → DC01",
+    "a": "Aanmelding",
+    "x": "Sara meldt aan op CLIENT01; DC01 controleert haar domeinidentiteit (authenticatie)."
    },
    {
-    "k": "r4",
-    "l": "Pijl DC01 → ad.brightlearning.test",
-    "o": [
-     "Biedt AD DS aan",
-     "Is het domein",
-     "Is het forest",
-     "DNS-vraag"
-    ],
+    "k": "p4",
+    "l": "Pijl ④ DC01 → het domein",
     "a": "Biedt AD DS aan",
-    "x": "DC01 is een server waarop AD DS voor het domein draait. Het domein zelf is een logische structuur.",
-    "why": {
-     "Is het domein": "Een domein is geen server. Teken het als een kader.",
-     "Is het forest": "Het forest is de hoogste logische structuur, geen machine.",
-     "DNS-vraag": "Een DNS-vraag gaat van client naar DNS-server."
-    }
+    "x": "DC01 is een server waarop AD DS voor het domein draait. Het domein zelf is een logische structuur (het kader)."
    },
    {
-    "k": "d1",
-    "l": "DNS-server van CLIENT01",
+    "k": "d5",
+    "l": "⑤ DNS-server van CLIENT01",
     "o": [
      "192.168.50.10",
      "8.8.8.8",
@@ -445,82 +407,85 @@ window.ADDATA = {
      "127.0.0.1"
     ],
     "a": "192.168.50.10",
-    "x": "DC01 host de interne zone en de locatorrecords.",
+    "x": "DC01 (192.168.50.10) host de interne zone en de locatorrecords.",
     "why": {
      "8.8.8.8": "Een publieke DNS-server kent ad.brightlearning.test niet.",
-     "192.168.50.1": "Er is geen router of DNS-server op dat adres in het labo.",
-     "127.0.0.1": "Dat is CLIENT01 zelf; CLIENT01 is geen DNS-server."
+     "192.168.50.1": "In dit schema staat op dat adres niets: er is geen router of DNS-server.",
+     "127.0.0.1": "Dat is CLIENT01 zelf, en CLIENT01 is geen DNS-server."
     }
    },
    {
-    "k": "d2",
-    "l": "Waar staat het gebruikersobject sara.peeters?",
+    "k": "d6",
+    "l": "⑥ Waar wordt de account sara.peeters bewaard?",
     "o": [
-     "In het domein (de directory op DC01)",
-     "Op CLIENT01",
-     "In de DNS-zone",
+     "In het domein, op DC01",
+     "Lokaal op CLIENT01",
+     "In de DNS-zone van DC01",
      "In het forest, buiten het domein"
     ],
-    "a": "In het domein (de directory op DC01)",
-    "x": "De account wordt in het domein bewaard; DC01 biedt de directory aan.",
+    "a": "In het domein, op DC01",
+    "x": "De account staat in de directory van het domein; DC01 biedt die directory aan.",
     "why": {
-     "Op CLIENT01": "Op CLIENT01 staat alleen haar lokaal profiel na de eerste aanmelding.",
-     "In de DNS-zone": "DNS bevat records, geen gebruikersaccounts.",
+     "Lokaal op CLIENT01": "Op CLIENT01 staat alleen haar profiel, na de eerste aanmelding.",
+     "In de DNS-zone van DC01": "DNS bevat records, geen gebruikersaccounts.",
      "In het forest, buiten het domein": "Gebruikers horen in een domein van het forest."
     }
    }
   ],
   "fout": [
    {
-    "q": "Een student tekent <b>ad.brightlearning.test</b> als een tweede servericoon naast DC01. Wat is fout?",
+    "q": "Wat is er fout aan dit schema?",
     "o": [
-     "Een domein is een logische structuur: teken het als kader rond de inhoud",
-     "Niets, zolang het IP-adres erbij staat",
-     "Het domein hoort onder CLIENT01",
-     "Het domein hoort niet in het diagram"
+     "Het domein is als server getekend",
+     "DC01 heeft een verkeerd IP-adres",
+     "CLIENT01 gebruikt de verkeerde DNS",
+     "Sara staat bij de verkeerde pc"
     ],
     "a": 0,
-    "e": "Forest en domein zijn logische structuren (kaders). DC01 en CLIENT01 zijn machines.",
+    "e": "Een domein is een logische structuur. Teken het als kader rond DC01 en CLIENT01, niet als een machine met een eigen icoon.",
     "w": [
      null,
-     "Een domein heeft geen IP-adres; DC01 wel.",
-     "CLIENT01 wordt lid van het domein, niet omgekeerd.",
-     "Het domein is net een verplicht onderdeel."
-    ]
+     "192.168.50.10 is het IP-adres van DC01 uit de situatie.",
+     "CLIENT01 gebruikt 192.168.50.10: dat is DC01.",
+     "Sara meldt aan op CLIENT01: dat klopt."
+    ],
+    "v": "serverdomein"
    },
    {
-    "q": "Bij CLIENT01 staat: <i>DNS: 8.8.8.8, dan werkt internet ook</i>. Wat zeg je?",
+    "q": "Wat is er fout aan dit schema?",
     "o": [
-     "Fout: 8.8.8.8 kent de interne AD-zone niet; gebruik DC01 en laat DC01 doorsturen",
-     "Prima, internet is belangrijker",
-     "Zet 8.8.8.8 als voorkeurs-DNS en DC01 als alternatief",
-     "DNS is niet nodig voor AD"
+     "CLIENT01 heeft DNS 8.8.8.8",
+     "DC01 staat buiten het domein",
+     "Pijl ③ moet naar CLIENT01 wijzen",
+     "Het forest ontbreekt in het schema"
     ],
     "a": 0,
-    "e": "De domeinclient blijft de interne DNS gebruiken. Externe namen lost de interne DNS-server op via forwarders.",
+    "e": "8.8.8.8 kent de interne zone ad.brightlearning.test niet. CLIENT01 moet DC01 (192.168.50.10) als DNS-server gebruiken.",
     "w": [
      null,
-     "Dan vindt CLIENT01 het domein niet.",
-     "Windows kan de publieke server gebruiken en dan geen antwoord krijgen voor de interne zone.",
-     "AD is net afhankelijk van DNS om DC's te vinden."
-    ]
+     "DC01 staat binnen het domeinkader.",
+     "Bij aanmelden controleert DC01 de identiteit: de pijl wijst naar DC01.",
+     "Het buitenste kader is het forest."
+    ],
+    "v": "dns8"
    },
    {
-    "q": "Er staat één pijl CLIENT01 → DC01 met het label <i>ping</i>. Wat ontbreekt er vooral?",
+    "q": "Wat ontbreekt er vooral in dit schema?",
     "o": [
-     "De DNS-vraag en het locatorrecord waarmee CLIENT01 de DC vindt",
+     "De DNS-vraag en het SRV-antwoord",
      "Een tweede ping in de andere richting",
      "Het MAC-adres van DC01",
-     "Niets: ping bewijst dat het domein werkt"
+     "Een kader rond CLIENT01 alleen"
     ],
     "a": 0,
-    "e": "Teken relaties met betekenis: DNS-vraag, locatorrecord, aanmelding, biedt AD DS aan.",
+    "e": "Een ping zegt niets over hoe CLIENT01 het domein vindt. Teken de DNS-vraag en het antwoord met het SRV-record.",
     "w": [
      null,
      "Ping bewijst alleen IP-bereikbaarheid, in welke richting ook.",
-     "MAC-adressen zijn hier niet relevant.",
-     "Ping test geen DNS en geen AD-diensten."
-    ]
+     "MAC-adressen zijn voor AD niet relevant.",
+     "CLIENT01 staat al in het domeinkader."
+    ],
+    "v": "ping"
    }
   ]
  },
@@ -534,27 +499,27 @@ window.ADDATA = {
   "scopes": [
    {
     "k": "g1",
-    "l": "GG_Opleiding",
+    "l": "GG_Opleiding (alle docenten van Opleiding)",
     "a": "Global",
     "x": "Verzamelt accounts uit het eigen domein volgens hun afdeling."
    },
    {
     "k": "g2",
-    "l": "DL_Lesmateriaal_Read",
+    "l": "DL_Lesmateriaal_Read (leestoegang tot een map)",
     "a": "Domain Local",
     "x": "Stelt een toegangsniveau op een resource voor."
    },
    {
     "k": "g3",
-    "l": "GG_ServiceDesk",
+    "l": "GG_ServiceDesk (alle servicedeskmedewerkers)",
     "a": "Global",
     "x": "Een beheerrol: verzamelt de servicedeskaccounts."
    },
    {
     "k": "g4",
-    "l": "DL_Lesmateriaal_Modify",
+    "l": "DL_Lesmateriaal_Modify (wijzigtoegang tot een map)",
     "a": "Domain Local",
-    "x": "De groep die later Modify op de map krijgt."
+    "x": "De groep die Modify op de map krijgt."
    }
   ],
   "scopeOpts": [
@@ -565,99 +530,103 @@ window.ADDATA = {
   "why": {
    "Global": "Global verzamelt accounts met een gemeenschappelijke rol.",
    "Domain Local": "Domain Local verzamelt machtigingen op een resource.",
-   "Universal": "Universal is voor meerdere domeinen in een forest; in dit labo niet nodig."
+   "Universal": "Universal is voor meerdere domeinen in een forest; hier is er één domein."
   },
   "q": [
    {
-    "q": "Wie krijgt <b>Modify</b> op Lesmateriaal in de eindsituatie van de praktijkopdracht?",
+    "q": "Wie krijgt <b>Modify</b> op Lesmateriaal?",
     "o": [
-     "Sara, via GG_Opleiding → DL_Lesmateriaal_Modify",
+     "Alleen Sara",
+     "Sara en Youssef",
      "Sara, Youssef en Lina",
-     "Niemand: DL-groepen geven geen toegang",
-     "Lina, via GG_Administratie"
+     "Niemand: alleen Read"
     ],
     "a": 0,
     "e": "Sara → GG_Opleiding → DL_Lesmateriaal_Modify → Modify.",
     "w": [
      null,
-     "Youssef verhuisde naar Administratie en Lina zit daar: zij krijgen Read.",
-     "Zodra de machtiging op de map gekoppeld is, geven ze wel toegang.",
-     "GG_Administratie is lid van DL_Lesmateriaal_Read, niet Modify."
-    ]
+     "Youssef zit in GG_Administratie en krijgt dus Read.",
+     "Youssef en Lina zitten in GG_Administratie: zij krijgen Read.",
+     "DL_Lesmateriaal_Modify heeft Modify, en GG_Opleiding zit erin."
+    ],
+    "s": "<b>Situatie</b><br>GG_Opleiding: Sara · GG_Administratie: Youssef, Lina<br>GG_Opleiding is lid van DL_Lesmateriaal_Modify<br>GG_Administratie is lid van DL_Lesmateriaal_Read<br>Op de map Lesmateriaal: DL_Lesmateriaal_Modify = Modify · DL_Lesmateriaal_Read = Read"
    },
    {
-    "q": "Youssef verhuist. Je haalt hem uit GG_Opleiding en voegt hem toe aan GG_Administratie. Welke toegang krijgt hij?",
+    "q": "Sara verhuist naar Administratie. Je haalt haar uit GG_Opleiding en voegt haar toe aan GG_Administratie. Welke toegang heeft ze na opnieuw aanmelden?",
     "o": [
-     "Read, via GG_Administratie → DL_Lesmateriaal_Read",
-     "Modify én Read",
-     "Modify, want dat had hij al",
-     "Geen, want zijn Department staat nog op Opleiding"
+     "Read",
+     "Modify",
+     "Read en Modify",
+     "Geen toegang"
     ],
     "a": 0,
-    "e": "Mover goed afgehandeld: alleen de nieuwe toegang blijft.",
+    "e": "Mover goed afgehandeld: alleen de nieuwe toegang blijft. Een nieuw token krijgt ze pas na opnieuw aanmelden.",
     "w": [
      null,
+     "Ze is geen lid meer van GG_Opleiding, dus ook niet van DL_Lesmateriaal_Modify.",
      "Het oude lidmaatschap is weg; rechten stapelen zich niet op.",
-     "Toegang volgt het huidige lidmaatschap, niet het verleden (na een nieuwe aanmelding).",
-     "Een attribuut verleent geen toegang."
-    ]
+     "Via GG_Administratie → DL_Lesmateriaal_Read heeft ze Read."
+    ],
+    "s": "<b>Situatie</b><br>GG_Opleiding: Sara · GG_Administratie: Youssef, Lina<br>GG_Opleiding is lid van DL_Lesmateriaal_Modify<br>GG_Administratie is lid van DL_Lesmateriaal_Read<br>Op de map Lesmateriaal: DL_Lesmateriaal_Modify = Modify · DL_Lesmateriaal_Read = Read"
    },
    {
-    "q": "Sara is lid van GG_Opleiding, maar er is nog geen gedeelde map. Heeft ze nu toegang tot Lesmateriaal?",
+    "q": "Heeft Sara toegang tot Lesmateriaal?",
     "o": [
-     "Nee: een groep geeft pas toegang als er een machtiging aan gekoppeld is",
-     "Ja, via AGDLP",
-     "Ja, want ze staat in OU Gebruikers",
-     "Alleen Read"
+     "Nee",
+     "Ja, Modify",
+     "Ja, Read",
+     "Ja, via haar OU"
     ],
     "a": 0,
-    "e": "Lidmaatschap ≠ toegang. Controleer altijd beide kanten: groepen én machtigingen op de resource.",
+    "e": "Lidmaatschap ≠ toegang. Een groep geeft pas toegang als er een machtiging aan gekoppeld is.",
     "w": [
      null,
-     "AGDLP is de structuur; zonder P (permission) geen toegang.",
-     "Een OU-locatie geeft geen toegang tot resources.",
-     "Er is nog geen enkele machtiging."
-    ]
+     "Er is nog geen keten naar een machtiging (geen DL, geen P).",
+     "Er is nog geen enkele machtiging op de map.",
+     "Een OU-locatie geeft geen toegang tot resources."
+    ],
+    "s": "<b>Situatie</b><br>Sara is lid van GG_Opleiding.<br>GG_Opleiding is nog nergens lid van.<br>Op de map Lesmateriaal staat nog geen enkele machtiging voor een DL-groep."
    },
    {
-    "q": "Je wilt een mailinglijst voor nieuws. Welk groepstype?",
+    "q": "Je wilt een mailinglijst voor nieuwsberichten, zonder toegangsrechten. Welk groepstype kies je?",
     "o": [
      "Distribution",
-     "Security, Domain Local",
      "Security, Global",
-     "Een OU"
+     "Security, Domain Local",
+     "Een OU met de leden"
     ],
     "a": 0,
     "e": "Distribution = e-maildistributie, geen machtigingen.",
     "w": [
      null,
-     "Security groups zijn voor rechten; voor e-mail alleen volstaat distribution.",
-     "Kan technisch ook mail ontvangen, maar het doel is hier geen toegang.",
-     "Een OU verstuurt geen mail."
+     "Security groups zijn voor rechten; voor enkel e-mail volstaat distribution.",
+     "Security groups zijn voor rechten; voor enkel e-mail volstaat distribution.",
+     "Een OU verstuurt geen mail en heeft geen leden."
     ]
    },
    {
-    "q": "Een collega voegt Lina rechtstreeks toe aan DL_Lesmateriaal_Modify ‘omdat het sneller is’. Waarom is dat geen goed idee?",
+    "q": "Een collega maakt Lina rechtstreeks lid van DL_Lesmateriaal_Modify ‘omdat het sneller is’. Wat is het gevolg?",
     "o": [
-     "De rol (GG_) en de toegang (DL_) lopen door elkaar: bij een wissel vergeet je die uitzondering",
-     "Domain local groups kunnen geen gebruikers bevatten",
-     "Lina verliest dan haar Read-toegang",
-     "Het werkt pas na een herstart van DC01"
+     "Lina krijgt Modify buiten haar rol om",
+     "Lina verliest haar leestoegang",
+     "Windows weigert de wijziging",
+     "Er verandert niets aan haar toegang"
     ],
     "a": 0,
-    "e": "Geen losse uitzonderingen: wie hoort bij de rol beheer je in de global group.",
+    "e": "Een losse uitzondering: bij een volgende wissel vergeet je ze makkelijk. Wie bij een rol hoort, beheer je in de global group.",
     "w": [
      null,
-     "Technisch kan het wel; het probleem is beheersbaarheid.",
      "Read blijft via GG_Administratie bestaan; ze krijgt er Modify bij.",
-     "Een nieuwe aanmelding van Lina volstaat."
-    ]
+     "Windows laat het technisch toe.",
+     "Ze krijgt er wel Modify bij, na opnieuw aanmelden."
+    ],
+    "s": "<b>Situatie</b><br>GG_Opleiding: Sara · GG_Administratie: Youssef, Lina<br>GG_Opleiding is lid van DL_Lesmateriaal_Modify<br>GG_Administratie is lid van DL_Lesmateriaal_Read<br>Op de map Lesmateriaal: DL_Lesmateriaal_Modify = Modify · DL_Lesmateriaal_Read = Read"
    }
   ]
  },
  "diag": {
   "order": [
-   "IP-configuratie: juiste adapter, juist subnet, geen APIPA",
+   "IP-configuratie: juiste adapter, subnet, geen APIPA",
    "DNS-server wijst naar DC01",
    "A-record: dc01.ad.brightlearning.test",
    "SRV-record: _ldap._tcp.dc._msdcs…",
@@ -666,28 +635,28 @@ window.ADDATA = {
   ],
   "q": [
    {
-    "q": "Waarom staat de DNS-server vóór het SRV-record?",
+    "q": "Waarom controleer je de DNS-server vóór het SRV-record?",
     "o": [
-     "Een SRV-query heeft pas zin als je de juiste DNS-server vraagt",
-     "Dat is alfabetisch",
-     "SRV-records bestaan alleen op publieke DNS-servers",
-     "Omdat SRV sneller is"
+     "Een SRV-query aan de verkeerde server zegt niets",
+     "Omdat SRV-records alleen op publieke servers staan",
+     "Omdat de volgorde alfabetisch is",
+     "Omdat een SRV-query veel langer duurt"
     ],
     "a": 0,
     "e": "Werk van onder naar boven: iedere laag steunt op de vorige.",
     "w": [
      null,
-     "De volgorde volgt de afhankelijkheden, niet het alfabet.",
      "Integendeel: alleen de interne AD-DNS kent ze.",
-     "Snelheid speelt geen rol."
+     "De volgorde volgt de afhankelijkheden, niet het alfabet.",
+     "Duur speelt geen rol."
     ]
    },
    {
-    "q": "nslookup dc01.ad.brightlearning.test lukt. Wat weet je nog <b>niet</b>?",
+    "q": "<code>nslookup dc01.ad.brightlearning.test</code> lukt. Wat weet je daarmee nog <b>niet</b>?",
     "o": [
-     "Of de domeindiensten (SRV) gevonden worden",
-     "Of de DNS-server antwoordt",
-     "Of de naam van DC01 opgelost wordt",
+     "Of de domeindiensten gevonden worden",
+     "Of de DNS-server van de client antwoordt",
+     "Of de naam dc01 opgelost wordt",
      "Welk IP-adres DC01 heeft"
     ],
     "a": 0,
@@ -700,37 +669,37 @@ window.ADDATA = {
     ]
    },
    {
-    "q": "Alles tot en met nltest is groen, maar de aanmelding mislukt nog. Wat controleer je nu?",
+    "q": "IP, DNS, A-record, SRV-record en nltest zijn in orde, maar aanmelden mislukt. Wat controleer je nu?",
     "o": [
-     "Datum, tijd en tijdzone (Kerberos is tijdgevoelig)",
-     "Opnieuw de ping",
-     "De Windows-editie",
-     "De reverse zone"
+     "Datum, tijd en tijdzone",
+     "Opnieuw de ping naar de DC",
+     "De Windows-editie van de client",
+     "De reverse zone op de DC"
     ],
     "a": 0,
-    "e": "Controleer tijd vóór je diep gaat troubleshooten.",
+    "e": "Kerberos is tijdgevoelig: controleer de tijd vóór je diep gaat troubleshooten.",
     "w": [
      null,
      "De netwerklaag is al bewezen.",
-     "Die controleerde je vóór de join.",
+     "Die controleer je vóór de join.",
      "Een reverse zone is niet nodig om aan te melden."
     ]
    },
    {
-    "q": "Wanneer neem je een <b>go</b>-beslissing voor de join?",
+    "q": "Wanneer neem je een <b>go</b>-beslissing voor de domain join?",
     "o": [
-     "Als editie, naam, IP, DNS, SRV, nltest, tijd en rechten gecontroleerd zijn",
-     "Zodra de ping lukt",
-     "Zodra internet werkt",
+     "Als alle controles van de lijst groen zijn",
+     "Zodra een ping naar de DC lukt",
+     "Zodra websites openen op de client",
      "Na de eerste foutmelding van de wizard"
     ],
     "a": 0,
-    "e": "Een join uitvoeren met een gekende fout maakt het alleen moeilijker.",
+    "e": "Editie, naam, IP, DNS, SRV, nltest, tijd en rechten: pas dan go.",
     "w": [
      null,
      "Ping bewijst alleen IP.",
      "Internet bewijst niets over de AD-zone.",
-     "Dan maak je de foutanalyse net moeilijker."
+     "Een join uitvoeren met een gekende fout maakt het alleen moeilijker."
     ]
    }
   ]
@@ -739,13 +708,13 @@ window.ADDATA = {
   {
    "q": "Wat is het eerste probleem?",
    "o": [
-    "Er is geen geldige IP-configuratie (APIPA): eerst IPv4 vast instellen",
+    "Er is geen geldig IPv4-adres",
     "De SRV-records ontbreken",
-    "De tijd wijkt af",
-    "CLIENT01 is al domeinlid"
+    "De klok van de client wijkt af",
+    "De client is al domeinlid"
    ],
    "a": 0,
-   "e": "169.254 = geen geldige configuratie. Laag 1 eerst.",
+   "e": "169.254 = geen geldige configuratie (APIPA). Laag 1 eerst: IPv4 instellen.",
    "w": [
     null,
     "Zo ver kom je nog niet: zonder geldig adres bereikt de client niets.",
@@ -757,31 +726,31 @@ window.ADDATA = {
   {
    "q": "Wat zegt deze uitvoer?",
    "o": [
-    "De client vraagt een publieke DNS-server die de interne zone niet kent",
-    "DC01 staat uit",
+    "De client vraagt een publieke DNS-server",
+    "De domain controller DC01 staat uit",
     "Het A-record van DC01 is verwijderd",
-    "De zone heet anders"
+    "De zone heeft een andere naam gekregen"
    ],
    "a": 0,
-   "e": "Kijk altijd bovenaan wélke server antwoordt.",
+   "e": "Kijk altijd bovenaan wélke server antwoordt. 8.8.8.8 kent de interne zone niet.",
    "w": [
     null,
-    "8.8.8.8 antwoordt wel; het weet gewoon niets van de interne zone.",
-    "Je vraagt de verkeerde server: dat kan je niet besluiten.",
-    "Je vraagt de verkeerde server: dat kan je niet besluiten."
+    "Dat kan je niet besluiten: je vraagt de verkeerde server.",
+    "Dat kan je niet besluiten: je vraagt de verkeerde server.",
+    "Dat kan je niet besluiten: je vraagt de verkeerde server."
    ],
    "out": "> nslookup dc01.ad.brightlearning.test\nServer:  dns.google\nAddress:  8.8.8.8\n\n*** dns.google can't find dc01.ad.brightlearning.test: Non-existent domain"
   },
   {
    "q": "Waarom staat er <b>UnKnown</b>?",
    "o": [
-    "Er is geen PTR-record (reverse zone) voor 192.168.50.10",
-    "DC01 antwoordt niet",
-    "De naam dc01 bestaat niet",
-    "De client is geen domeinlid"
+    "Er is geen PTR-record voor 192.168.50.10",
+    "De DNS-server antwoordt niet op tijd",
+    "De naam dc01 bestaat niet in de zone",
+    "De client is nog geen domeinlid"
    ],
    "a": 0,
-   "e": "UnKnown gaat over de naam van de DNS-server, niet over je vraag.",
+   "e": "nslookup zoekt de naam van zijn DNS-server op via een reverse zone. UnKnown gaat over die naam, niet over je vraag.",
    "w": [
     null,
     "Hij antwoordt wel: de naam werd opgelost.",
@@ -793,9 +762,9 @@ window.ADDATA = {
   {
    "q": "Welke controle doe je eerst?",
    "o": [
-    "Welke DNS-server de client gebruikt (ipconfig /all) en de SRV-query",
+    "De DNS-server en de SRV-query",
     "Test-ComputerSecureChannel",
-    "gpresult /r",
+    "gpresult /r /scope computer",
     "Het wachtwoord van Administrator"
    ],
    "a": 0,
@@ -811,28 +780,28 @@ window.ADDATA = {
   {
    "q": "Wat stel je vast?",
    "o": [
-    "Je bent aangemeld met een lokale account, niet met Sara's domeinaccount",
-    "Alles in orde: dit is Sara",
-    "CLIENT01 is geen domeinlid meer",
-    "Sara heeft een tijdelijk profiel"
+    "Je bent aangemeld met een lokale account",
+    "Je bent aangemeld met Sara's domeinaccount",
+    "CLIENT01 is uit het domein gehaald",
+    "Sara heeft een tijdelijk profiel gekregen"
    ],
    "a": 0,
    "e": "Zelfde naam, andere identiteit. Meld aan met sara.peeters@ad.brightlearning.test of AD\\sara.peeters.",
    "w": [
     null,
-    "De accountbron is CLIENT01, niet AD.",
-    "Dat kan je hier niet uit afleiden: er kan ook gewoon een lokale account met die naam bestaan.",
+    "De accountbron vóór de backslash is CLIENT01, niet AD.",
+    "Dat kan je hier niet uit afleiden: er kan gewoon een lokale account met die naam bestaan.",
     "Dat zie je niet in whoami."
    ],
    "out": "> whoami\nclient01\\sara.peeters"
   },
   {
-   "q": "Wat doe je niet als eerste?",
+   "q": "Wat doe je níét als eerste?",
    "o": [
-    "Meteen het computerobject verwijderen en opnieuw joinen",
-    "DNS en tijd controleren",
+    "Meteen uit het domein halen en opnieuw joinen",
+    "DNS en de tijd van de client controleren",
     "Het computerobject in ADUC onderzoeken",
-    "Lokaal aanmelden met .\\lokalebeheerder voor diagnose"
+    "Lokaal aanmelden voor verdere diagnose"
    ],
    "a": 0,
    "e": "Test eerst, herstel niet blind. Daarna eventueel -Repair met bevoegde credentials.",
@@ -847,28 +816,29 @@ window.ADDATA = {
   {
    "q": "Waarom ontbreekt BL - C - Aanmeldbericht?",
    "o": [
-    "CLIENT01 staat in de container Computers, buiten OU BrightLearning › Computers",
+    "CLIENT01 staat in de verkeerde plaats",
     "Het GPO is uitgeschakeld",
-    "Sara is geen lid van GG_Opleiding",
-    "De link is Enforced"
+    "De gebruiker zit in de verkeerde groep",
+    "De link staat op Enforced"
    ],
    "a": 0,
-   "e": "Lees de DN in gpresult: CN=Computers is niet de OU waar de link op staat.",
+   "e": "Lees de DN in gpresult: CN=Computers is de standaardcontainer, niet de OU waar de link op staat.",
    "w": [
     null,
     "Dan zou het GPO in scope komen en als ‘filtered out’ verschijnen.",
-    "Computerbeleid hangt niet van Sara af.",
+    "Computerbeleid hangt niet van de groepen van de gebruiker af.",
     "Enforced zou het net sterker toepassen."
    ],
+   "s": "<b>Situatie</b><br>BL - C - Aanmeldbericht is gekoppeld aan <b>OU=Computers,OU=BrightLearning</b>,DC=ad,DC=brightlearning,DC=test.",
    "out": "COMPUTER SETTINGS\n    CN=CLIENT01,CN=Computers,DC=ad,DC=brightlearning,DC=test\n    Applied Group Policy Objects\n        Default Domain Policy"
   },
   {
    "q": "Wat is de oorzaak?",
    "o": [
-    "De link op OU Computers is uitgeschakeld",
+    "De link is uitgeschakeld",
     "Het GPO bevat geen instellingen",
-    "CLIENT01 staat in de verkeerde OU",
-    "Security Filtering weigert CLIENT01"
+    "De computer staat in de verkeerde OU",
+    "Security Filtering weigert de computer"
    ],
    "a": 0,
    "e": "Lees de reden: Disabled (Link) → Link Enabled terug aanzetten.",
@@ -885,13 +855,13 @@ window.ADDATA = {
   {
    "q": "Bewering: <b>CLIENT01 is domeinlid</b>. Welk bewijs is het sterkst?",
    "o": [
-    "systeminfo toont Domain: ad.brightlearning.test én het object CLIENT01 bestaat één keer in AD",
-    "ping dc01 lukt",
-    "Op het aanmeldscherm staat ‘Other user’",
-    "nslookup vindt dc01"
+    "systeminfo + het object in ADUC",
+    "Een ping naar dc01 die lukt",
+    "‘Other user’ op het aanmeldscherm",
+    "nslookup vindt dc01 zonder fout"
    ],
    "a": 0,
-   "e": "Bewijs aan clientzijde én in AD: beide kanten van de relatie.",
+   "e": "systeminfo toont Domain: ad.brightlearning.test en het object CLIENT01 bestaat in AD: bewijs aan beide kanten van de relatie.",
    "w": [
     null,
     "Ping lukt ook vanaf een werkgroepcomputer.",
@@ -902,8 +872,8 @@ window.ADDATA = {
   {
    "q": "Bewering: <b>de secure channel werkt</b>.",
    "o": [
-    "Test-ComputerSecureChannel geeft True",
-    "Sara kan aanmelden",
+    "Test-ComputerSecureChannel → True",
+    "Sara kan zich aanmelden",
     "CLIENT01 staat in OU Computers",
     "nltest /dsgetdc vindt DC01"
    ],
@@ -917,15 +887,15 @@ window.ADDATA = {
    ]
   },
   {
-   "q": "Bewering: <b>ik ben aangemeld als Sara's domeinidentiteit</b>.",
+   "q": "Bewering: <b>ik ben aangemeld met Sara's domeinaccount</b>.",
    "o": [
-    "whoami toont ad\\sara.peeters en whoami /user een domein-SID",
+    "whoami → ad\\sara.peeters",
     "Het bureaublad toont ‘Sara’",
     "%USERNAME% is sara.peeters",
-    "Ik heb het wachtwoord van Sara ingetypt"
+    "Ik typte Sara's wachtwoord"
    ],
    "a": 0,
-   "e": "De accountbron (AD\\) en de SID tellen.",
+   "e": "De accountbron (AD\\) telt; whoami /user toont bovendien de domein-SID.",
    "w": [
     null,
     "Een weergavenaam bewijst geen accountbron.",
@@ -936,13 +906,13 @@ window.ADDATA = {
   {
    "q": "Bewering: <b>Sara heeft een eigen domeinprofiel</b>.",
    "o": [
-    "%USERPROFILE% verwijst naar C:\\Users\\sara.peeters en ProfileList bevat haar domein-SID",
-    "Er staat een map Documents",
-    "Ze kan Notepad openen",
-    "Haar bureaubladachtergrond is blauw"
+    "ProfileList bevat haar domein-SID",
+    "Er staat een map Documents in haar profiel",
+    "Ze kan Kladblok openen",
+    "Haar achtergrond is blauw"
    ],
    "a": 0,
-   "e": "Profiel en identiteit worden via de SID gekoppeld.",
+   "e": "Profiel en identiteit worden via de SID gekoppeld; %USERPROFILE% wijst naar C:\\Users\\sara.peeters.",
    "w": [
     null,
     "Elk profiel heeft een map Documents.",
@@ -953,13 +923,13 @@ window.ADDATA = {
   {
    "q": "Bewering: <b>Sara is niet onbedoeld lokale administrator</b>.",
    "o": [
-    "net localgroup Administrators toont Sara niet (en geen groep waarvan ze lid is)",
-    "Ze heeft geen UAC-melding gezien",
+    "net localgroup Administrators",
+    "Ze kreeg geen UAC-melding",
     "Ze staat in OU Gebruikers",
     "whoami /upn toont haar UPN"
    ],
    "a": 0,
-   "e": "Negatieve controle: ook lidmaatschap via een groep telt.",
+   "e": "Negatieve controle: Sara (en geen groep waarvan ze lid is) mag niet in de lijst staan.",
    "w": [
     null,
     "Geen melding zien bewijst niets: ze heeft het misschien niet geprobeerd.",
@@ -970,10 +940,10 @@ window.ADDATA = {
   {
    "q": "Bewering: <b>BL - C - Aanmeldbericht wordt toegepast</b>.",
    "o": [
-    "gpresult /r /scope computer toont het bij Applied én het bericht verschijnt",
+    "gpresult: Applied + bericht zichtbaar",
     "Het GPO bestaat in GPMC",
     "De link staat op OU Computers",
-    "gpupdate /force meldt succes"
+    "gpupdate /force meldt succes voor de computer"
    ],
    "a": 0,
    "e": "RSoP op het eindpunt + zichtbaar resultaat.",
@@ -990,9 +960,9 @@ window.ADDATA = {
    "q": "Krijgt CLIENT01 het aanmeldbericht?",
    "o": [
     "Ja",
-    "Nee, want Sara staat in OU Gebruikers",
+    "Nee, Sara staat in OU Gebruikers",
     "Alleen voor beheerders",
-    "Pas na Enforced"
+    "Alleen met Enforced"
    ],
    "a": 0,
    "e": "Object in het pad van de link + juiste helft = in scope.",
@@ -1007,28 +977,28 @@ window.ADDATA = {
   {
    "q": "Krijgt Sara de bureaubladinstelling?",
    "o": [
-    "Nee: User Configuration volgt het gebruikersobject",
-    "Ja: ze meldt aan op een computer in OU Computers",
-    "Ja, maar pas na een herstart",
-    "Alleen als CLIENT01 Enforced is"
+    "Nee",
+    "Ja, via de computer",
+    "Ja, na een herstart",
+    "Alleen met Enforced"
    ],
    "a": 0,
-   "e": "Koppel gebruikersbeleid aan OU Gebruikers.",
+   "e": "User Configuration volgt het gebruikersobject: koppel gebruikersbeleid aan OU Gebruikers.",
    "w": [
     null,
     "Dat zou enkel met loopback processing gelden.",
     "Een herstart verandert de scope niet.",
-    "Enforced is een eigenschap van een link, niet van een computer."
+    "Enforced is een eigenschap van een link en verandert de scope niet."
    ],
-   "s": "BL - U - Bureaublad (User Configuration) hangt aan <b>OU Computers</b>. Sara staat in OU Gebruikers en meldt aan op CLIENT01."
+   "s": "BL - U - Bureaublad (User Configuration) hangt aan <b>OU Computers</b>. Sara staat in OU Gebruikers en meldt aan op CLIENT01, die in OU Computers staat."
   },
   {
    "q": "Krijgt DC01 het bericht?",
    "o": [
     "Nee",
-    "Ja, alle computers in het domein",
-    "Ja, want DC01 is de domain controller",
-    "Alleen na gpupdate op DC01"
+    "Ja, zoals elke computer",
+    "Ja, als domain controller",
+    "Alleen na gpupdate"
    ],
    "a": 0,
    "e": "Negatieve controle geslaagd.",
@@ -1044,8 +1014,8 @@ window.ADDATA = {
    "q": "Welke objecten ontvangen het?",
    "o": [
     "Geen enkel",
-    "Alle objecten in het domein",
-    "Alleen DC01",
+    "Alle objecten",
+    "Alleen de DC's",
     "Alleen de maker"
    ],
    "a": 0,
@@ -1053,7 +1023,7 @@ window.ADDATA = {
    "w": [
     null,
     "Domeinbreed geldt enkel met een link op het domein.",
-    "Ook DC01 heeft een link in zijn pad nodig.",
+    "Ook een DC heeft een link in zijn pad nodig.",
     "GPO's werken niet per maker."
    ],
    "s": "Een GPO bestaat met instellingen, maar is <b>nergens gekoppeld</b>."
@@ -1061,28 +1031,28 @@ window.ADDATA = {
   {
    "q": "Welke achtergrond krijgt Sara?",
    "o": [
-    "Groen: de OU wordt later verwerkt en wint bij een conflict",
-    "Blauw: het domein is belangrijker",
+    "Groen",
+    "Blauw",
     "Afwisselend",
-    "Geen: conflicten heffen elkaar op"
+    "Geen van beide"
    ],
    "a": 0,
-   "e": "LSDOU: Local → Site → Domain → OU.",
+   "e": "LSDOU: Local → Site → Domain → OU. De OU wordt later verwerkt en wint bij een conflict.",
    "w": [
     null,
     "Zonder Enforced wint het niveau dichter bij het object.",
     "Er geldt één winnende waarde.",
     "Er wint één waarde volgens de verwerkingsvolgorde."
    ],
-   "s": "Aan het domein hangt GPO A (bureaubladachtergrond <b>blauw</b>). Aan OU Gebruikers hangt GPO B (achtergrond <b>groen</b>). Sara staat in OU Gebruikers."
+   "s": "Aan het domein hangt GPO A (bureaubladachtergrond <b>blauw</b>). Aan OU Gebruikers hangt GPO B (achtergrond <b>groen</b>). Sara staat in OU Gebruikers. Geen enkele link is Enforced."
   },
   {
-   "q": "Welke achtergrond krijgt Sara nu?",
+   "q": "Welke achtergrond krijgt Sara?",
    "o": [
     "Blauw",
     "Groen",
-    "Geen",
-    "Groen, tenzij Sara herstart"
+    "Geen van beide",
+    "Groen, na een herstart"
    ],
    "a": 0,
    "e": "Enforced: onderliggende containers kunnen de conflicterende instelling niet overschrijven.",
@@ -1092,15 +1062,15 @@ window.ADDATA = {
     "Er blijft een winnende waarde.",
     "Herstarten verandert de voorrang niet."
    ],
-   "s": "Zelfde situatie, maar de link van GPO A op het domein staat op <b>Enforced</b>."
+   "s": "Aan het domein hangt GPO A (achtergrond <b>blauw</b>), en die link staat op <b>Enforced</b>. Aan OU Gebruikers hangt GPO B (achtergrond <b>groen</b>). Sara staat in OU Gebruikers."
   },
   {
    "q": "Krijgt Sara de instellingen van GPO A?",
    "o": [
     "Nee",
     "Ja",
-    "Alleen de computerhelft",
-    "Alleen als ze lid is van Domain Users"
+    "Alleen het computerdeel",
+    "Alleen via Domain Users"
    ],
    "a": 0,
    "e": "Behalve enforced links. Gebruik beide uitzonderingen spaarzaam.",
@@ -1110,13 +1080,13 @@ window.ADDATA = {
     "Block Inheritance geldt voor beide helften.",
     "Groepslidmaatschap heft Block Inheritance niet op."
    ],
-   "s": "Op OU BrightLearning staat <b>Block Inheritance</b>. De domeinlink van GPO A is niet Enforced."
+   "s": "Aan het domein hangt GPO A (niet Enforced). Op OU BrightLearning staat <b>Block Inheritance</b>. Sara staat in OU BrightLearning › Gebruikers."
   },
   {
    "q": "Wat toont gpresult op CLIENT01?",
    "o": [
-    "Het GPO bij ‘filtered out’, met Disabled (GPO)",
-    "Het GPO bij Applied",
+    "‘Filtered out’: Disabled (GPO)",
+    "Het GPO staat bij Applied",
     "Niets: het GPO is verwijderd",
     "Een fout in Event Viewer"
    ],
@@ -1128,33 +1098,33 @@ window.ADDATA = {
     "Uitschakelen is niet verwijderen.",
     "Het is geen verwerkingsfout maar een bewuste instelling."
    ],
-   "s": "BL - C - Aanmeldbericht hangt aan OU Computers, maar in GPO Status is <b>Computer configuration settings disabled</b>."
+   "s": "BL - C - Aanmeldbericht hangt aan OU Computers, waarin CLIENT01 staat. In GPO Status staat <b>Computer configuration settings disabled</b>."
   }
  ],
  "exit1": [
   {
    "q": "Waarom is DNS essentieel voor Active Directory?",
    "o": [
-    "Clients vinden via SRV-records welke server de domeindiensten aanbiedt",
-    "DNS bewaart de gebruikersaccounts en wachtwoorden",
-    "Zonder DNS kan je DC01 niet pingen",
-    "DNS deelt de IP-adressen uit aan de clients"
+    "Clients vinden er de domain controllers mee",
+    "DNS bewaart de accounts en wachtwoorden",
+    "Zonder DNS kan je de DC niet pingen",
+    "DNS deelt IP-adressen uit aan clients"
    ],
    "a": 0,
-   "e": "AD DS gebruikt DNS om domain controllers en domeindiensten te lokaliseren (_ldap._tcp.dc._msdcs…). Een verkeerde DNS-server is een van de meest voorkomende oorzaken van problemen.",
+   "e": "AD DS gebruikt DNS om domain controllers en domeindiensten te lokaliseren (SRV-records _ldap._tcp.dc._msdcs…). Een verkeerde DNS-server is een van de meest voorkomende oorzaken van problemen.",
    "w": [
     null,
     "Accounts staan in de directory van AD DS, niet in DNS.",
-    "Pingen op IP-adres werkt ook zonder DNS; dat bewees demo 7.",
-    "Dat is DHCP."
+    "Pingen op IP-adres werkt ook zonder DNS.",
+    "Dat doet DHCP."
    ]
   },
   {
-   "q": "Waarom maak je een eigen OU in plaats van alles in Users te laten?",
+   "q": "Waarom maak je een eigen OU in plaats van alles in de container Users te laten?",
    "o": [
-    "Om beheer te delegeren en GPO's gericht te koppelen",
-    "Om gebruikers toegang te geven tot een gedeelde map",
-    "Omdat een gebruiker in Users zich niet kan aanmelden",
+    "Om beheer te delegeren en GPO's te koppelen",
+    "Om gebruikers toegang te geven tot een map",
+    "Omdat gebruikers in Users niet kunnen aanmelden",
     "Om het organigram exact na te bouwen"
    ],
    "a": 0,
@@ -1169,9 +1139,9 @@ window.ADDATA = {
   {
    "q": "Waarom ken je rechten toe aan groepen en niet rechtstreeks aan gebruikers?",
    "o": [
-    "Bij een personeelswissel pas je alleen het groepslidmaatschap aan",
+    "Bij een personeelswissel pas je één lidmaatschap aan",
     "Gebruikers kunnen technisch geen rechten krijgen",
-    "Groepen maken aanmelden sneller",
+    "Groepen maken het aanmelden sneller",
     "Zo hoeft een gebruiker geen wachtwoord te hebben"
    ],
    "a": 0,
@@ -1184,10 +1154,10 @@ window.ADDATA = {
    ]
   },
   {
-   "q": "Je wil dat de servicedesk wachtwoorden kan resetten. Waar start je de Delegation of Control Wizard?",
+   "q": "De servicedesk (GG_ServiceDesk) mag de wachtwoorden van de gewone medewerkers resetten, maar niet die van de beheeraccounts. Waar start je de Delegation of Control Wizard?",
    "o": [
-    "Op OU BrightLearning › Gebruikers",
-    "Op het domein ad.brightlearning.test",
+    "Op OU Gebruikers",
+    "Op het domein",
     "Op de groep GG_ServiceDesk",
     "Op de container Users"
    ],
@@ -1195,27 +1165,29 @@ window.ADDATA = {
    "e": "Start de wizard op de OU waarop de taak moet gelden. Least privilege: precies die taak, precies die scope.",
    "w": [
     null,
-    "Dan wordt de scope het hele domein, inclusief beheeraccounts: te breed.",
+    "Dan wordt de scope het hele domein, inclusief de beheeraccounts: te breed.",
     "De groep ontvangt de rechten; de scope is de plaats waar je de wizard start.",
-    "Daar staan de ingebouwde accounts; je eigen gebruikers staan in OU Gebruikers."
-   ]
+    "Daar staan de beheeraccounts, niet de gewone medewerkers."
+   ],
+   "s": "<b>Situatie</b><br>ad.brightlearning.test<br>├ Users (container): Administrator, Guest, krbtgt<br>└ OU BrightLearning<br>&nbsp;&nbsp;&nbsp;├ OU Gebruikers: Sara, Youssef, Lina<br>&nbsp;&nbsp;&nbsp;└ OU Groepen: GG_ServiceDesk, …"
   },
   {
-   "q": "Youssef verhuist van Opleiding naar Administratie. Wat is voldoende om zijn toegang aan te passen?",
+   "q": "Youssef verhuist naar Administratie en mag voortaan alleen nog lezen in Lesmateriaal. Wat moet je minstens doen?",
    "o": [
-    "Uit GG_Opleiding halen en aan GG_Administratie toevoegen (en Department bijwerken)",
-    "Alleen het attribuut Department wijzigen",
+    "GG_Opleiding → GG_Administratie",
+    "Alleen Department aanpassen",
     "Hem naar een andere OU verplaatsen",
-    "Hem rechtstreeks lid maken van DL_Lesmateriaal_Read"
+    "Hem in DL_Lesmateriaal_Read zetten"
    ],
    "a": 0,
-   "e": "Mover: oude toegang weg, nieuwe toegang gericht toevoegen. Zo stapelen rechten zich niet op. Youssef krijgt nu Read via GG_Administratie → DL_Lesmateriaal_Read.",
+   "e": "Mover: uit GG_Opleiding halen en lid maken van GG_Administratie (en Department bijwerken). Zo stapelen rechten zich niet op: Youssef krijgt Read via GG_Administratie → DL_Lesmateriaal_Read.",
    "w": [
     null,
     "Een attribuut verleent geen toegang: die volgt uit groepslidmaatschap.",
     "De OU-locatie bepaalt geen toegang tot resources.",
-    "Geen gebruikers rechtstreeks in DL_-groepen; dat breekt AGDLP."
-   ]
+    "Hij zit dan nog in GG_Opleiding en houdt Modify; bovendien horen geen gebruikers rechtstreeks in een DL_-groep."
+   ],
+   "s": "<b>Situatie</b><br>Youssef is lid van GG_Opleiding.<br>GG_Opleiding is lid van DL_Lesmateriaal_Modify · GG_Administratie is lid van DL_Lesmateriaal_Read.<br>Department van Youssef: Opleiding."
   }
  ],
  "intros": {
@@ -1231,8 +1203,10 @@ window.ADDATA = {
   "schema": {
    "t": "Teken de infrastructuur",
    "p": [
-    "Eerst teken je zelf (3 minuten, papier of Visio): forest, domein, DC01, CLIENT01, een domeingebruiker en gelabelde relaties.",
-    "Daarna benoem je hier de relaties en de belangrijkste gegevens, en beoordeel je drie foute schema's."
+    "Eerst teken je zelf (3 minuten, papier of Visio): forest, domein, DC01, CLIENT01, een domeingebruiker en pijlen met een label.",
+    "Deel 1: in de app staat een schema met genummerde pijlen. Kies voor elke pijl het juiste label en vul twee gegevens aan.",
+    "Deel 2: je krijgt drie getekende schema's met telkens één fout. Zoek de fout.",
+    "Op het einde zie je het modelschema: leg het naast je eigen tekening."
    ],
    "cs": "lab"
   },
