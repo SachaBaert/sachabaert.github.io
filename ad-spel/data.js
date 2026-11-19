@@ -1203,7 +1203,7 @@ window.ADDATA = {
   "schema": {
    "t": "Teken de infrastructuur",
    "p": [
-    "Eerst teken je zelf (3 minuten, papier of Visio): forest, domein, DC01, CLIENT01, een domeingebruiker en pijlen met een label.",
+    "Eerst teken je zelf in duo: wat gebeurt er als Sara op maandagochtend aanmeldt op CLIENT01? Teken de pijlen tussen CLIENT01, DC01, Sara en het domein, en schrijf er in je eigen woorden bij wat er gebeurt.",
     "Deel 1: in de app staat een schema met genummerde pijlen. Kies voor elke pijl het juiste label en vul twee gegevens aan.",
     "Deel 2: je krijgt drie getekende schema's met telkens één fout. Zoek de fout.",
     "Op het einde zie je het modelschema: leg het naast je eigen tekening."
