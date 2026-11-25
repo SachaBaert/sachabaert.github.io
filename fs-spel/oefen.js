@@ -415,38 +415,38 @@
     "e": "Kijk wie het bestand open heeft."
    },
    {
-    "q": "Wat doet ABE (Access-Based Enumeration)?",
+    "q": "Wat doet <code>Get-SmbShare</code> op FS01?",
     "o": [
-     "Items zonder leesrecht niet tonen",
-     "Alle bestanden versleutelen",
-     "Toegang geven aan wie de map ziet",
-     "De share verbergen in het netwerk"
+     "De shares van FS01 tonen, met hun lokaal pad",
+     "De sharemachtigingen tonen",
+     "De actieve sessies van clients tonen",
+     "De gekoppelde netwerkstations tonen"
     ],
     "a": 0,
     "w": [
      null,
-     "Dat is encryption.",
-     "Het omgekeerde: ABE geeft niets.",
-     "Een verborgen share maak je met $."
+     "Dat is Get-SmbShareAccess.",
+     "Dat is Get-SmbSession.",
+     "Dat is net use, op de client."
     ],
-    "e": "ABE verbergt, NTFS beveiligt."
+    "e": "Met Select Name, Path zie je meteen naar welke map elke share wijst."
    },
    {
-    "q": "Met welk commando zet je ABE aan op Finance?",
+    "q": "Welke handeling test je om te bewijzen dat HR Finance <b>niet</b> kan openen?",
     "o": [
-     "Set-SmbShare -Name Finance -FolderEnumerationMode AccessBased",
-     "New-SmbShare -Name Finance -ABE",
-     "icacls D:\\Shares\\Finance /abe",
-     "Grant-SmbShareAccess -Name Finance -AccessRight ABE"
+     "Als student.hr via \\\\FS01\\Finance openen en ‘Access denied’ zien",
+     "Als beheerder op FS01 de map D:\\Shares\\Finance openen",
+     "Get-SmbShare uitvoeren op FS01",
+     "Pingen naar FS01 als student.hr"
     ],
     "a": 0,
     "w": [
      null,
-     "Die parameter bestaat niet en de share bestaat al.",
-     "icacls kent geen ABE.",
-     "ABE is geen toegangsrecht."
+     "De beheerder heeft andere rechten en werkt lokaal.",
+     "Dat toont alleen dat de share bestaat.",
+     "Ping test geen toegang."
     ],
-    "e": "Controle: Get-SmbShare | Select FolderEnumerationMode."
+    "e": "Een negatieve test met het echte account, via de normale toegangsweg."
    },
    {
     "q": "Welk resultaat geeft een open poort 445 maar een ontbrekende share meestal?",
@@ -1556,7 +1556,7 @@
   ]
  },
  "acl": {
-  "t": "Overerving, eigenaar, kopiëren",
+  "t": "Overerving en uitzonderingen",
   "q": [
    {
     "q": "Wat is een geërfde ACE?",
@@ -1695,123 +1695,124 @@
     "e": "Handig na een verplaatsing binnen hetzelfde volume."
    },
    {
-    "q": "Een bestand wordt van C: naar D: verplaatst. Welke rechten krijgt het normaal?",
+    "q": "Een beheerder past de regel van DL_FS_Finance_RW aan op D:\\Shares\\Finance. Wat gebeurt er met Budgetten?",
     "o": [
-     "Die van de doelmap: het wordt gekopieerd en daarna verwijderd",
-     "Die van de bron",
-     "Geen",
-     "Die van de bron én de doelmap"
+     "Budgetten volgt mee, want het erft die regel",
+     "Budgetten blijft ongewijzigd tot je het opnieuw instelt",
+     "Alleen nieuwe bestanden volgen",
+     "Niets, tot de gebruikers opnieuw aanmelden"
     ],
     "a": 0,
     "w": [
      null,
-     "Tussen volumes is verplaatsen kopiëren + verwijderen.",
-     "Het erft wel.",
-     "Er wordt niets samengevoegd."
+     "Erven betekent net dat de wijziging doorwerkt.",
+     "Ook bestaande objecten die erven, volgen.",
+     "Opnieuw aanmelden gaat over groepen in de token, niet over de ACL."
     ],
-    "e": "Binnen hetzelfde volume is dat anders."
+    "e": "Geërfde regels volgen de bron.",
+    "s": "<b>Situatie</b><br>De submap Budgetten erft van Finance (overerving aan)."
    },
    {
-    "q": "Een bestand wordt binnen D: verplaatst. Wat gebeurt er normaal met de ACL?",
+    "q": "Wat betekent een regel zonder <code>(I)</code> in icacls?",
     "o": [
-     "Het bestand behoudt zijn ACL",
-     "Het bestand erft de doelmap",
-     "De ACL wordt gewist",
-     "De bron-ACL en doel-ACL worden samengevoegd"
+     "Ze is expliciet op dit object ingesteld",
+     "Ze is ongeldig",
+     "Ze geldt alleen voor bestanden",
+     "Ze is een Deny-regel"
     ],
     "a": 0,
     "w": [
      null,
-     "Dat gebeurt bij kopiëren.",
-     "Ze blijft bestaan.",
-     "Er wordt niets samengevoegd."
+     "Ze is gewoon geldig.",
+     "Het toepassingsgebied lees je aan (OI)/(CI).",
+     "Deny staat er als DENY bij."
     ],
-    "e": "Controleer na verplaatsen altijd de ACL."
+    "e": "Geen (I) = expliciet; met (I) = geërfd."
    },
    {
-    "q": "Welke robocopy-optie neemt de NTFS-ACL mee?",
+    "q": "Waar pas je een geërfde regel aan?",
     "o": [
-     "/COPY:DATS",
-     "/COPY:DAT",
-     "/MIR",
-     "/E"
+     "Op de map waar ze expliciet staat",
+     "Op elke submap afzonderlijk",
+     "Op de share",
+     "In Active Directory"
     ],
     "a": 0,
     "w": [
      null,
-     "Zonder S geen beveiligingsinformatie.",
-     "/MIR spiegelt, maar kopieert de ACL niet per se.",
-     "/E neemt submappen mee."
+     "Op de submap is ze alleen een gevolg.",
+     "De share is een andere laag.",
+     "AD bevat de groepen, niet de ACL."
     ],
-    "e": "D = data, A = attributes, T = timestamps, S = security."
+    "e": "Wijzig de bron; de submappen volgen."
    },
    {
-    "q": "Wanneer is de bron-ACL behouden bij een migratie géén goed idee?",
+    "q": "Een submap moet strenger zijn dan haar bovenliggende map. Wat doe je eerst?",
     "o": [
-     "Als de bestemming een andere beveiligingszone is",
-     "Altijd, het is altijd goed",
-     "Als de bestanden groot zijn",
-     "Als de bron op C: staat"
+     "Overerving op die submap uitschakelen en converteren",
+     "Een Deny voor Everyone toevoegen",
+     "Een tweede share op de submap maken",
+     "De bovenliggende map strenger maken"
     ],
     "a": 0,
     "w": [
      null,
-     "Oude rechten kunnen ongewenste toegang geven.",
-     "Grootte speelt geen rol.",
-     "De locatie van de bron is niet het criterium."
+     "Deny Everyone blokkeert ook wie er wel in moet.",
+     "Een tweede share verandert de NTFS-rechten niet.",
+     "Dan raak je ook alle andere submappen."
     ],
-    "e": "Kies bewust tussen behouden en opnieuw erven."
+    "e": "Daarna gericht de regels weghalen die niet mogen blijven, en een eigen groep toevoegen."
    },
    {
-    "q": "Wat kan de eigenaar van een bestand altijd?",
+    "q": "Welk commando zet de overerving op een map opnieuw aan?",
     "o": [
-     "De machtigingen van het bestand wijzigen",
-     "Het bestand lezen",
-     "Het bestand verwijderen",
-     "Het bestand delen als share"
+     "icacls pad /inheritance:e",
+     "icacls pad /inheritance:r",
+     "icacls pad /inheritance:d",
+     "icacls pad /grant Everyone:F"
     ],
     "a": 0,
     "w": [
      null,
-     "Eigenaarschap geeft geen leesrecht.",
-     "Ook dat vraagt een recht.",
-     "Shares maken vraagt beheerdersrechten."
+     "r verwijdert de geërfde regels.",
+     "d schakelt uit en converteert.",
+     "Dat geeft iedereen alles en lost niets op."
     ],
-    "e": "Eigenaar ≠ Modify."
+    "e": "e = enable."
    },
    {
-    "q": "Wat doet <code>takeown /f pad /a</code>?",
+    "q": "Wat doet <code>icacls pad /inheritance:r</code>?",
     "o": [
-     "Administrators worden eigenaar",
-     "De huidige gebruiker krijgt Full Control",
-     "De eigenaar wordt verwijderd",
-     "De ACL wordt hersteld"
+     "Overerving uitschakelen en alle geërfde regels verwijderen",
+     "Overerving uitschakelen en de regels converteren",
+     "Overerving inschakelen",
+     "Alle expliciete regels verwijderen"
     ],
     "a": 0,
     "w": [
      null,
-     "Eigenaar worden is geen Full Control.",
-     "Een object heeft altijd een eigenaar.",
-     "Het herstelt geen rechten."
+     "Dat is /inheritance:d.",
+     "Dat is /inheritance:e.",
+     "Het raakt alleen geërfde regels."
     ],
-    "e": "Daarna de ACL gecontroleerd herstellen."
+    "e": "r = remove: gevaarlijk, ook beheertoegang kan verdwijnen."
    },
    {
-    "q": "Waarom is <code>takeown /r</code> op een grote map riskant?",
+    "q": "Waarom geef je een uitzondering een eigen resourcegroep, zoals DL_FS_Finance_Directie_RW?",
     "o": [
-     "Oorspronkelijke eigenaars gaan verloren en veel objecten wijzigen",
-     "De map wordt verwijderd",
-     "De share wordt ontkoppeld",
-     "Overerving wordt overal uitgeschakeld"
+     "Zo zie je in de ACL meteen wie die afwijkende toegang krijgt",
+     "Omdat een submap geen bestaande groep mag bevatten",
+     "Omdat Windows anders de overerving uitschakelt",
+     "Omdat een domeinlokale groep maar één map mag dragen"
     ],
     "a": 0,
     "w": [
      null,
-     "Er wordt niets verwijderd.",
-     "De share blijft.",
-     "takeown raakt de overerving niet."
+     "Dat mag wel.",
+     "Een groep toevoegen raakt de overerving niet.",
+     "Een DL-groep kan op meerdere mappen staan."
     ],
-    "e": "Wijzig niet meer objecten dan nodig."
+    "e": "Een uitzondering documenteer je met een eigen groep en een beschrijving."
    },
    {
     "q": "In een ACL staat een onbekende SID zoals S-1-5-21-…-1240. Wat is waarschijnlijk?",
@@ -1916,21 +1917,21 @@
     "e": "Bv. CREATOR OWNER:(OI)(CI)(IO)(F)."
    },
    {
-    "q": "Na een verplaatsing staat op een Finance-bestand nog <code>DL_FS_HR_RW:(I)(M)</code>. Wat doe je?",
+    "q": "Een gebruiker kan overal in Finance, behalve in één submap. Wat controleer je eerst op die submap?",
     "o": [
-     "icacls bestand /reset en daarna testen",
-     "student.finance rechtstreeks toevoegen",
-     "Full Control geven aan Everyone",
-     "De share Finance opnieuw maken"
+     "Of de overerving uitstaat en welke regels er expliciet staan",
+     "Het IP-adres van FS01",
+     "Het SMB-dialect",
+     "De sharemachtigingen van een andere share"
     ],
     "a": 0,
     "w": [
      null,
-     "Rechtstreekse toekenningen vermijd je.",
-     "Veel te breed.",
-     "De share is het probleem niet."
+     "DNS en netwerk werken: de rest van Finance opent.",
+     "Het dialect geldt voor de hele verbinding.",
+     "Een andere share speelt geen rol."
     ],
-    "e": "De geërfde Finance-regels komen terug."
+    "e": "(Get-Acl pad).AreAccessRulesProtected en icacls van die submap."
    },
    {
     "q": "Waarom heeft een nieuwe map op D:\\ meteen regels voor BUILTIN\\Users?",
@@ -1967,21 +1968,21 @@
     "e": "Een zelfstandige ACL moet apart beheerd worden."
    },
    {
-    "q": "Na een herstel uit back-up toont een map een oude eigenaar. Wat doe je?",
+    "q": "Welke vraag stel je vóór je de overerving op een submap uitschakelt?",
     "o": [
-     "Eigenaar en ACL controleren en gecontroleerd herstellen",
-     "De map verwijderen",
-     "De back-up opnieuw terugzetten",
-     "Niets: eigenaars spelen geen rol"
+     "Welke beheertoegang moet er zeker blijven?",
+     "Welke SMB-versie gebruikt de client?",
+     "Wie is de eigenaar van de share?",
+     "Hoeveel bestanden staan in de map?"
     ],
     "a": 0,
     "w": [
      null,
-     "Dan verlies je de gegevens.",
-     "Dan krijg je hetzelfde resultaat.",
-     "Een oude eigenaar kan beheer bemoeilijken."
+     "Het dialect heeft niets met NTFS te maken.",
+     "De share heeft daar niets mee te maken.",
+     "Het aantal bestanden verandert de keuze niet."
     ],
-    "e": "Test daarna met gebruikers."
+    "e": "Zo vermijd je dat je jezelf en de beheerders buitensluit."
    },
    {
     "q": "Wat bewijst <code>icacls</code> niet?",
@@ -2001,72 +2002,73 @@
     "e": "De share is een andere laag."
    },
    {
-    "q": "Je kopieert een map met <code>Copy-Item</code> naar Finance. Welke regels krijgt de kopie?",
+    "q": "Op een map staat <code>CREATOR OWNER:(OI)(CI)(IO)(F)</code>. Wat betekent (IO)?",
     "o": [
-     "De geërfde regels van Finance",
-     "De regels van de bron",
-     "Geen",
-     "De bronregels plus Everyone"
+     "De regel geldt niet op de map zelf, alleen voor wat erin gemaakt wordt",
+     "De regel is ongeldig",
+     "De regel geldt alleen op deze map",
+     "De regel is geërfd"
     ],
     "a": 0,
     "w": [
      null,
-     "Copy-Item maakt nieuwe objecten.",
-     "Ze erft.",
-     "Er komt geen Everyone bij."
+     "Ze is geldig.",
+     "Net omgekeerd.",
+     "Geërfd = (I)."
     ],
-    "e": "Controleer met icacls."
+    "e": "IO = inherit only."
    },
    {
-    "q": "Wat is het verschil tussen ABE en NTFS?",
+    "q": "Waarom is ‘Remove all inherited permissions’ zelden de beste keuze?",
     "o": [
-     "ABE regelt zichtbaarheid, NTFS de toegang",
-     "ABE regelt toegang, NTFS zichtbaarheid",
-     "Er is geen verschil",
-     "ABE geldt lokaal, NTFS via de share"
+     "Je verliest ook SYSTEM en Administrators, en moet alles opnieuw opbouwen",
+     "Het schakelt de share uit",
+     "Het verwijdert de bestanden",
+     "Het werkt alleen op Server Core"
     ],
     "a": 0,
     "w": [
      null,
-     "Omgekeerd.",
-     "Ze doen iets anders.",
-     "ABE werkt via de share."
+     "De share blijft bestaan.",
+     "Alleen regels verdwijnen, geen bestanden.",
+     "Het werkt overal."
     ],
-    "e": "ABE verbergt, NTFS beveiligt."
+    "e": "Converteren en daarna gericht verwijderen is veiliger."
    },
    {
-    "q": "Een gebruiker ziet met ABE een map niet meer, maar typt het pad. Wat gebeurt er?",
+    "q": "Een geërfde Allow geeft Modify, een expliciete Allow op de submap geeft Read & execute. Wat krijgt de gebruiker?",
     "o": [
-     "Toegang geweigerd: NTFS blijft beveiligen",
-     "De map opent toch",
-     "ABE geeft een andere map",
-     "De share sluit"
+     "Modify: Allow-regels tellen op",
+     "Read & execute: expliciet wint altijd",
+     "Niets: de regels botsen",
+     "Alleen wat de share toelaat, zonder NTFS"
     ],
     "a": 0,
     "w": [
      null,
-     "NTFS geeft geen leesrecht.",
-     "ABE verandert geen paden.",
-     "De share blijft open."
+     "Expliciet gaat alleen vóór bij Deny tegenover Allow; Allow-regels tellen gewoon op.",
+     "Allow-regels botsen niet.",
+     "NTFS geldt altijd mee."
     ],
-    "e": "ABE is geen beveiliging op zich."
+    "e": "Wil je minder geven, dan moet de geërfde Allow weg: overerving aanpassen.",
+    "s": "<b>Situatie</b><br>De gebruiker zit in beide groepen."
    },
    {
-    "q": "Waarom moet je na een migratie ook met gebruikers testen?",
+    "q": "Waarom test je na het aanpassen van de overerving met gebruikers?",
     "o": [
      "De ACL kan er correct uitzien terwijl de effectieve toegang afwijkt",
      "Gebruikers moeten het wachtwoord vernieuwen",
      "Anders werkt DNS niet",
-     "Omdat icacls niet werkt na een migratie"
+     "Omdat icacls de wijziging niet toont"
     ],
     "a": 0,
     "w": [
      null,
      "Wachtwoorden blijven gelijk.",
      "DNS staat los hiervan.",
-     "icacls werkt gewoon."
+     "icacls toont de wijziging wel."
     ],
-    "e": "Positieve en negatieve tests."
+    "e": "Positieve en negatieve tests met RW-, RO- en geweigerde accounts."
    }
   ]
  },
@@ -2161,7 +2163,7 @@
    {
     "q": "Slechts één bestand geeft Access denied. Welke hypothese past?",
     "o": [
-     "Het bestand heeft een afwijkende ACL, bv. na verplaatsen",
+     "Het bestand heeft een afwijkende ACL (expliciete regel of uitgeschakelde overerving)",
      "DNS werkt niet",
      "De share bestaat niet",
      "Poort 445 is dicht"

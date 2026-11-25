@@ -10,9 +10,9 @@ Mobiele oefeningen bij de les **File Services: SMB en NTFS** (labo DC01 · FS01 
 | AGDLP-keten | `#/agdlp` | Volgorde, bereik, toegang |
 | Exitcheck blok 1 | `#/exit1` | Paden, shares, SMB |
 | Lees de uitvoer | `#/uitvoer` | icacls, Get-SmbShareAccess, Get-SmbConnection, whoami |
-| Overerving | `#/overerving` | Geërfd, uitzonderingen, eigenaar, kopiëren/verplaatsen |
+| Overerving | `#/overerving` | Geërfd of expliciet, overerving uitschakelen, uitzonderingen |
 | Welk bewijs? | `#/bewijs` | Begripscheck |
-| Voorspel de demo | `#/demo`, `#/demo/<n>` | Voorspellingen 1–10 bij demo's 1–7 |
+| Voorspel de demo | `#/demo`, `#/demo/<n>` | Voorspellingen 1–8 bij demo's 1–5 |
 | Werkdoel · Status · Foutenpracticum · Ticket · Exit ticket | `#/werkdoel`, `#/status`, `#/fout`, `#/ticket`, `#/exitticket` | Namiddag |
 | Extra oefenen | `#/extra/<onderwerp>` | 10 uit 30: smb, rechten, agdlp, acl, trouble |
 

@@ -182,11 +182,11 @@
     { r: "agdlp", t: "Bouw de AGDLP-keten", s: "Account → Global → Domain Local → Permission", c: "#14799B", i: "A→P", k: "agdlp" },
     { r: "exit1", t: "Exitcheck blok 1", s: "Paden, shares en de SMB-keten", c: "#919E2C", i: "✓", k: "exit1" },
     { r: "uitvoer", t: "Lees de uitvoer", s: "icacls, Get-SmbShareAccess, Get-SmbConnection, whoami", c: "#14799B", i: ">_", k: "uitvoer" },
-    { r: "overerving", t: "Overerving, eigenaar, kopiëren", s: "Geërfde regels, uitzonderingen, takeown, verplaatsen", c: "#000", i: "(I)", k: "overerving" },
+    { r: "overerving", t: "Overerving en uitzonderingen", s: "Geërfd of expliciet, overerving uitschakelen, een afwijkende submap", c: "#000", i: "(I)", k: "overerving" },
     { r: "bewijs", t: "Welk bewijs?", s: "Begripscheck: wat bewijst écht iets?", c: "#EB6008", i: "!", k: "bewijs" }
   ];
   var LES = [
-    { r: "demo", t: "Voorspel de demo", s: "Demo's 1–7: eerst voorspellen, dan het bewijs", c: "#EB6008", i: "?" },
+    { r: "demo", t: "Voorspel de demo", s: "Demo's 1–5: eerst voorspellen, dan het bewijs", c: "#EB6008", i: "?" },
     { r: "werkdoel", t: "Werkdoel en testmatrix", s: "Wat moet lukken, wat moet falen, en wat zag je?", c: "#14799B", i: "◎" },
     { r: "status", t: "Status", s: "Toon je status naast je laptop", c: "#000", i: "●" },
     { r: "fout", t: "Foutenpracticum", s: "Foutkaarten voor saboteur en slachtoffer", c: "#A6090F", i: "!" },
@@ -638,7 +638,7 @@
     exit1: simple("exit1", "Exitcheck blok 1", function () { return D.exit1; }, "Vraag"),
     uitvoer: simple("uitvoer", "Lees de uitvoer", function () { return D.uitvoer; }, "Uitvoer"),
     bewijs: simple("bewijs", "Welk bewijs is overtuigend?", function () { return shuffle(D.bewijs); }, "Bewering"),
-    overerving: simple("overerving", "Overerving, eigenaar, kopiëren", function () { return D.overerving; }, "Vraag"),
+    overerving: simple("overerving", "Overerving en uitzonderingen", function () { return D.overerving; }, "Vraag"),
     demo: function () { demoPage(); }, status: statusPage,
     fout: function () { foutPage(); }, "fout/sab": function () { foutPage("sab"); }, "fout/slo": function () { foutPage("slo"); },
     ticket: function () { formPage("ticket", "Ticketformulier", D.ticketVelden, "ticket-fs.txt"); },

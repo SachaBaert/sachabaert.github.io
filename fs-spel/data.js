@@ -121,9 +121,9 @@ window.FSDATA = {
      "e": "Ook op de server zelf: wie het UNC-pad gebruikt, gaat via de SMB-server en dus via de share."
     },
     {
-     "q": "Een gebruiker opent <code>\\\\FS01\\Finance</code> en de share heeft ABE aan.",
+     "q": "Een gebruiker opent <code>\\\\FS01\\Finance</code> via een snelkoppeling op zijn bureaublad.",
      "a": "Share + NTFS",
-     "e": "ABE verandert de lagen niet; het verbergt alleen items waarvoor NTFS geen leesrecht geeft."
+     "e": "Een snelkoppeling bevat gewoon het UNC-pad: de toegang loopt via SMB, dus share en NTFS."
     }
    ]
   },
@@ -289,9 +289,9 @@ window.FSDATA = {
      "e": "Alleen lezen: Read & execute (RO in de groepsnaam)."
     },
     {
-     "q": "Fileserverbeheerders passen de ACL aan en herstellen eigenaarschap.",
+     "q": "Fileserverbeheerders passen de ACL van de afdelingsmappen aan.",
      "a": "Full Control",
-     "e": "Machtigingen wijzigen en eigenaar worden: Full Control."
+     "e": "Machtigingen wijzigen kan alleen met Full Control."
     },
     {
      "q": "Een scanner mag nieuwe scans in een map plaatsen, maar niets verwijderen.",
@@ -499,7 +499,7 @@ window.FSDATA = {
     null,
     "Full Control is NTFS. Via de share blijft Read over.",
     "Sharemachtigingen gelden voor iedereen die via de share komt.",
-    "Eigenaarschap verandert de sharelaag niet."
+    "Wie een bestand maakte, verandert niets aan de sharelaag."
    ],
    "e": "Read ∩ Full Control = <b>Read</b>. Lokaal op FS01 zou hij wel kunnen verwijderen."
   }
@@ -826,14 +826,14 @@ window.FSDATA = {
     "De share verwijst naar een andere map dan de beheerder aanpaste",
     "De ACL van D:\\Shares\\Finance is niet doorgevoerd",
     "De gebruikers hebben een oude token",
-    "ABE verbergt de nieuwe bestanden"
+    "De share is verborgen (Finance$)"
    ],
    "a": 0,
    "w": [
     null,
     "De ACL kan perfect zijn; ze staat alleen op een map die niet gedeeld wordt.",
     "Een oude token verklaart geen oude bestanden.",
-    "ABE verbergt geen bestanden waarvoor gebruikers rechten hebben."
+    "Een verborgen share toont gewoon de bestanden van haar pad."
    ],
    "e": "Controleer altijd de koppeling sharenaam → lokaal pad met Get-SmbShare. Anders onderzoek je de verkeerde ACL."
   },
@@ -1051,74 +1051,75 @@ window.FSDATA = {
    "e": "Controleer vooraf welke beheertoegang moet overblijven."
   },
   {
-   "s": "<b>Situatie</b><br>Een beheerder kopieert C:\\Tijdelijk\\Rapport.xlsx naar D:\\Shares\\Finance.<br>De doelmap heeft overerfbare regels voor de Finance-groepen.",
-   "q": "Welke rechten heeft de kopie normaal?",
+   "s": "<b>Situatie</b><br>Op D:\\Shares\\Finance staat DL_FS_Finance_RW met Modify, voor deze map, submappen en bestanden.<br>De submap Budgetten erft gewoon van Finance.<br>De beheerder verandert op Finance het recht van DL_FS_Finance_RW naar Read & execute.",
+   "q": "Wat gebeurt er op Budgetten?",
    "o": [
-    "Die van de doelmap (geërfd)",
-    "Die van C:\\Tijdelijk",
-    "Geen: kopieën hebben een lege ACL",
-    "Alleen de beheerder"
+    "Budgetten volgt automatisch: de groep heeft daar nu ook Read & execute",
+    "Budgetten houdt Modify tot je de map opnieuw aanmaakt",
+    "Alleen nieuwe bestanden in Budgetten krijgen Read & execute",
+    "Budgetten verandert pas na een herstart van FS01"
    ],
    "a": 0,
    "w": [
     null,
-    "Een kopie is een nieuw object; het behoudt de bron-ACL niet zomaar.",
-    "Het nieuwe object erft van de doelmap.",
-    "De maker wordt eigenaar, maar de geërfde regels komen er ook op."
+    "Een geërfde regel wordt niet bewaard als kopie; ze volgt de bron.",
+    "Ook bestaande objecten die erven, nemen de wijziging over.",
+    "NTFS-wijzigingen gelden meteen."
    ],
-   "e": "Kopiëren maakt een nieuw object dat de doelmap erft (tenzij een tool zoals robocopy /COPY:DATS de ACL meeneemt)."
+   "e": "Geërfde regels volgen de bovenliggende map. Daarom beheer je bij voorkeur één ACL bovenaan."
   },
   {
-   "s": "<b>Situatie</b><br>Een beheerder verplaatst D:\\Shares\\HR\\Loonmodel.xlsx naar D:\\Shares\\Finance (zelfde volume).<br>Op HR staan alleen HR-groepen, op Finance alleen Finance-groepen.",
-   "q": "Wat is normaal het resultaat?",
+   "s": "<b>Situatie</b><br>icacls D:\\Shares\\Finance\\Directie toont: HOGENT\\DL_FS_Finance_RW:(OI)(CI)(M), zonder (I).<br>(Get-Acl D:\\Shares\\Finance\\Directie).AreAccessRulesProtected geeft True.<br>Op Finance staat dezelfde regel.",
+   "q": "Hoe is deze regel er waarschijnlijk gekomen?",
    "o": [
-    "Het bestand behoudt zijn HR-rechten",
-    "Het bestand krijgt de Finance-rechten",
-    "Het bestand krijgt beide sets",
-    "Het bestand wordt ontoegankelijk voor iedereen"
+    "Bij het uitschakelen van de overerving werd ‘converteren’ gekozen",
+    "Ze wordt op dit moment nog geërfd van Finance",
+    "De share Finance heeft ze op de map gezet",
+    "Windows zet ze standaard op elke submap"
    ],
    "a": 0,
    "w": [
     null,
-    "Dat gebeurt bij kopiëren of bij verplaatsen naar een ander volume.",
-    "Er wordt niets samengevoegd.",
-    "De HR-groepen hebben nog toegang."
+    "Een geërfde regel heeft (I), en de overerving staat uit (True).",
+    "Sharemachtigingen komen nooit in de NTFS-ACL.",
+    "Windows zet geen afdelingsgroepen op mappen."
    ],
-   "e": "Binnen hetzelfde volume wordt het bestaande object verhangen. Herstel met icacls /reset en controleer daarna."
+   "e": "Converteren maakt van de geërfde regels expliciete regels. Ze blijven gelden tot je ze bewust verwijdert."
   },
   {
-   "q": "Wat is het verschil tussen eigenaar zijn en Full Control hebben?",
+   "q": "Waarom kan je een geërfde regel op een submap niet zomaar verwijderen?",
    "o": [
-    "De eigenaar kan altijd de machtigingen wijzigen, ook zonder Modify",
-    "Er is geen verschil",
-    "De eigenaar kan altijd alles lezen",
-    "Full Control maakt je automatisch eigenaar"
+    "Ze hoort bij de bovenliggende map: pas ze daar aan of schakel de overerving uit",
+    "Geërfde regels zijn alleen-lezen voor iedereen behalve SYSTEM",
+    "Geërfde regels kunnen alleen via de share verwijderd worden",
+    "Dat kan pas na een herstart van de server"
    ],
    "a": 0,
    "w": [
     null,
-    "Het zijn aparte onderdelen van de beveiligingsinformatie.",
-    "Eigenaarschap geeft geen leesrecht op de inhoud; wel het recht om de ACL aan te passen.",
-    "Eigenaar worden is een aparte handeling (Take ownership)."
+    "Een beheerder kan de ACL wel wijzigen; de regel staat alleen niet op dit object zelf.",
+    "Sharemachtigingen en NTFS zijn aparte lagen.",
+    "Er is geen herstart nodig."
    ],
-   "e": "De eigenaar kan de DACL wijzigen. Eigenaarschap is geen dagelijkse bestandsmachtiging."
+   "e": "Op de submap is de regel een gevolg, geen instelling. Wijzig de bron, of maak de submap zelfstandig (overerving uit, converteren) en verwijder dan gericht."
   },
   {
-   "q": "Wat doet <code>takeown /f D:\\Shares\\Finance\\OudeMap /a /r</code>?",
+   "s": "<b>Situatie</b><br>Op D:\\Shares\\Finance\\Budgetten werd de overerving uitgeschakeld met ‘Remove all inherited permissions’.<br>Er staan nu alleen DL_FS_Beheerders_FC en SYSTEM.<br>Finance-medewerkers en de directie krijgen ‘Access denied’ op Budgetten; de rest van Finance werkt.",
+   "q": "Wat is de beste oplossing?",
    "o": [
-    "De groep Administrators wordt eigenaar van de map en alles eronder",
-    "De huidige gebruiker krijgt Full Control",
-    "Alle machtigingen worden hersteld",
-    "De map wordt naar de beheerder verplaatst"
+    "De overerving opnieuw inschakelen en de expliciete regels nakijken",
+    "Everyone Full Control geven op Budgetten",
+    "De Finance-medewerkers rechtstreeks toevoegen",
+    "De share Finance opnieuw aanmaken"
    ],
    "a": 0,
    "w": [
     null,
-    "takeown verandert de eigenaar, niet de ACL.",
-    "takeown herstelt geen machtigingen; dat doe je daarna gecontroleerd.",
-    "Er wordt niets verplaatst."
+    "Dat verbergt het probleem en geeft iedereen toegang.",
+    "Rechtstreekse toekenningen vermijd je; de groepen staan al goed op Finance.",
+    "De share is in orde: de rest van Finance werkt."
    ],
-   "e": "/a: Administrators wordt eigenaar; /r: recursief. Daarna de ACL nakijken en herstellen."
+   "e": "Met overerving aan krijgt Budgetten opnieuw de regels van Finance. Test daarna met een RW- en een RO-gebruiker."
   }
  ],
  "exit1": [
@@ -1268,9 +1269,9 @@ window.FSDATA = {
    "cs": "ladder"
   },
   "overerving": {
-   "t": "Overerving, eigenaar, kopiëren",
+   "t": "Overerving en uitzonderingen",
    "p": [
-    "Acht vragen over geërfde regels, uitzonderingen, eigenaarschap en wat kopiëren en verplaatsen met een ACL doen."
+    "Acht vragen over geërfde en expliciete regels, overerving uitschakelen en een bewuste uitzondering op een submap."
    ],
    "cs": "acl"
   },
@@ -1351,13 +1352,13 @@ window.FSDATA = {
   },
   {
    "id": "acl",
-   "t": "Overerving en eigenaar",
-   "h": "<p>icacls: (I) geërfd · (OI) ook bestanden · (CI) ook submappen · (IO) alleen erven · (F) Full · (M) Modify · (RX) Read & execute · (W) Write.</p><p>Overerving uitschakelen: <b>converteren</b> (alles blijft, nu expliciet) of <b>verwijderen</b> (alles weg, ook beheer). Controle: <code>(Get-Acl pad).AreAccessRulesProtected</code>.</p><p><b>Kopiëren</b>: nieuw object, erft de doelmap. <b>Verplaatsen binnen hetzelfde volume</b>: behoudt de ACL. Herstel met <code>icacls pad /reset</code>.</p><p>Eigenaar kan de ACL wijzigen; <code>takeown /f pad /a /r</code> maakt Administrators eigenaar (geen herstel van rechten).</p><p><b>ABE</b> verbergt items zonder leesrecht; NTFS beveiligt.</p>"
+   "t": "Overerving",
+   "h": "<p>icacls: (I) geërfd · (OI) ook bestanden · (CI) ook submappen · (IO) alleen erven · (F) Full · (M) Modify · (RX) Read & execute · (W) Write.</p><p>Geërfde regels volgen de bovenliggende map. Een afwijking maak je bewust, met een eigen resourcegroep.</p><p>Overerving uitschakelen: <b>converteren</b> (alles blijft, nu expliciet) of <b>verwijderen</b> (alles weg, ook beheer). Controle: <code>(Get-Acl pad).AreAccessRulesProtected</code>. Opnieuw erven: <code>icacls pad /inheritance:e</code> of <code>icacls pad /reset</code>.</p>"
   },
   {
    "id": "cmd",
    "t": "Commando's",
-   "h": "<p><code>Resolve-DnsName FS01</code> · <code>Test-NetConnection FS01 -Port 445</code> · <code>Get-SmbConnection</code> (client) · <code>Get-SmbShare</code>, <code>Get-SmbShareAccess -Name Finance</code>, <code>Get-SmbSession</code>, <code>Get-SmbOpenFile</code> (server) · <code>New-SmbShare</code>, <code>Grant-/Revoke-/Block-SmbShareAccess</code>, <code>Set-SmbShare -FolderEnumerationMode AccessBased</code> · <code>icacls</code>, <code>Get-Acl</code> · <code>whoami</code>, <code>whoami /groups</code> · <code>Get-ADGroupMember … -Recursive</code> · <code>net use</code></p>"
+   "h": "<p><code>Resolve-DnsName FS01</code> · <code>Test-NetConnection FS01 -Port 445</code> · <code>Get-SmbConnection</code> (client) · <code>Get-SmbShare</code>, <code>Get-SmbShareAccess -Name Finance</code>, <code>Get-SmbSession</code>, <code>Get-SmbOpenFile</code> (server) · <code>New-SmbShare</code>, <code>Grant-/Revoke-/Block-SmbShareAccess</code> · <code>icacls</code>, <code>Get-Acl</code> · <code>whoami</code>, <code>whoami /groups</code> · <code>Get-ADGroupMember … -Recursive</code> · <code>net use</code></p>"
   },
   {
    "id": "ladder",
@@ -1367,7 +1368,7 @@ window.FSDATA = {
   {
    "id": "waarom",
    "t": "Waarom…?",
-   "h": "<p><b>Waarom NETLOGON en niet meteen onze eigen share?</b><br>Omdat elke domain controller die share al heeft. Zo zien we de volledige SMB-keten werken voordat we zelf iets bouwen.</p><p><b>Waarom niet gewoon ping?</b><br>Ping test ICMP, niet SMB. Een server kan op ping antwoorden terwijl poort 445 dicht is, of omgekeerd.</p><p><b>Waarom staat Signed op True?</b><br>Windows 11 24H2 en Server 2025 vereisen standaard SMB signing. Dat beschermt tegen wijzigen onderweg, maar versleutelt niets.</p><p><b>Waarom een aparte schijf D:?</b><br>Bedrijfsgegevens op een eigen volume maken opslag, back-up en herstel overzichtelijker, en een volle datamap legt het systeem niet plat.</p><p><b>Waarom kan HR Finance lezen, er staat toch niets voor HR?</b><br>Er staat wel iets: Users, geërfd van de root van D:. Domain Users is lid van Users op FS01, dus elke domeingebruiker leest mee.</p><p><b>Waarom zet de wizard Everyone Full op de share?</b><br>Microsoft kiest daar strategie 2: een ruime sharelaag en de details in NTFS. Dat werkt alleen als NTFS daarna wél streng is.</p><p><b>Waarom runas en niet gewoon afmelden?</b><br>Sneller, en elk runas-venster is een aparte aanmeldsessie met een eigen token en eigen SMB-sessie. Zo test je meerdere rollen naast elkaar.</p><p><b>Waarom zet u nu toch een gebruiker rechtstreeks in de ACL?</b><br>Om één ding te tonen: de werking van twee lagen. In demo 4 halen we die regel weg en doen we het met groepen, zoals het hoort.</p><p><b>Waarom eerst Everyone van de share halen?</b><br>Anders geeft Everyone Full via de share de schrijfrechten alsnog. Allow-regels via verschillende groepen tellen op.</p><p><b>Waarom kijkt Effective Access ook naar de share?</b><br>Effective Access berekent wat via die toegangsweg overblijft en toont welke laag beperkt: Share of File Permissions.</p><p><b>Waarom twee groepen en niet gewoon GG_Finance_Medewerkers in de ACL?</b><br>De globale groep zegt wie iemand is, de domeinlokale groep welke toegang bij een resource hoort. Zo geef je één rol verschillende rechten op verschillende mappen zonder de ACL's aan te raken.</p><p><b>Waarom zijn de groepen niet meteen in mijn sessie zichtbaar?</b><br>De security token wordt bij het aanmelden gemaakt en daarna niet ververst. Afmelden en opnieuw aanmelden maakt een nieuwe token.</p><p><b>Waarom niet gewoon Full Control voor Finance?</b><br>Full Control laat ook machtigingen en eigenaar wijzigen. Medewerkers moeten inhoud beheren, niet de beveiliging: Modify volstaat.</p><p><b>Waarom niet gewoon de directiegroep toevoegen en klaar?</b><br>Een extra Allow neemt niets weg. Finance-medewerkers erven nog altijd Modify van de bovenliggende map.</p><p><b>Waarom converteren en niet alles verwijderen?</b><br>Verwijderen haalt ook SYSTEM en Administrators weg. Converteren is veiliger: je verwijdert daarna gericht wat niet mag blijven.</p><p><b>Waarom staat er nog (I) bij de oude HR-regels?</b><br>Ze zijn bij het aanmaken in HR geërfd en blijven als ‘geërfd’ gemarkeerd tot de ACL opnieuw wordt toegepast, bijvoorbeeld met icacls /reset.</p><p><b>Waarom is dit belangrijk in de praktijk?</b><br>Bij een herstructurering verplaatst een beheerder vaak mappen. Zonder controle blijven oude afdelingen toegang houden of krijgen nieuwe geen toegang.</p><p><b>Waarom zet Windows ABE niet standaard aan?</b><br>Het kost extra controles bij elke opsomming en het kan gebruikers verwarren als mappen ‘verdwijnen’. Je kiest het bewust waar mapnamen zelf gevoelig zijn.</p><p><b>Waarom is dit dan nuttig?</b><br>Mapnamen zoals ‘Ontslagen 2027’ verraden al informatie. En gebruikers bellen minder voor mappen die ze toch niet mogen openen.</p><p><b>Waarom is een share geen kopie van de map?</b><br>De share is alleen een toegangspunt via het netwerk. De bestanden staan één keer op D:; wat je via \\\\FS01\\Finance wijzigt, wijzig je in D:\\Shares\\Finance.</p><p><b>Waarom gelden sharemachtigingen niet lokaal?</b><br>Lokaal ga je rechtstreeks naar het bestandssysteem en passeer je de share niet. Alleen NTFS hangt aan het bestand zelf.</p><p><b>Waarom eerst DNS en dan pas de poort?</b><br>Zonder IP-adres weet de client niet naar welke server hij de TCP-verbinding moet opbouwen.</p><p><b>Waarom bestaan er dialecten?</b><br>SMB is in versies gegroeid. Client en server kiezen de hoogste versie die beide kennen, zodat oude en nieuwe systemen nog samenwerken.</p><p><b>Waarom bestaan sharemachtigingen nog, als NTFS fijner is?</b><br>Ze bestaan al van vóór NTFS en ze beperken alleen de netwerkweg. Je kan ermee een share bewust smaller maken dan NTFS.</p><p><b>Waarom Change en niet Full voor medewerkers?</b><br>Full laat ook de sharemachtigingen zelf wijzigen. Dat is beheer, geen dagelijks werk.</p><p><b>Waarom is Write niet genoeg?</b><br>Write laat maken en schrijven toe, maar niet verwijderen. Wie documenten beheert, moet ook oude versies kunnen weggooien: Modify.</p><p><b>Waarom terughoudend met Deny?</b><br>Deny wint van Allow en geldt via elke groep waarin de gebruiker zit. Eén vergeten lidmaatschap blokkeert dan onverwacht iemand.</p><p><b>Waarom (OI)(CI) in icacls?</b><br>Zonder die vlaggen geldt de regel alleen voor de map zelf, niet voor de bestanden en submappen erin.</p><p><b>Waarom is geen Allow iets anders dan Deny?</b><br>Geen Allow betekent: deze regel geeft het niet. Een andere groep kan het nog wel geven. Deny verbiedt het, ook als een andere groep het geeft.</p><p><b>Waarom domeinlokaal voor de resourcegroep?</b><br>Een domeinlokale groep mag globale groepen bevatten en is bedoeld om machtigingen op resources in het eigen domein te dragen.</p><p><b>Waarom zo veel groepen voor één map?</b><br>Eén groep per toegangsniveau maakt in de ACL meteen zichtbaar wie wat krijgt, en een personeelswijziging raakt de ACL niet.</p><p><b>Waarom halen we BUILTIN\\Users weg?</b><br>Domain Users is lid van Users op FS01. Zolang die geërfde regel staat, kan elke domeingebruiker Finance lezen, wat de share ook zegt.</p><p><b>Waarom converteren en niet gewoon de Users-regel verwijderen?</b><br>Een geërfde regel kan je op de map zelf niet verwijderen. Eerst converteren maakt ze expliciet, dan kan je ze weghalen.</p><p><b>Waarom ook negatief testen?</b><br>Een configuratie die iedereen alles geeft, slaagt voor elke positieve test. Pas als HR geweigerd wordt, weet je dat de beveiliging werkt.</p><p><b>Waarom niet met de beheerder testen?</b><br>De beheerder heeft Full Control. Wat bij hem lukt, zegt niets over wat een gewone medewerker kan.</p><p><b>Waarom niet gewoon Full Control geven als het niet werkt?</b><br>Dan verdwijnt het symptoom, maar de oorzaak blijft en je opent toegang voor wie dat niet mag. Zoek de laag die faalt.</p>"
+   "h": "<p><b>Waarom NETLOGON en niet meteen onze eigen share?</b><br>Omdat elke domain controller die share al heeft. Zo zien we de volledige SMB-keten werken voordat we zelf iets bouwen.</p><p><b>Waarom niet gewoon ping?</b><br>Ping test ICMP, niet SMB. Een server kan op ping antwoorden terwijl poort 445 dicht is, of omgekeerd.</p><p><b>Waarom staat Signed op True?</b><br>Windows 11 24H2 en Server 2025 vereisen standaard SMB signing. Dat beschermt tegen wijzigen onderweg, maar versleutelt niets.</p><p><b>Waarom een aparte schijf D:?</b><br>Bedrijfsgegevens op een eigen volume maken opslag, back-up en herstel overzichtelijker, en een volle datamap legt het systeem niet plat.</p><p><b>Waarom kan HR Finance lezen, er staat toch niets voor HR?</b><br>Er staat wel iets: Users, geërfd van de root van D:. Domain Users is lid van Users op FS01, dus elke domeingebruiker leest mee.</p><p><b>Waarom zet de wizard Everyone Full op de share?</b><br>Microsoft kiest daar strategie 2: een ruime sharelaag en de details in NTFS. Dat werkt alleen als NTFS daarna wél streng is.</p><p><b>Waarom runas en niet gewoon afmelden?</b><br>Sneller, en elk runas-venster is een aparte aanmeldsessie met een eigen token en eigen SMB-sessie. Zo test je meerdere rollen naast elkaar.</p><p><b>Waarom zet u nu toch een gebruiker rechtstreeks in de ACL?</b><br>Om één ding te tonen: de werking van twee lagen. In demo 4 halen we die regel weg en doen we het met groepen, zoals het hoort.</p><p><b>Waarom eerst Everyone van de share halen?</b><br>Anders geeft Everyone Full via de share de schrijfrechten alsnog. Allow-regels via verschillende groepen tellen op.</p><p><b>Waarom kijkt Effective Access ook naar de share?</b><br>Effective Access berekent wat via die toegangsweg overblijft en toont welke laag beperkt: Share of File Permissions.</p><p><b>Waarom twee groepen en niet gewoon GG_Finance_Medewerkers in de ACL?</b><br>De globale groep zegt wie iemand is, de domeinlokale groep welke toegang bij een resource hoort. Zo geef je één rol verschillende rechten op verschillende mappen zonder de ACL's aan te raken.</p><p><b>Waarom zijn de groepen niet meteen in mijn sessie zichtbaar?</b><br>De security token wordt bij het aanmelden gemaakt en daarna niet ververst. Afmelden en opnieuw aanmelden maakt een nieuwe token.</p><p><b>Waarom niet gewoon Full Control voor Finance?</b><br>Full Control laat ook machtigingen en eigenaar wijzigen. Medewerkers moeten inhoud beheren, niet de beveiliging: Modify volstaat.</p><p><b>Waarom niet gewoon de directiegroep toevoegen en klaar?</b><br>Een extra Allow neemt niets weg. Finance-medewerkers erven nog altijd Modify van de bovenliggende map.</p><p><b>Waarom converteren en niet alles verwijderen?</b><br>Verwijderen haalt ook SYSTEM en Administrators weg. Converteren is veiliger: je verwijdert daarna gericht wat niet mag blijven.</p><p><b>Waarom is een share geen kopie van de map?</b><br>De share is alleen een toegangspunt via het netwerk. De bestanden staan één keer op D:; wat je via \\\\FS01\\Finance wijzigt, wijzig je in D:\\Shares\\Finance.</p><p><b>Waarom gelden sharemachtigingen niet lokaal?</b><br>Lokaal ga je rechtstreeks naar het bestandssysteem en passeer je de share niet. Alleen NTFS hangt aan het bestand zelf.</p><p><b>Waarom eerst DNS en dan pas de poort?</b><br>Zonder IP-adres weet de client niet naar welke server hij de TCP-verbinding moet opbouwen.</p><p><b>Waarom bestaan er dialecten?</b><br>SMB is in versies gegroeid. Client en server kiezen de hoogste versie die beide kennen, zodat oude en nieuwe systemen nog samenwerken.</p><p><b>Waarom bestaan sharemachtigingen nog, als NTFS fijner is?</b><br>Ze bestaan al van vóór NTFS en ze beperken alleen de netwerkweg. Je kan ermee een share bewust smaller maken dan NTFS.</p><p><b>Waarom Change en niet Full voor medewerkers?</b><br>Full laat ook de sharemachtigingen zelf wijzigen. Dat is beheer, geen dagelijks werk.</p><p><b>Waarom is Write niet genoeg?</b><br>Write laat maken en schrijven toe, maar niet verwijderen. Wie documenten beheert, moet ook oude versies kunnen weggooien: Modify.</p><p><b>Waarom terughoudend met Deny?</b><br>Deny wint van Allow en geldt via elke groep waarin de gebruiker zit. Eén vergeten lidmaatschap blokkeert dan onverwacht iemand.</p><p><b>Waarom (OI)(CI) in icacls?</b><br>Zonder die vlaggen geldt de regel alleen voor de map zelf, niet voor de bestanden en submappen erin.</p><p><b>Waarom is geen Allow iets anders dan Deny?</b><br>Geen Allow betekent: deze regel geeft het niet. Een andere groep kan het nog wel geven. Deny verbiedt het, ook als een andere groep het geeft.</p><p><b>Waarom domeinlokaal voor de resourcegroep?</b><br>Een domeinlokale groep mag globale groepen bevatten en is bedoeld om machtigingen op resources in het eigen domein te dragen.</p><p><b>Waarom zo veel groepen voor één map?</b><br>Eén groep per toegangsniveau maakt in de ACL meteen zichtbaar wie wat krijgt, en een personeelswijziging raakt de ACL niet.</p><p><b>Waarom halen we BUILTIN\\Users weg?</b><br>Domain Users is lid van Users op FS01. Zolang die geërfde regel staat, kan elke domeingebruiker Finance lezen, wat de share ook zegt.</p><p><b>Waarom converteren en niet gewoon de Users-regel verwijderen?</b><br>Een geërfde regel kan je op de map zelf niet verwijderen. Eerst converteren maakt ze expliciet, dan kan je ze weghalen.</p><p><b>Waarom ook negatief testen?</b><br>Een configuratie die iedereen alles geeft, slaagt voor elke positieve test. Pas als HR geweigerd wordt, weet je dat de beveiliging werkt.</p><p><b>Waarom niet met de beheerder testen?</b><br>De beheerder heeft Full Control. Wat bij hem lukt, zegt niets over wat een gewone medewerker kan.</p><p><b>Waarom niet gewoon Full Control geven als het niet werkt?</b><br>Dan verdwijnt het symptoom, maar de oorzaak blijft en je opent toegang voor wie dat niet mag. Zoek de laag die faalt.</p>"
   }
  ]
 };

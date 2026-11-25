@@ -162,46 +162,6 @@
     "De NTFS-ACL geldt lokaal én via SMB; via de share heeft hij Change."
    ],
    "e": "Converteren kopieert de geërfde regels als expliciete regels: <b>DL_FS_Finance_RW:(OI)(CI)(M)</b> staat er nog, nu zonder (I). Je moet die regel bewust verwijderen. Pas dan is de uitzondering echt."
-  },
-  {
-   "n": 9,
-   "demo": 6,
-   "t": "Verplaatsen binnen hetzelfde volume",
-   "q": "Als beheerder verplaats je <code>D:\\Shares\\HR\\Loonmodel.xlsx</code> naar <code>D:\\Shares\\Finance</code> (zelfde volume D:). Kan student.finance het bestand daarna openen?",
-   "o": [
-    "Nee: het bestand behield zijn HR-ACL",
-    "Ja: een bestand neemt altijd de rechten van de nieuwe map over",
-    "Ja, maar alleen lezen",
-    "Nee: verplaatste bestanden zijn vergrendeld"
-   ],
-   "a": 0,
-   "w": [
-    null,
-    "Dat geldt voor kopiëren (nieuw object). Binnen hetzelfde volume blijft het bestaande object met zijn beveiligingsdescriptor staan.",
-    "Er komen geen Finance-regels bij zolang de ACL niet opnieuw wordt toegepast.",
-    "Verplaatsen vergrendelt niets."
-   ],
-   "e": "Binnen hetzelfde NTFS-volume wordt het object alleen verhangen en behoudt het zijn ACL: <code>icacls</code> toont nog <b>DL_FS_HR_RW</b> en geen Finance-groepen. Kopiëren maakt een nieuw object dat de ACL van de doelmap erft."
-  },
-  {
-   "n": 10,
-   "demo": 7,
-   "t": "Access-Based Enumeration",
-   "q": "student.finance heeft geen toegang meer tot Finance\\Directie. Je zet ABE aan op de share Finance. Wat ziet hij in <code>\\\\FS01\\Finance</code>?",
-   "o": [
-    "De map Directie is niet meer zichtbaar",
-    "De map Directie is zichtbaar, maar openen geeft toegang geweigerd",
-    "De hele share is onzichtbaar",
-    "Alles blijft hetzelfde tot hij opnieuw aanmeldt"
-   ],
-   "a": 0,
-   "w": [
-    null,
-    "Dat was het gedrag vóór ABE: zichtbaar maar ontoegankelijk.",
-    "ABE filtert items binnen de share, niet de share zelf.",
-    "ABE werkt bij elke opsomming van de map; een nieuwe aanmelding is niet nodig."
-   ],
-   "e": "Met <code>FolderEnumerationMode AccessBased</code> toont SMB alleen items waarvoor de gebruiker minstens leesrecht heeft. Directie verdwijnt uit de lijst. Beveiligd was ze al door NTFS: ABE verbergt, NTFS beveiligt."
   }
  ],
  "status": [
