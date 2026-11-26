@@ -7,7 +7,7 @@
    "n": 1,
    "demo": 1,
    "t": "Wat bewijst een geslaagde poorttest?",
-   "q": "Op CLIENT01 geeft <code>Test-NetConnection DC01 -Port 445</code> <b>TcpTestSucceeded : True</b>. Wat is daarmee bewezen?",
+   "q": "Op W11-01 geeft <code>Test-NetConnection DC01 -Port 445</code> <b>TcpTestSucceeded : True</b>. Wat is daarmee bewezen?",
    "o": [
     "DC01 aanvaardt TCP-verbindingen op de SMB-poort",
     "De gebruiker mag de share NETLOGON openen",
@@ -27,7 +27,7 @@
    "n": 2,
    "demo": 1,
    "t": "Welke SMB-sessie zie je?",
-   "q": "Als AD\\Administrator open je <code>\\\\DC01\\NETLOGON</code> en voer je <code>Get-SmbConnection</code> uit. Welk dialect verwacht je tussen Windows 11 en Windows Server 2025?",
+   "q": "Als HOGENT\\Administrator open je <code>\\\\DC01\\NETLOGON</code> en voer je <code>Get-SmbConnection</code> uit. Welk dialect verwacht je tussen Windows 11 en Windows Server 2025?",
    "o": [
     "3.1.1",
     "1.0",
@@ -47,7 +47,7 @@
    "n": 3,
    "demo": 2,
    "t": "De map bestaat, de share nog niet",
-   "q": "Op FS01 bestaat <code>D:\\Shares\\Finance</code>. Er is nog geen share. Wat gebeurt er als je op CLIENT01 <code>\\\\FS01\\Finance</code> opent?",
+   "q": "Op FS01 bestaat <code>D:\\Shares\\Finance</code>. Er is nog geen share. Wat gebeurt er als je op W11-01 <code>\\\\FS01\\Finance</code> opent?",
    "o": [
     "Windows vindt het netwerkpad of de netwerknaam niet",
     "De map opent, maar is leeg",
@@ -127,7 +127,7 @@
    "n": 7,
    "demo": 4,
    "t": "Nieuwe groep, oude sessie",
-   "q": "student.finance is aangemeld op CLIENT01. Op DC01 wordt GG_Finance_Medewerkers lid van DL_FS_Finance_RW. Wat toont <code>whoami /groups</code> in zijn bestaande sessie?",
+   "q": "student.finance is aangemeld op W11-01. Op DC01 wordt GG_Finance_Medewerkers lid van DL_FS_Finance_RW. Wat toont <code>whoami /groups</code> in zijn bestaande sessie?",
    "o": [
     "DL_FS_Finance_RW ontbreekt nog",
     "DL_FS_Finance_RW staat er meteen bij",

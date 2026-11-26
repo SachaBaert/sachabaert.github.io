@@ -92,7 +92,7 @@
     "e": "Lokaal = NTFS."
    },
    {
-    "q": "Welke machtigingen gelden bij <code>\\\\FS01\\Finance</code> vanaf CLIENT01?",
+    "q": "Welke machtigingen gelden bij <code>\\\\FS01\\Finance</code> vanaf W11-01?",
     "o": [
      "Share en NTFS",
      "Alleen NTFS",
@@ -367,7 +367,7 @@
     "q": "Een server is client én server tegelijk. Wanneer is FS01 SMB-client?",
     "o": [
      "Als FS01 zelf een share op DC01 opent",
-     "Als CLIENT01 \\\\FS01\\Finance opent",
+     "Als W11-01 \\\\FS01\\Finance opent",
      "Als FS01 een share aanmaakt",
      "Nooit: een server is altijd SMB-server"
     ],
@@ -780,8 +780,8 @@
    {
     "q": "Welk commando voegt Change toe op de share Finance voor een groep?",
     "o": [
-     "Grant-SmbShareAccess -Name Finance -AccountName AD\\DL_FS_Finance_RW -AccessRight Change -Force",
-     "icacls D:\\Shares\\Finance /grant AD\\DL_FS_Finance_RW:C",
+     "Grant-SmbShareAccess -Name Finance -AccountName HOGENT\\DL_FS_Finance_RW -AccessRight Change -Force",
+     "icacls D:\\Shares\\Finance /grant HOGENT\\DL_FS_Finance_RW:C",
      "Set-Acl -Path \\\\FS01\\Finance -Change",
      "New-SmbShare -Name Finance -Change"
     ],
@@ -2348,7 +2348,7 @@
      "De sessie gebruikt het juiste account."
     ],
     "e": "RX geeft geen schrijfrechten.",
-    "s": "<b>Situatie</b><br>Get-SmbShareAccess: DL_FS_Finance_RW Change.<br>whoami /groups bevat DL_FS_Finance_RW.<br>Get-SmbConnection: UserName AD\\student.finance.<br>icacls: DL_FS_Finance_RW:(OI)(CI)(RX).<br>Opslaan mislukt."
+    "s": "<b>Situatie</b><br>Get-SmbShareAccess: DL_FS_Finance_RW Change.<br>whoami /groups bevat DL_FS_Finance_RW.<br>Get-SmbConnection: UserName HOGENT\\student.finance.<br>icacls: DL_FS_Finance_RW:(OI)(CI)(RX).<br>Opslaan mislukt."
    },
    {
     "q": "Welke laag is het probleem?",
@@ -2366,7 +2366,7 @@
      "Zover komt het niet."
     ],
     "e": "De client gebruikt een verkeerde DNS-server.",
-    "s": "<b>Situatie</b><br>Resolve-DnsName FS01: DNS name does not exist.<br>Get-DnsClientServerAddress op CLIENT01: 192.168.50.99.<br>DC01 is de DNS-server (192.168.50.10)."
+    "s": "<b>Situatie</b><br>Resolve-DnsName FS01: DNS name does not exist.<br>Get-DnsClientServerAddress op W11-01: 192.168.60.99.<br>DC01 is de DNS-server (192.168.60.10)."
    },
    {
     "q": "Welke laag is het probleem?",
@@ -2384,7 +2384,7 @@
      "De naam wordt opgelost."
     ],
     "e": "De sessie gebruikt een ander account.",
-    "s": "<b>Situatie</b><br>whoami: hogent\\student.hr.<br>Get-SmbConnection: FS01 Finance AD\\directeur01.<br>student.hr kan onverwacht Finance lezen."
+    "s": "<b>Situatie</b><br>whoami: hogent\\student.hr.<br>Get-SmbConnection: FS01 Finance HOGENT\\directeur01.<br>student.hr kan onverwacht Finance lezen."
    },
    {
     "q": "Welke laag is het probleem?",
@@ -2420,7 +2420,7 @@
      "Lezen werkt."
     ],
     "e": "Deny wint van Allow.",
-    "s": "<b>Situatie</b><br>student.finance kan overal in Finance schrijven, behalve in Budgetten.<br>icacls Budgetten: AD\\GG_Stagiairs:(OI)(CI)(DENY)(W).<br>whoami /groups bevat GG_Stagiairs."
+    "s": "<b>Situatie</b><br>student.finance kan overal in Finance schrijven, behalve in Budgetten.<br>icacls Budgetten: HOGENT\\GG_Stagiairs:(OI)(CI)(DENY)(W).<br>whoami /groups bevat GG_Stagiairs."
    },
    {
     "q": "Welke tool gebruik je voor een snelle berekening van de rechten van één gebruiker op FS01?",

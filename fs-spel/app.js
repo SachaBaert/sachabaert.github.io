@@ -229,7 +229,7 @@
     w.appendChild(t3);
     w.appendChild(el("div", { class: "card mt" }, [
       el("b", { text: "Labomgeving" }),
-      el("p", { class: "muted", html: "Domein <code>ad.brightlearning.test</code> (NetBIOS AD) · DC01 <code>192.168.50.10</code> (AD DS + DNS) · FS01 <code>192.168.50.30</code> (fileserver, D:\\Shares) · CLIENT01 <code>192.168.50.20</code> · netwerk 192.168.50.0/24, geen gateway" })
+      el("p", { class: "muted", html: "<b>Jouw labo</b>: <code>ad.brightlearning.test</code> (AD\\) · DC01 <code>192.168.50.10</code> · CLIENT01 <code>192.168.50.20</code> · FS01 <code>192.168.50.30</code> (D:\\Shares). <b>Demo's</b> van de lector: <code>hogent.local</code> (HOGENT\\) met W11-01. Vertaaltabel: ⓘ Info › Jouw labo ↔ demolabo." }),
     ]));
     w.appendChild(el("button", { class: "btn sec mt", onclick: function () {
       if (!window.confirm("Al je scores, voorspellingen en ingevulde gegevens van deze FS-app wissen?")) return;
