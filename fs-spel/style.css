@@ -188,3 +188,4 @@ table.vk th,table.vk td{text-align:left;padding:6px;border-bottom:1px solid #e6e
 .sheet code{background:#eee;border-radius:5px;padding:1px 4px}
 .sheet pre code{background:none;padding:0}
 .sheet td,.sheet th{word-break:break-word;overflow-wrap:anywhere}
+li code, p code{word-break:break-all}

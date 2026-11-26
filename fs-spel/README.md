@@ -1,6 +1,6 @@
 # FS-spel · Windows System Administration (HOGENT)
 
-Mobiele oefeningen bij de les **File Services: SMB en NTFS** (labo DC01 · FS01 · W11-01 · hogent.local).
+Mobiele oefeningen bij de les **File Services: SMB en NTFS** (labo DC01 · FS01 · CLIENT01 · ad.brightlearning.test).
 
 | Oefening | Route | Wat |
 |---|---|---|
@@ -13,6 +13,7 @@ Mobiele oefeningen bij de les **File Services: SMB en NTFS** (labo DC01 · FS01 
 | Overerving | `#/overerving` | Geërfd of expliciet, overerving uitschakelen, uitzonderingen |
 | Welk bewijs? | `#/bewijs` | Begripscheck |
 | Voorspel de demo | `#/demo`, `#/demo/<n>` | Voorspellingen 1–8 bij demo's 1–5 |
+| Labo klaarzetten | `#/labo` | FS01 toevoegen, FS_labo_student.ps1 met kopieerknop |
 | Werkdoel · Status · Foutenpracticum · Ticket · Exit ticket | `#/werkdoel`, `#/status`, `#/fout`, `#/ticket`, `#/exitticket` | Namiddag |
 | Extra oefenen | `#/extra/<onderwerp>` | 10 uit 30: smb, rechten, agdlp, acl, trouble |
 

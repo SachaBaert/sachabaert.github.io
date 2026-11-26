@@ -46,7 +46,7 @@ window.FSDATA = {
      "e": "Een verborgen share is nog altijd een UNC-pad. Het dollarteken verbergt alleen bij het bladeren."
     },
     {
-     "q": "<code>C:\\Windows\\System32</code> op W11-01",
+     "q": "<code>C:\\Windows\\System32</code> op CLIENT01",
      "a": "Lokaal",
      "e": "Een map op het eigen systeemvolume van de client."
     },
@@ -86,7 +86,7 @@ window.FSDATA = {
    ],
    "items": [
     {
-     "q": "student.finance opent vanaf W11-01 <code>\\\\FS01\\Finance\\Budget-2027.txt</code>.",
+     "q": "student.finance opent vanaf CLIENT01 <code>\\\\FS01\\Finance\\Budget-2027.txt</code>.",
      "a": "Share + NTFS",
      "e": "Via het netwerk: eerst de sharemachtiging, dan de NTFS-ACL. Alleen wat beide toestaan blijft over."
     },
@@ -146,7 +146,7 @@ window.FSDATA = {
    ],
    "items": [
     {
-     "q": "Windows vraagt een Kerberos-ticket voor <b>cifs/FS01.hogent.local</b>.",
+     "q": "Windows vraagt een Kerberos-ticket voor <b>cifs/FS01.ad.brightlearning.test</b>.",
      "a": "Authenticatie",
      "e": "Met het ticket bewijst de gebruiker wie hij is tegenover FS01."
     },
@@ -166,7 +166,7 @@ window.FSDATA = {
      "e": "Een ACE in de DACL: dat bepaalt wat de identiteit mag."
     },
     {
-     "q": "<code>Get-SmbConnection</code> toont <b>UserName HOGENT\\directeur01</b>.",
+     "q": "<code>Get-SmbConnection</code> toont <b>UserName AD\\directeur01</b>.",
      "a": "Authenticatie",
      "e": "De identiteit waarmee de SMB-sessie werd opgebouwd."
     },
@@ -689,7 +689,7 @@ window.FSDATA = {
     "e": "Authenticatie stelt de identiteit vast; autorisatie bepaalt daarna wat die identiteit mag."
    },
    {
-    "s": "<b>Situatie</b><br>Op W11-01 werkt ping FS01.<br>Test-NetConnection FS01 -Port 445 geeft TcpTestSucceeded : False.",
+    "s": "<b>Situatie</b><br>Op CLIENT01 werkt ping FS01.<br>Test-NetConnection FS01 -Port 445 geeft TcpTestSucceeded : False.",
     "q": "Wat is de meest waarschijnlijke oorzaak?",
     "o": [
      "Een firewall blokkeert TCP 445 of FS01 biedt geen SMB aan",
@@ -727,7 +727,7 @@ window.FSDATA = {
  },
  "uitvoer": [
   {
-   "out": "PS C:\\> icacls D:\\Shares\\Finance\\Budgetten\nD:\\Shares\\Finance\\Budgetten HOGENT\\DL_FS_Beheerders_FC:(I)(OI)(CI)(F)\n                             HOGENT\\DL_FS_Finance_RW:(I)(OI)(CI)(M)\n                             HOGENT\\DL_FS_Finance_RO:(I)(OI)(CI)(RX)\n                             NT AUTHORITY\\SYSTEM:(I)(OI)(CI)(F)",
+   "out": "PS C:\\> icacls D:\\Shares\\Finance\\Budgetten\nD:\\Shares\\Finance\\Budgetten AD\\DL_FS_Beheerders_FC:(I)(OI)(CI)(F)\n                             AD\\DL_FS_Finance_RW:(I)(OI)(CI)(M)\n                             AD\\DL_FS_Finance_RO:(I)(OI)(CI)(RX)\n                             NT AUTHORITY\\SYSTEM:(I)(OI)(CI)(F)",
    "q": "Wat zegt <b>(I)</b> bij elke regel?",
    "o": [
     "De regel is geërfd van een bovenliggende map",
@@ -745,7 +745,7 @@ window.FSDATA = {
    "e": "(I) = inherited. (OI) = ook bestanden, (CI) = ook submappen."
   },
   {
-   "out": "PS C:\\> Get-SmbShareAccess -Name Finance\nName    ScopeName AccountName                AccessControlType AccessRight\n----    --------- -----------                ----------------- -----------\nFinance *         HOGENT\\DL_FS_Finance_RW     Allow             Read\nFinance *         HOGENT\\DL_FS_Finance_RO     Allow             Read\nFinance *         HOGENT\\DL_FS_Beheerders_FC  Allow             Full",
+   "out": "PS C:\\> Get-SmbShareAccess -Name Finance\nName    ScopeName AccountName                AccessControlType AccessRight\n----    --------- -----------                ----------------- -----------\nFinance *         AD\\DL_FS_Finance_RW     Allow             Read\nFinance *         AD\\DL_FS_Finance_RO     Allow             Read\nFinance *         AD\\DL_FS_Beheerders_FC  Allow             Full",
    "s": "<b>Situatie</b><br>NTFS geeft DL_FS_Finance_RW Modify op D:\\Shares\\Finance.<br>student.finance zit (via zijn rolgroep) in DL_FS_Finance_RW.",
    "q": "Wat kan student.finance via de share?",
    "o": [
@@ -764,7 +764,7 @@ window.FSDATA = {
    "e": "DL_FS_Finance_RW heeft op de share maar Read: dat moet Change zijn."
   },
   {
-   "out": "PS C:\\> whoami\nhogent\\student.hr\nPS C:\\> Get-SmbConnection | Select ServerName, ShareName, UserName\nServerName ShareName UserName\n---------- --------- --------\nFS01       Finance   HOGENT\\directeur01",
+   "out": "PS C:\\> whoami\nhogent\\student.hr\nPS C:\\> Get-SmbConnection | Select ServerName, ShareName, UserName\nServerName ShareName UserName\n---------- --------- --------\nFS01       Finance   AD\\directeur01",
    "q": "Wat is hier aan de hand?",
    "o": [
     "De SMB-sessie gebruikt een andere identiteit dan de aangemelde gebruiker",
@@ -782,7 +782,7 @@ window.FSDATA = {
    "e": "Een oude verbinding of opgeslagen referentie (net use /user:…) gebruikt directeur01. Verbreek die verbinding; pas geen ACL aan."
   },
   {
-   "out": "PS C:\\> whoami /groups | Select-String 'FS_|GG_'\nHOGENT\\GG_Finance_Medewerkers   Group  S-1-5-21-...-1105  Mandatory group, Enabled by default, Enabled group",
+   "out": "PS C:\\> whoami /groups | Select-String 'FS_|GG_'\nAD\\GG_Finance_Medewerkers   Group  S-1-5-21-...-1105  Mandatory group, Enabled by default, Enabled group",
    "s": "<b>Situatie</b><br>In AD is GG_Finance_Medewerkers lid van DL_FS_Finance_RW.<br>Die nesting werd tien minuten geleden toegevoegd. De gebruiker is sinds vanochtend aangemeld.",
    "q": "Waarom ontbreekt DL_FS_Finance_RW?",
    "o": [
@@ -801,7 +801,7 @@ window.FSDATA = {
    "e": "Afmelden en opnieuw aanmelden: de nieuwe token bevat DL_FS_Finance_RW."
   },
   {
-   "out": "PS C:\\> Test-NetConnection FS01 -Port 445\nComputerName           : FS01\nRemoteAddress          : 192.168.60.20\nRemotePort             : 445\nPingSucceeded          : True\nTcpTestSucceeded       : False",
+   "out": "PS C:\\> Test-NetConnection FS01 -Port 445\nComputerName           : FS01\nRemoteAddress          : 192.168.50.30\nRemotePort             : 445\nPingSucceeded          : True\nTcpTestSucceeded       : False",
    "q": "Welke conclusie is juist?",
    "o": [
     "FS01 is bereikbaar, maar SMB op poort 445 niet",
@@ -962,7 +962,7 @@ window.FSDATA = {
    "e": "Share ∩ NTFS: controleer ook icacls en test met het account."
   },
   {
-   "q": "‘Op W11-01 toont whoami /groups DL_FS_Finance_RW in de sessie van student.finance.’",
+   "q": "‘Op CLIENT01 toont whoami /groups DL_FS_Finance_RW in de sessie van student.finance.’",
    "o": [
     "Overtuigend voor de token, niet voor de ACL",
     "Overtuigend voor de hele toegangsketen",
@@ -1069,7 +1069,7 @@ window.FSDATA = {
    "e": "Geërfde regels volgen de bovenliggende map. Daarom beheer je bij voorkeur één ACL bovenaan."
   },
   {
-   "s": "<b>Situatie</b><br>icacls D:\\Shares\\Finance\\Directie toont: HOGENT\\DL_FS_Finance_RW:(OI)(CI)(M), zonder (I).<br>(Get-Acl D:\\Shares\\Finance\\Directie).AreAccessRulesProtected geeft True.<br>Op Finance staat dezelfde regel.",
+   "s": "<b>Situatie</b><br>icacls D:\\Shares\\Finance\\Directie toont: AD\\DL_FS_Finance_RW:(OI)(CI)(M), zonder (I).<br>(Get-Acl D:\\Shares\\Finance\\Directie).AreAccessRulesProtected geeft True.<br>Op Finance staat dezelfde regel.",
    "q": "Hoe is deze regel er waarschijnlijk gekomen?",
    "o": [
     "Bij het uitschakelen van de overerving werd ‘converteren’ gekozen",
@@ -1141,7 +1141,7 @@ window.FSDATA = {
    "e": "De share is een toegangspunt naar de lokale map."
   },
   {
-   "s": "<b>Situatie</b><br>Op W11-01: Resolve-DnsName FS01 lukt.<br>Test-NetConnection FS01 -Port 445 geeft True.<br>\\\\FS01\\Finance geeft ‘The network name cannot be found’.",
+   "s": "<b>Situatie</b><br>Op CLIENT01: Resolve-DnsName FS01 lukt.<br>Test-NetConnection FS01 -Port 445 geeft True.<br>\\\\FS01\\Finance geeft ‘The network name cannot be found’.",
    "q": "Wat controleer je eerst?",
    "o": [
     "Of de share Finance bestaat (Get-SmbShare op FS01)",
@@ -1246,7 +1246,7 @@ window.FSDATA = {
    "cs": "smb"
   },
   "exit1": {
-   "t": "Exitcheck blok 1",
+   "t": "Exitcheck",
    "p": [
     "Vijf vragen over paden, shares en de SMB-keten."
    ],
@@ -1328,7 +1328,7 @@ window.FSDATA = {
   {
    "id": "lab",
    "t": "Labomgeving",
-   "h": "<p>Domein <b>hogent.local</b> (NetBIOS HOGENT) · netwerk <code>192.168.60.0/24</code>, geen gateway.</p><table><tr><th>Machine</th><th>IP</th><th>Rol</th></tr><tr><td>DC01</td><td>192.168.60.10</td><td>AD DS + DNS voor hogent.local</td></tr><tr><td>FS01</td><td>192.168.60.20</td><td>fileserver (File Server-rol), datavolume D:</td></tr><tr><td>W11-01</td><td>192.168.60.30</td><td>domeinclient, testen via UNC</td></tr></table><p>D:\\Shares\\Finance → <code>\\\\FS01\\Finance</code><br>D:\\Shares\\HR → <code>\\\\FS01\\HR</code></p><ul><li><b>student.finance</b>: Finance-medewerker, moet Finance lezen, maken, wijzigen en verwijderen</li><li><b>student.hr</b>: HR-medewerker, moet HR wijzigen, mag Finance niet openen</li><li><b>directeur01</b>: directielid, mag Finance en HR alleen lezen</li><li><b>fsadmin</b>: fileserverbeheerder, beheert machtigingen (Full Control)</li></ul><p>Testen met een ander account op W11-01: <code>runas /user:HOGENT\\student.hr powershell</code></p>"
+   "h": "<p>Domein <b>ad.brightlearning.test</b> (NetBIOS AD) · netwerk <code>192.168.50.0/24</code>, geen gateway.</p><table><tr><th>Machine</th><th>IP</th><th>Rol</th></tr><tr><td>DC01</td><td>192.168.50.10</td><td>AD DS + DNS voor ad.brightlearning.test</td></tr><tr><td>CLIENT01</td><td>192.168.50.20</td><td>domeinclient, testen via UNC</td></tr><tr><td>FS01</td><td>192.168.50.30</td><td>fileserver (File Server-rol), datavolume D:</td></tr></table><p>D:\\Shares\\Finance → <code>\\\\FS01\\Finance</code><br>D:\\Shares\\HR → <code>\\\\FS01\\HR</code></p><ul><li><b>student.finance</b>: Finance-medewerker, moet Finance lezen, maken, wijzigen en verwijderen</li><li><b>student.hr</b>: HR-medewerker, moet HR wijzigen, mag Finance niet openen</li><li><b>directeur01</b>: directielid, mag Finance en HR alleen lezen</li><li><b>fsadmin</b>: fileserverbeheerder, beheert machtigingen (Full Control)</li></ul><p>Testen met een ander account op CLIENT01: <code>runas /user:AD\\student.hr powershell</code></p>"
   },
   {
    "id": "lagen",

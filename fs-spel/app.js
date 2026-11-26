@@ -180,12 +180,13 @@
     { r: "smb", t: "Hoe werkt SMB?", s: "Zet de negen stappen van een SMB-verbinding in volgorde", c: "#000", i: "1…9", k: "smb" },
     { r: "matrix", t: "Toegangsmatrix", s: "Share ∩ NTFS, Allow, Deny: wat blijft er over?", c: "#EB6008", i: "∩", k: "matrix" },
     { r: "agdlp", t: "Bouw de AGDLP-keten", s: "Account → Global → Domain Local → Permission", c: "#14799B", i: "A→P", k: "agdlp" },
-    { r: "exit1", t: "Exitcheck blok 1", s: "Paden, shares en de SMB-keten", c: "#919E2C", i: "✓", k: "exit1" },
+    { r: "exit1", t: "Exitcheck", s: "Paden, shares en de SMB-keten", c: "#919E2C", i: "✓", k: "exit1" },
     { r: "uitvoer", t: "Lees de uitvoer", s: "icacls, Get-SmbShareAccess, Get-SmbConnection, whoami", c: "#14799B", i: ">_", k: "uitvoer" },
     { r: "overerving", t: "Overerving en uitzonderingen", s: "Geërfd of expliciet, overerving uitschakelen, een afwijkende submap", c: "#000", i: "(I)", k: "overerving" },
     { r: "bewijs", t: "Welk bewijs?", s: "Begripscheck: wat bewijst écht iets?", c: "#EB6008", i: "!", k: "bewijs" }
   ];
   var LES = [
+    { r: "labo", t: "Labo klaarzetten", s: "FS01 toevoegen en het script uitvoeren tot KLAAR", c: "#2e7d32", i: "▶" },
     { r: "demo", t: "Voorspel de demo", s: "Demo's 1–5: eerst voorspellen, dan het bewijs", c: "#EB6008", i: "?" },
     { r: "werkdoel", t: "Werkdoel en testmatrix", s: "Wat moet lukken, wat moet falen, en wat zag je?", c: "#14799B", i: "◎" },
     { r: "status", t: "Status", s: "Toon je status naast je laptop", c: "#000", i: "●" },
@@ -228,7 +229,7 @@
     w.appendChild(t3);
     w.appendChild(el("div", { class: "card mt" }, [
       el("b", { text: "Labomgeving" }),
-      el("p", { class: "muted", html: "Domein <code>hogent.local</code> (NetBIOS HOGENT) · DC01 <code>192.168.60.10</code> (AD DS + DNS) · FS01 <code>192.168.60.20</code> (fileserver, D:\\Shares) · W11-01 <code>192.168.60.30</code> · netwerk 192.168.60.0/24, geen gateway" })
+      el("p", { class: "muted", html: "Domein <code>ad.brightlearning.test</code> (NetBIOS AD) · DC01 <code>192.168.50.10</code> (AD DS + DNS) · FS01 <code>192.168.50.30</code> (fileserver, D:\\Shares) · CLIENT01 <code>192.168.50.20</code> · netwerk 192.168.50.0/24, geen gateway" })
     ]));
     w.appendChild(el("button", { class: "btn sec mt", onclick: function () {
       if (!window.confirm("Al je scores, voorspellingen en ingevulde gegevens van deze FS-app wissen?")) return;
@@ -307,7 +308,7 @@
     var g = '<svg viewBox="-16 0 376 150" role="img" aria-label="Toegangsweg van ' + o.u + ': ' + (lok ? 'lokaal, alleen NTFS' : 'via SMB, share ' + o.share + ' en NTFS ' + o.ntfs) + '" style="width:100%;max-width:560px;display:block;margin:6px auto 10px;font-family:Montserrat,system-ui,sans-serif">';
     g += '<defs><marker id="gah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>';
     // gebruiker
-    g += '<circle cx="32" cy="52" r="10" fill="none" stroke="#000" stroke-width="1.8"/><path d="M14,86 q18,-26 36,0" fill="none" stroke="#000" stroke-width="1.8"/>' + t(32, 104, o.u, { size: 9.5 }) + t(32, 118, lok ? "op FS01" : "op W11-01", { w: 400, size: 9, fill: "#5a5a5a" });
+    g += '<circle cx="32" cy="52" r="10" fill="none" stroke="#000" stroke-width="1.8"/><path d="M14,86 q18,-26 36,0" fill="none" stroke="#000" stroke-width="1.8"/>' + t(32, 104, o.u, { size: 9.5 }) + t(32, 118, lok ? "op FS01" : "op CLIENT01", { w: 400, size: 9, fill: "#5a5a5a" });
     // pijl met pad
     g += '<line x1="58" y1="66" x2="104" y2="66" stroke="#000" stroke-width="2" marker-end="url(#gah)"/>' + t(81, 58, lok ? "D:\\" : "\\\\FS01", { size: 8.5, w: 700 });
     // sharepoort
@@ -358,6 +359,34 @@
       series(box, A.q, "agdlp", agdlp, "Vraag", function (s) { finish(box, "agdlp", score + s, total, agdlp); });
     }
     intro(box, "agdlp", stap1);
+  }
+
+  /* ---------- Labo klaarzetten: stappen + script met kopieerknop ---------- */
+  function laboPage() {
+    clear(); crumb.textContent = "Labo klaarzetten";
+    var w = wrap(), L = D.labo;
+    w.appendChild(el("h1", { text: "Je AD-labo uitbreiden met FS01" }));
+    w.appendChild(el("p", { class: "muted", html: L.intro }));
+    var ol = el("ol");
+    L.stappen.forEach(function (st) { ol.appendChild(el("li", { html: st })); });
+    w.appendChild(el("div", { class: "card" }, [ol]));
+    w.appendChild(el("h2", { text: "Het script FS_labo_student.ps1" }));
+    var msg = el("div");
+    var pre = el("pre", { class: "code", text: L.script, style: "white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto;background:#1e1e1e;color:#e6e6e6;padding:10px;border-radius:8px;font-size:12px" });
+    w.appendChild(el("div", { class: "row mt" }, [
+      el("button", { class: "btn", onclick: function () {
+        msg.innerHTML = "";
+        (navigator.clipboard ? navigator.clipboard.writeText(L.script) : Promise.reject()).then(function () { msg.appendChild(fb(true, "Gekopieerd", "Plak het in Kladblok op de VM en sla op als C:\\FS_labo_student.ps1 (Opslaan als › Alle bestanden).")); },
+          function () { msg.appendChild(el("p", { class: "muted", text: "Kopiëren lukte niet automatisch: selecteer de tekst hieronder en kopieer hem zelf." })); });
+      } }, ["Script kopiëren"]),
+      el("button", { class: "btn sec", onclick: function () {
+        var a = el("a", { href: URL.createObjectURL(new Blob(["\ufeff" + L.script], { type: "text/plain" })), download: "FS_labo_student.ps1" });
+        document.body.appendChild(a); a.click(); a.remove();
+      } }, ["Downloaden (.ps1)"])]));
+    w.appendChild(msg);
+    w.appendChild(pre);
+    w.appendChild(el("div", { class: "card mt" }, [el("b", { text: "Lukt het niet?" }), el("ul", {}, L.hulp.map(function (h) { return el("li", { html: h }); }))]));
+    w.appendChild(back());
   }
 
   /* ---------- 4. Hoe werkt SMB? ---------- */
@@ -635,12 +664,13 @@
   var R = {
     "": home,
     matrix: matrix, agdlp: agdlp, smb: smb,
-    exit1: simple("exit1", "Exitcheck blok 1", function () { return D.exit1; }, "Vraag"),
+    exit1: simple("exit1", "Exitcheck", function () { return D.exit1; }, "Vraag"),
     uitvoer: simple("uitvoer", "Lees de uitvoer", function () { return D.uitvoer; }, "Uitvoer"),
     bewijs: simple("bewijs", "Welk bewijs is overtuigend?", function () { return shuffle(D.bewijs); }, "Bewering"),
     overerving: simple("overerving", "Overerving en uitzonderingen", function () { return D.overerving; }, "Vraag"),
     demo: function () { demoPage(); }, status: statusPage,
     fout: function () { foutPage(); }, "fout/sab": function () { foutPage("sab"); }, "fout/slo": function () { foutPage("slo"); },
+    labo: laboPage,
     ticket: function () { formPage("ticket", "Ticketformulier", D.ticketVelden, "ticket-fs.txt"); },
     werkdoel: function () { formPage("werkdoel", "Werkdoel en testmatrix", D.werkdoel, "werkdoel-fs.txt"); },
     exitticket: exitTicketPage
